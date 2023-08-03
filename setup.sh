@@ -7,4 +7,3 @@ then
     sudo apt install python3-pip -y
 fi
 pip3 install -r requirements.txt
-echo "now run python3 server.py"

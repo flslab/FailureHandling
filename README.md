@@ -7,4 +7,8 @@
 
 ``bash setup.sh``
 
-#
+## Run
+
+``python3 primary.py``
+
+``python3 secondary.py``

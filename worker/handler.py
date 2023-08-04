@@ -24,17 +24,6 @@ class HandlerThread(threading.Thread):
             if event.type == MessageTypes.STOP or event.type == MessageTypes.FAILURE_DETECTED:
                 break
 
-            # self.flush_queue()
-
-    def flush_queue(self):
-        with self.event_queue.mutex:
-            for item in self.event_queue.queue:
-                t = item.event.type
-                if t == MessageTypes.BREAK or t == MessageTypes.STOP or MessageTypes.REENTER_SINGLE_STATE:
-                    item.stale = False
-                else:
-                    item.stale = True
-
     def flush_all(self):
         with self.event_queue.mutex:
             for item in self.event_queue.queue:

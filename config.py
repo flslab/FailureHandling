@@ -12,7 +12,7 @@ class Config:
     DISPLAY_CELL_SIZE = 0.05
     BUSY_WAITING = False
     DURATION = 60 * 0.3
-    K = 20  # if k = 0 no standbys are deployed
+    K = 5  # if k = 0 no standbys are deployed
     SHAPE = 'racecar'
     RESULTS_PATH = 'results'
     DEBUG = True
@@ -23,4 +23,4 @@ class Config:
     DISPATCHERS = 5  # valid values 1 3 5
     DISPATCH_RATE = 1  # valid values 'inf' or a non-zero number
     MULTICAST = False  # should be False for cloudlab and True for AWS
-    INPUT = 'racecar_K20'  # place the file int the results directory
+    INPUT = 'racecar_K5'  # place the file int the results directory

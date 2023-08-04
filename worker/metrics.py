@@ -124,9 +124,11 @@ def gen_point_metrics(events):
             illuminating_metrics[pid][1] += 1
 
         elif e == TimelineEvents.STANDBY_FAIL:
-            pid = fid_to_point[fid]
-            standby_events[pid].append([t, e])
-            standby_metrics[pid][1] += 1
+            # Check if the stand by FLS is in mid-flight
+            if not event[2]:
+                pid = fid_to_point[fid]
+                standby_events[pid].append([t, e])
+                standby_metrics[pid][2] += 1
 
         elif e == TimelineEvents.ILLUMINATE:
             pid = point_to_id(event[2])
@@ -142,9 +144,15 @@ def gen_point_metrics(events):
         elif e == TimelineEvents.ILLUMINATE_STANDBY:
             pid = point_to_id(event[2])
             fid_to_point[fid] = pid
-            illuminating_events[pid].append([t, e])
-            illuminating_metrics[pid][3] += 1
-            illuminating_metrics[pid][5].append(t - illuminating_events[pid][-2][0])
+
+            if pid in illuminating_events:
+                illuminating_events[pid].append([t, e])
+                illuminating_metrics[pid][3] += 1
+                illuminating_metrics[pid][5].append(t - illuminating_events[pid][-2][0])
+            else:
+                # Situations when the previous FLS who was assigned with this point never arrived
+                illuminating_events[pid] = [[t, e]]
+                illuminating_metrics[pid] = [pid, 0, 0, 0, [], []]
 
         elif e == TimelineEvents.STANDBY:
             pid = point_to_id(event[2])
@@ -158,9 +166,10 @@ def gen_point_metrics(events):
                 standby_metrics[pid] = [pid, 0, 0, 0, []]
 
         elif e == TimelineEvents.REPLACE:
-            pid = fid_to_point[fid]
-            standby_events[pid].append([t, e])
-            standby_metrics[pid][2] += 1
+            if not event[2]:
+                pid = fid_to_point[fid]
+                standby_events[pid].append([t, e])
+                standby_metrics[pid][2] += 1
 
     # print(illuminating_events)
     # print(standby_events)
@@ -230,10 +239,11 @@ def gen_charts(events, fig_dir):
                 standby["t"].append(t)
                 standby["y"].append(standby["y"][-1] - 1)
         elif e == TimelineEvents.REPLACE:
-            mid_flight["t"].append(t)
-            mid_flight["y"].append(mid_flight["y"][-1] + 1)
-            standby["t"].append(t)
-            standby["y"].append(standby["y"][-1] - 1)
+            if not event[2]:  # is mid-flight
+                mid_flight["t"].append(t)
+                mid_flight["y"].append(mid_flight["y"][-1] + 1)
+                standby["t"].append(t)
+                standby["y"].append(standby["y"][-1] - 1)
 
     dispatched["t"].append(events[-1][0])
     dispatched["y"].append(dispatched["y"][-1])
@@ -354,7 +364,7 @@ class Metrics:
 
     def log_arrival(self, timestamp, event, coord):
         t = timestamp - self.start_time
-        self.timeline.append((timestamp, event, coord.tolist()))
+        self.timeline.append((t, event, coord.tolist()))
 
     def log_standby_id(self, timestamp, standby_id):
         self.general_metrics["05_standby_id"].append((timestamp - self.start_time, standby_id))
@@ -370,13 +380,13 @@ class Metrics:
         else:
             self.timeline.append((t, TimelineEvents.FAIL, is_mid_flight))
 
-    def log_replacement(self, replacement_time, replacement_duration, failed_fls_id, failed_fls_gtl):
+    def log_replacement(self, replacement_time, replacement_duration, failed_fls_id, failed_fls_gtl, is_mid_flight):
         t = replacement_time - self.start_time
         self.general_metrics["31_replacement_start_time"] = t
         self.general_metrics["32_replacement_arrival_time"] = t + replacement_duration
         self.general_metrics["33_replacement_duration"] = replacement_duration
         self.general_metrics["34_failed_fls_id"] = failed_fls_id
-        self.timeline.append((t, TimelineEvents.REPLACE))
+        self.timeline.append((t, TimelineEvents.REPLACE, is_mid_flight))
         # self.timeline.append((t + replacement_duration, TimelineEvents.ILLUMINATE_STANDBY, failed_fls_gtl.tolist()))
 
 

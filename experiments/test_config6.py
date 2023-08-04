@@ -1,7 +1,7 @@
 class TestConfig:
-    ENABLED = False
+    ENABLED = True
     NUMBER_OF_FLSS = 165
-    K = 11
+    K = 15
     R = 10
     H = 'vns'
     ETA = K-1

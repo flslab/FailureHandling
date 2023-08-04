@@ -85,7 +85,7 @@ class StateMachine:
         self.context.gtl = msg.gtl
         timestamp, dur, dest = self.context.move(v)
         self.move(dur, dest, TimelineEvents.ILLUMINATE_STANDBY)
-        self.context.log_replacement(timestamp, dur, msg.fid, msg.gtl)
+        self.context.log_replacement(timestamp, dur, msg.fid, msg.gtl, self.is_mid_flight)
 
         logger.debug(f"REPLACED {self.context} failed_fid={msg.fid} failed_el={msg.el}")
 

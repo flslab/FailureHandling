@@ -1,5 +1,5 @@
 class TestConfig:
-    ENABLED = False
+    ENABLED = True
     NUMBER_OF_FLSS = 165
     K = 11
     R = 10

@@ -75,6 +75,7 @@ def _max(values):
         return max(values)
     return 0
 
+
 def point_to_id(point):
     return '_'.join([str(p) for p in point])
 
@@ -118,17 +119,25 @@ def gen_point_metrics(events):
         e = event[1]
         fid = event[-1]
 
-        if e == TimelineEvents.FAIL and event[2] is False:
+        if e == TimelineEvents.DISPATCH:
+            pid = point_to_id(event[2])
+            fid_to_point[fid] = pid
+
+        elif e == TimelineEvents.FAIL and event[2] is False:
             pid = fid_to_point[fid]
             illuminating_events[pid].append([t, e])
             illuminating_metrics[pid][1] += 1
 
         elif e == TimelineEvents.STANDBY_FAIL:
             # Check if the stand by FLS is in mid-flight
-            if not event[2]:
-                pid = fid_to_point[fid]
+            pid = fid_to_point[fid]
+            if pid in standby_events:
                 standby_events[pid].append([t, e])
-                standby_metrics[pid][2] += 1
+            else:
+                standby_events[pid] = [[t, e]]
+                standby_metrics[pid] = [pid, 0, 0, 0, []]
+
+            standby_metrics[pid][1] += 1
 
         elif e == TimelineEvents.ILLUMINATE:
             pid = point_to_id(event[2])
@@ -166,10 +175,14 @@ def gen_point_metrics(events):
                 standby_metrics[pid] = [pid, 0, 0, 0, []]
 
         elif e == TimelineEvents.REPLACE:
-            if not event[2]:
-                pid = fid_to_point[fid]
+            pid = fid_to_point[fid]
+            if pid in standby_events:
                 standby_events[pid].append([t, e])
-                standby_metrics[pid][2] += 1
+            else:
+                standby_events[pid] = [[t, e]]
+                standby_metrics[pid] = [pid, 0, 0, 0, []]
+
+            standby_metrics[pid][2] += 1
 
     # print(illuminating_events)
     # print(standby_events)
@@ -191,8 +204,8 @@ def gen_point_metrics(events):
         row.append(_avg(hub_w_t))
         row.append(_max(hub_w_t))
 
-    return [metric_keys] + i_rows,\
-        [standby_metric_keys] + s_rows
+    return [metric_keys] + i_rows, \
+           [standby_metric_keys] + s_rows
 
 
 def gen_charts(events, fig_dir):
@@ -262,7 +275,8 @@ def gen_charts(events, fig_dir):
     plt.step(illuminating["t"], illuminating["y"], where='post', label="Illuminating FLSs")
     plt.step(failed["t"], failed["y"], where='post', label="Failed FLSs")
     plt.step(mid_flight["t"], mid_flight["y"], where='post', label="Mid-flight FLSs")
-
+    plt.gca().xaxis.set_major_locator(mpl.ticker.MaxNLocator(integer=True))
+    plt.gca().yaxis.set_major_locator(mpl.ticker.MaxNLocator(integer=True))
     # Add a legend
     plt.legend()
     if Config.DEBUG:
@@ -356,7 +370,7 @@ class Metrics:
         self.general_metrics["13_dispatch_duration"] = dispatch_duration
         self.log_standby_id(timestamp, standby_id)
         self.log_is_standby(timestamp, is_standby)
-        self.timeline.append((t, TimelineEvents.DISPATCH))
+        self.timeline.append((t, TimelineEvents.DISPATCH, el.tolist()))
         # if is_standby:
         #     self.timeline.append((t + dispatch_duration, TimelineEvents.STANDBY, el.tolist()))
         # else:

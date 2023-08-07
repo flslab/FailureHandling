@@ -352,7 +352,6 @@ class PrimaryNode:
 
     def _write_results(self):
         logger.info("Writing results")
-
         utils.write_csv(self.dir_meta, self._get_metrics(), 'metrics')
         utils.create_csv_from_json(self.dir_meta, os.path.join(self.dir_figure, f'{self.result_name}.jpg'))
         utils.write_configs(self.dir_meta, self.start_time)
@@ -367,6 +366,9 @@ class PrimaryNode:
 
     def start_experiment(self):
         self._setup_results_directory()
+
+        utils.file.delete_previous_json_files(self.dir_meta)
+
         self._create_server_socket()
         self._bind_server_socket()
         self._listen_to_secondary_nodes()

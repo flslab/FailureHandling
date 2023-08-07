@@ -13,6 +13,7 @@ class HandlerThread(threading.Thread):
 
     def run(self):
         self.state_machine.start()
+        stop_flag = False
         while True:
             item = self.event_queue.get()
             if item.stale:
@@ -23,6 +24,14 @@ class HandlerThread(threading.Thread):
             self.state_machine.drive(event)
             if event.type == MessageTypes.STOP or event.type == MessageTypes.FAILURE_DETECTED:
                 break
+
+            # if event.type == MessageTypes.STOP or event.type == MessageTypes.FAILURE_DETECTED or stop_flag:
+            #     stop_flag = True
+            #     if event.type == MessageTypes.FAILURE_DETECTED or not self.state_machine.check_mid_flight():
+            #         self.state_machine.drive(event)
+            #         break
+            # else:
+            #     self.state_machine.drive(event)
 
     def flush_all(self):
         with self.event_queue.mutex:

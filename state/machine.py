@@ -39,7 +39,7 @@ class StateMachine:
             self.move_thread.cancel()
             self.move_thread = None
             self.is_mid_flight = False
-        self.move_thread = threading.Timer(dur, self.put_state_in_q, (MessageTypes.MOVE, (dest, arrival_event)))
+        self.move_thread = threading.Timer(dur, self.change_move_state, (MessageTypes.MOVE, (dest, arrival_event)))
         self.move_thread.start()
         self.is_mid_flight = True
 
@@ -114,7 +114,6 @@ class StateMachine:
         self.context.el = msg.args[0]
         self.context.metrics.log_arrival(time.time(), msg.args[1], self.context.gtl)
         self.move_thread = None
-        self.is_mid_flight = False
 
     def enter(self, state):
         self.leave(self.state)
@@ -122,6 +121,10 @@ class StateMachine:
 
         if self.state == StateTypes.SINGLE:
             self.set_timer_to_fail()
+
+    def change_move_state(self, event, args=()):
+        self.put_state_in_q(event, args=args)
+        self.is_mid_flight = False
 
     def put_state_in_q(self, event, args=()):
         msg = Message(event, args=args).to_fls(self.context)
@@ -164,3 +167,6 @@ class StateMachine:
         if self.timer_failure is not None:
             self.timer_failure.cancel()
             self.timer_failure = None
+
+    def check_mid_flight(self):
+        return self.is_mid_flight

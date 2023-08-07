@@ -7,13 +7,14 @@ import message
 
 
 class NetworkThread(threading.Thread):
-    def __init__(self, event_queue, context, sock):
+    def __init__(self, event_queue, context, sock, state_machine):
         super(NetworkThread, self).__init__()
         self.event_queue = event_queue
         self.context = context
         self.sock = sock
         self.latest_message_id = dict()
         self._stop_event = threading.Event()
+        # self.state_machine = state_machine
 
     def stop(self):
         self._stop_event.set()
@@ -22,6 +23,7 @@ class NetworkThread(threading.Thread):
         return self._stop_event.is_set()
 
     def run(self):
+        # stop_flag = False
         while not self.stopped():
             # if self.sock.is_ready():
             msg, length = self.sock.receive()
@@ -31,8 +33,12 @@ class NetworkThread(threading.Thread):
                 self.latest_message_id[msg.fid] = msg.id
                 self.event_queue.put(NetworkThread.prioritize_message(msg))
                 if msg is not None and msg.type == message.MessageTypes.STOP:
-                    # print(f"network_stopped_{self.context.fid}")
                     break
+                # if msg is not None and msg.type == message.MessageTypes.STOP or stop_flag:
+                #     stop_flag = True
+                #     if not self.state_machine.check_mid_flight:
+                #         # print(f"network_stopped_{self.context.fid}")
+                #         break
 
     def is_message_valid(self, msg):
         if msg is None:

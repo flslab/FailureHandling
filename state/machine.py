@@ -56,7 +56,6 @@ class StateMachine:
 
     def fail(self, msg):
         if self.is_terminating:
-            logger.debug(f"CANCEL FAILURE {self.context}")
             return
 
         self.context.metrics.log_failure_time(time.time(), self.context.is_standby, self.is_mid_flight)

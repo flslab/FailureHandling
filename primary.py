@@ -296,6 +296,7 @@ class PrimaryNode:
                             "group_id": group_id,
                         }
                         self._deploy_fls(fls)
+                        logger.debug(f"Deployed fid={fls['fid']}, replacing fid={msg.fid}")
                         self.num_replaced_flss += 1
 
                         logger.debug(f"fid={self.pid} normal failed_fid={msg.fid}")
@@ -329,7 +330,6 @@ class PrimaryNode:
 
     def _stop_secondary_nodes(self):
         logger.info("Stopping secondary nodes")
-
         self._send_msg_to_all_nodes(False)
         client_threads = []
         for nid in range(len(self.client_sockets)):
@@ -360,6 +360,7 @@ class PrimaryNode:
     def stop_experiment(self):
         logger.info("Stopping the experiment")
 
+        print(time.time() - self.start_time)
         self._stop_dispatchers()
         self._stop_secondary_nodes()
         self._write_results()

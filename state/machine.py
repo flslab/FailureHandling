@@ -22,6 +22,7 @@ class StateMachine:
         self.handled_failure = dict()
         self.move_thread = None
         self.is_mid_flight = False
+        self.is_terminating = False
 
     def start(self):
         self.enter(StateTypes.SINGLE)
@@ -53,21 +54,26 @@ class StateMachine:
         write_json(self.context.fid, self.context.metrics.get_final_report_(), self.metrics.results_directory, False)
 
     def fail(self, msg):
+        if self.is_terminating:
+            logger.debug(f"CANCEL FAILURE {self.context}")
+            return
+
         self.context.metrics.log_failure_time(time.time(), self.context.is_standby, self.is_mid_flight)
         # self.put_state_in_q(MessageTypes.STOP, args=(False,))  # False for not broadcasting stop msg
         if self.context.is_standby:
             # notify group
             self.broadcast(Message(MessageTypes.STANDBY_FAILED).to_swarm(self.context))
-            # request a standby FLS from the hub, arg False is for standby FLS
             self.send_to_server(Message(MessageTypes.REPLICA_REQUEST_HUB, args=(False,)))
         elif self.context.standby_id is None:
             # request an illuminating FLS from the hub, arg True is for illuminating FLS
             self.send_to_server(Message(MessageTypes.REPLICA_REQUEST_HUB, args=(True,)))
+            logger.debug(f"RECOVER BY HUB {self.context}")
         else:
             # notify group
             self.broadcast(Message(MessageTypes.REPLICA_REQUEST).to_swarm(self.context))
             # request standby from server
             self.send_to_server(Message(MessageTypes.REPLICA_REQUEST_HUB, args=(False,)))
+            logger.debug(f"RECOVER BY STANDBY {self.context}")
 
         self.handle_stop(None)
         logger.debug(f"FAILED {self.context}")
@@ -171,3 +177,6 @@ class StateMachine:
 
     def check_mid_flight(self):
         return self.is_mid_flight
+
+    def cancel_fail(self):
+        self.is_terminating = True

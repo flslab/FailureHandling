@@ -85,10 +85,12 @@ class SecondaryNode:
 
         for p in self.processes.values():
             if p.is_alive():
+                logger.debug(f"Process UNFINISHED: {p.name}")
                 p.join(Config.PROCESS_JOIN_TIMEOUT)
 
         for p in self.processes.values():
             if p.is_alive():
+                logger.debug(f"Process Alive: {p.name}")
                 p.terminate()
 
     def start_node(self):

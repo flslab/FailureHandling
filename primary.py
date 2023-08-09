@@ -296,7 +296,6 @@ class PrimaryNode:
                             "group_id": group_id,
                         }
                         self._deploy_fls(fls)
-                        logger.debug(f"Deployed fid={fls['fid']}, replacing fid={msg.fid}")
                         self.num_replaced_flss += 1
 
                         logger.debug(f"fid={self.pid} normal failed_fid={msg.fid}")

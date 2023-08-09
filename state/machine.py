@@ -23,6 +23,7 @@ class StateMachine:
         self.move_thread = None
         self.is_mid_flight = False
         self.is_terminating = False
+        self.is_arrived = False
 
     def start(self):
         self.enter(StateTypes.SINGLE)
@@ -44,8 +45,8 @@ class StateMachine:
         self.move_thread.start()
         self.is_mid_flight = True
 
-    def handle_stop(self, msg):
-        if msg is not None and (msg.args is None or len(msg.args) == 0):
+    def handle_stop(self, msg, simulate_stop=False):
+        if (msg is not None and (msg.args is None or len(msg.args) == 0)) or simulate_stop:
             stop_msg = Message(MessageTypes.STOP).to_all()
             self.broadcast(stop_msg)
 
@@ -132,6 +133,8 @@ class StateMachine:
     def change_move_state(self, event, args=()):
         self.put_state_in_q(event, args=args)
         self.is_mid_flight = False
+        print("FLS arrived " + str(self.context.fid))
+        self.is_arrived = True
 
     def put_state_in_q(self, event, args=()):
         msg = Message(event, args=args).to_fls(self.context)
@@ -175,8 +178,8 @@ class StateMachine:
             self.timer_failure.cancel()
             self.timer_failure = None
 
-    def check_mid_flight(self):
-        return self.is_mid_flight
+    def check_arrived(self):
+        return self.is_arrived
 
     def cancel_fail(self):
         self.is_terminating = True

@@ -28,9 +28,12 @@ class HandlerThread(threading.Thread):
 
             if event.type == MessageTypes.STOP or event.type == MessageTypes.FAILURE_DETECTED or stop_flag:
                 stop_flag = True
-                if event.type == MessageTypes.FAILURE_DETECTED or not self.state_machine.check_mid_flight():
+                if event.type == MessageTypes.FAILURE_DETECTED or self.state_machine.check_arrived():
                     self.state_machine.drive(event)
-                    logger.debug(f"END HANDLER {self.context}")
+                    logger.debug(f"END HANDLER {self.context} by failure: {event.type == MessageTypes.FAILURE_DETECTED}")
+
+                    # if event.type is not (MessageTypes.STOP or MessageTypes.FAILURE_DETECTED):
+                    #     self.state_machine.handle_stop(event, True)
                     break
                 self.state_machine.cancel_fail()
             else:

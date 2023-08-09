@@ -33,14 +33,16 @@ class NetworkThread(threading.Thread):
                 self.context.log_received_message(msg, length)
                 self.latest_message_id[msg.fid] = msg.id
                 self.event_queue.put(NetworkThread.prioritize_message(msg))
-                # if msg is not None and msg.type == message.MessageTypes.STOP:
-                #     break
-                if msg is not None and msg.type == message.MessageTypes.STOP or stop_flag:
-                    stop_flag = True
-                    if not self.state_machine.check_mid_flight():
-                        # print(f"network_stopped_{self.context.fid}")
-                        logger.debug(f"END NETWORK {self.context}")
-                        break
+                if msg is not None and msg.type == message.MessageTypes.STOP:
+                    logger.debug(f"END NETWORK {self.context}")
+                    break
+                # if msg is not None and msg.type == message.MessageTypes.STOP or stop_flag:
+                #     stop_flag = True
+                #     logger.debug(f"NETWORK {self.context}")
+                #     if not self.state_machine.check_mid_flight():
+                #         # print(f"network_stopped_{self.context.fid}")
+                #         logger.debug(f"END NETWORK {self.context}")
+                #         break
 
     def is_message_valid(self, msg):
         if msg is None:

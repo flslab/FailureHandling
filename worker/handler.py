@@ -35,6 +35,9 @@ class HandlerThread(threading.Thread):
                     logger.debug(f"CANCEL FAILURE {self.context}")
 
             elif event.type == MessageTypes.STOP or stop_flag:
+                if not stop_flag:
+                    logger.debug(f"STOP TRIGGERED {self.context}")
+
                 stop_flag = True
 
                 if event.type is MessageTypes.MOVE or (self.state_machine.check_arrived() and event.type is MessageTypes.STOP):

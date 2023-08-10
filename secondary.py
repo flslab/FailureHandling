@@ -79,7 +79,7 @@ class SecondaryNode:
         self.sock.sendall(pickle.dumps(True))
 
     def _stop_processes(self):
-        logger.info("Stopping FLS processes")
+        logger.info(f"Stopping FLS processes {time.time()}")
 
         stop.stop_all()
 

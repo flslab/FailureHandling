@@ -34,7 +34,7 @@ class StateMachine:
             # send the id of the new standby to group members
             self.broadcast(Message(MessageTypes.ASSIGN_STANDBY).to_swarm(self.context))
 
-        logger.debug(f"STARTED {self.context}")
+        logger.debug(f"STARTED {self.context}, {self.is_mid_flight}")
 
     def move(self, dur, dest, arrival_event):
         if self.move_thread is not None:
@@ -42,8 +42,9 @@ class StateMachine:
             self.move_thread = None
             self.is_mid_flight = False
         self.move_thread = threading.Timer(dur, self.change_move_state, (MessageTypes.MOVE, (dest, arrival_event)))
-        self.move_thread.start()
+        self.is_arrived = False
         self.is_mid_flight = True
+        self.move_thread.start()
 
     def handle_stop(self, msg, simulate_stop=False):
         if (msg is not None and (msg.args is None or len(msg.args) == 0)) or simulate_stop:
@@ -64,16 +65,17 @@ class StateMachine:
             # notify group
             self.broadcast(Message(MessageTypes.STANDBY_FAILED).to_swarm(self.context))
             self.send_to_server(Message(MessageTypes.REPLICA_REQUEST_HUB, args=(False,)))
+            logger.debug(f"REQUEST NEW STANDBY {self.context} {time.time()}")
         elif self.context.standby_id is None:
             # request an illuminating FLS from the hub, arg True is for illuminating FLS
             self.send_to_server(Message(MessageTypes.REPLICA_REQUEST_HUB, args=(True,)))
-            logger.debug(f"RECOVER BY HUB {self.context}")
+            logger.debug(f"RECOVER BY HUB {self.context} {time.time()}")
         else:
             # notify group
             self.broadcast(Message(MessageTypes.REPLICA_REQUEST).to_swarm(self.context))
             # request standby from server
             self.send_to_server(Message(MessageTypes.REPLICA_REQUEST_HUB, args=(False,)))
-            logger.debug(f"RECOVER BY STANDBY {self.context}")
+            logger.debug(f"RECOVER BY STANDBY {self.context} standby fid={self.context.standby_id}")
 
         self.handle_stop(None)
         logger.debug(f"FAILED {self.context}")
@@ -91,10 +93,11 @@ class StateMachine:
         self.context.gtl = msg.gtl
         timestamp, dur, dest = self.context.move(v)
         mid_flight_state = self.is_mid_flight
+
         self.move(dur, dest, TimelineEvents.ILLUMINATE_STANDBY)
         self.context.log_replacement(timestamp, dur, msg.fid, msg.gtl, mid_flight_state)
 
-        logger.debug(f"REPLACED {self.context} failed_fid={msg.fid} failed_el={msg.el}")
+        logger.debug(f"REPLACED {self.context} failed_fid={msg.fid} failed_el={msg.el} mid flight={mid_flight_state}")
 
     def handle_replica_request(self, msg):
         if self.context.is_standby:
@@ -121,6 +124,9 @@ class StateMachine:
         self.context.el = msg.args[0]
         self.context.metrics.log_arrival(time.time(), msg.args[1], self.context.gtl)
         self.move_thread = None
+        self.is_arrived = True
+
+        print("FLS arrived " + str(self.context.fid))
 
     def enter(self, state):
         self.leave(self.state)
@@ -130,10 +136,8 @@ class StateMachine:
             self.set_timer_to_fail()
 
     def change_move_state(self, event, args=()):
-        self.put_state_in_q(event, args=args)
         self.is_mid_flight = False
-        print("FLS arrived " + str(self.context.fid))
-        self.is_arrived = True
+        self.put_state_in_q(event, args=args)
 
     def put_state_in_q(self, event, args=()):
         msg = Message(event, args=args).to_fls(self.context)

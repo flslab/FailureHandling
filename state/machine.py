@@ -24,6 +24,7 @@ class StateMachine:
         self.is_mid_flight = False
         self.is_terminating = False
         self.is_arrived = False
+        self.unhandled_move = None
 
     def start(self):
         self.enter(StateTypes.SINGLE)
@@ -94,7 +95,15 @@ class StateMachine:
         v = msg.gtl - self.context.gtl
         self.context.gtl = msg.gtl
         timestamp, dur, dest = self.context.move(v)
-        mid_flight_state = self.is_mid_flight
+
+        if self.unhandled_move is not None:
+            self.unhandled_move.stale = True
+            mid_flight_state = True
+            logger.debug(f"UNHANDLED MOVE CANCEL fid={self.context.fid}")
+            self.unhandled_move = None
+        else:
+            mid_flight_state = self.is_mid_flight
+            logger.debug(f"STANDBY MID_FLIGHT STATE {mid_flight_state} fid={self.context.fid}")
 
         self.move(dur, dest, TimelineEvents.ILLUMINATE_STANDBY)
 
@@ -128,6 +137,7 @@ class StateMachine:
         self.context.metrics.log_arrival(time.time(), msg.args[1], self.context.gtl)
         self.move_thread = None
         self.is_arrived = True
+        self.unhandled_move = None
 
         logger.debug(f"MOVE HANDLED fid={self.context.fid}")
 
@@ -141,12 +151,13 @@ class StateMachine:
     def change_move_state(self, event, args=()):
         self.is_mid_flight = False
         logger.debug(f"MOVE ENQUEUE fid={self.context.fid}")
-        self.put_state_in_q(event, args=args)
+        self.unhandled_move = self.put_state_in_q(event, args=args)
 
     def put_state_in_q(self, event, args=()):
         msg = Message(event, args=args).to_fls(self.context)
         item = PrioritizedItem(1, msg, False)
         self.event_queue.put(item)
+        return item
 
     def leave(self, state):
         pass

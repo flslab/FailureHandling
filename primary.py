@@ -97,6 +97,8 @@ class PrimaryNode:
         self.num_initial_standbys = 0
         self.num_replaced_flss = 0
         self.num_replaced_standbys = 0
+        self.stop_flag = False
+        self.stop_thread = None
 
     def _create_server_socket(self):
         # Experimental artifact to gather theoretical stats for scientific publications.
@@ -276,7 +278,10 @@ class PrimaryNode:
     def _handle_failures(self):
         logger.info("Handling Failures")
 
-        while time.time() - self.start_time <= Config.DURATION:
+        self.stop_thread.start()
+
+        # while time.time() - self.start_time <= Config.DURATION:
+        while not self.stop_flag:
             try:
                 msg, _ = self.failure_handler_socket.receive()
             except socket.timeout:
@@ -357,11 +362,11 @@ class PrimaryNode:
         utils.combine_csvs(self.dir_meta, self.dir_experiment, "reli_" + self.result_name)
 
     def stop_experiment(self):
-        logger.info("Stopping the experiment")
-
-        print(time.time() - self.start_time)
+        logger.info(f"Stopping the experiment, experiment time={time.time() - self.start_time}")
         self._stop_dispatchers()
         self._stop_secondary_nodes()
+
+        self.stop_flag = True
         self._write_results()
 
     def start_experiment(self):
@@ -381,6 +386,9 @@ class PrimaryNode:
         self._start_dispatchers()
         self._handle_failures()
 
+    def start_termination_timer(self):
+        self.stop_thread = threading.Timer(Config.DURATION, self.stop_experiment)
+
 
 if __name__ == '__main__':
     N = 1
@@ -390,5 +398,7 @@ if __name__ == '__main__':
         name = sys.argv[2]
 
     primary_node = PrimaryNode(N, name)
+
+    primary_node.start_termination_timer()
     primary_node.start_experiment()
-    primary_node.stop_experiment()
+    # primary_node.stop_experiment()

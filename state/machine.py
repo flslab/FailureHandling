@@ -40,9 +40,11 @@ class StateMachine:
         if self.move_thread is not None:
             self.move_thread.cancel()
             self.move_thread = None
-            self.is_mid_flight = False
+            self.is_mid_flight = True
+            logger.debug(f"PREEMPT MOVEMENT fid={self.context.fid}, mid_flight={self.is_mid_flight}")
         self.move_thread = threading.Timer(dur, self.change_move_state, (MessageTypes.MOVE, (dest, arrival_event)))
         self.is_arrived = False
+        logger.debug(f"START MOVING fid={self.context.fid}")
         self.is_mid_flight = True
         self.move_thread.start()
 
@@ -95,6 +97,7 @@ class StateMachine:
         mid_flight_state = self.is_mid_flight
 
         self.move(dur, dest, TimelineEvents.ILLUMINATE_STANDBY)
+
         self.context.log_replacement(timestamp, dur, msg.fid, msg.gtl, mid_flight_state)
 
         logger.debug(f"REPLACED {self.context} failed_fid={msg.fid} failed_el={msg.el} mid flight={mid_flight_state}")
@@ -126,7 +129,7 @@ class StateMachine:
         self.move_thread = None
         self.is_arrived = True
 
-        print("FLS arrived " + str(self.context.fid))
+        logger.debug(f"MOVE HANDLED fid={self.context.fid}")
 
     def enter(self, state):
         self.leave(self.state)
@@ -137,6 +140,7 @@ class StateMachine:
 
     def change_move_state(self, event, args=()):
         self.is_mid_flight = False
+        logger.debug(f"MOVE ENQUEUE fid={self.context.fid}")
         self.put_state_in_q(event, args=args)
 
     def put_state_in_q(self, event, args=()):

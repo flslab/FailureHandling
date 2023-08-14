@@ -46,7 +46,7 @@ general_props = [
     },
     {
         "keys": ["DISPATCHERS"],
-        "values": ["1"]
+        "values": ["3"]
     },
     {
         "keys": ["FAILURE_TIMEOUT"],

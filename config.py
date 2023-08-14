@@ -16,7 +16,7 @@ class Config:
     SHAPE = 'racecar'
     RESULTS_PATH = 'results'
     DEBUG = True
-    FILE_NAME_KEYS = [('DISPATCHERS', 'D'), ('DISPATCH_RATE', 'R'), ('FAILURE_TIMEOUT', 'T')]
+    FILE_NAME_KEYS = [('DISPATCHERS', 'D'), ('DISPATCH_RATE', 'R'), ('FAILURE_TIMEOUT', 'T'),('MAX_SPEED_1', 'S')]
     DIR_KEYS = ['K']
     SERVER_TIMEOUT = 120
     PROCESS_JOIN_TIMEOUT = 120

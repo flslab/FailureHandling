@@ -53,6 +53,10 @@ general_props = [
         # "values": ["30", "60"]
         "values": ["30"]
         # "values": ["1", "3", "6", "30", "60", "120", "600"]
+    },
+    {
+        "Keys": ["MAX_SPEED"],
+        "values": ["1", "3"]
     }
     # {
     #     "keys": ["SHAPE"],

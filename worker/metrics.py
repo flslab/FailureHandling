@@ -408,20 +408,20 @@ class Metrics:
 if __name__ == '__main__':
     mpl.use('macosx')
 
-    with open("../results/racecar/H2/racecar_D5_H2/timeline.json") as f:
-        data = json.load(f)
-
-        gen_point_metrics(data)
-
-    # with open("/Users/hamed/Desktop/chess_5min/chess_K3_D5_R1_T30/charts.json") as f:
+    # with open("../results/racecar/H2/racecar_D5_H2/timeline.json") as f:
     #     data = json.load(f)
     #
-    #     plt.step(data["dispatched"]["t"], data["dispatched"]["y"], where='post', label="Dispatched FLSs")
-    #     plt.step(data["standby"]["t"], data["standby"]["y"], where='post', label="Standby FLSs")
-    #     plt.step(data["illuminating"]["t"], data["illuminating"]["y"], where='post', label="Illuminating FLSs")
-    #     plt.step(data["failed"]["t"], data["failed"]["y"], where='post', label="Failed FLSs")
-    #     plt.step(data["mid_flight"]["t"], data["mid_flight"]["y"], where='post', label="Mid-flight FLSs")
-    #     plt.legend()
-    #     plt.grid()
-    #     # plt.yscale("log")
-    #     plt.show()
+    #     gen_point_metrics(data)
+
+    with open("/Users/shuqinzhu/Desktop/chess/K0/chess_D1_Rinf_T30/charts.json") as f:
+        data = json.load(f)
+
+        plt.step(data["dispatched"]["t"], data["dispatched"]["y"], where='post', label="Dispatched FLSs")
+        plt.step(data["standby"]["t"], data["standby"]["y"], where='post', label="Standby FLSs")
+        plt.step(data["illuminating"]["t"], data["illuminating"]["y"], where='post', label="Illuminating FLSs")
+        plt.step(data["failed"]["t"], data["failed"]["y"], where='post', label="Failed FLSs")
+        plt.step(data["mid_flight"]["t"], data["mid_flight"]["y"], where='post', label="Mid-flight FLSs")
+        plt.legend()
+        plt.grid()
+        # plt.yscale("log")
+        plt.show()

@@ -27,6 +27,8 @@ class StateMachine:
         self.unhandled_move = None
 
     def start(self):
+        logger.debug(f"STARTED {self.context}, {self.is_mid_flight}")
+
         self.enter(StateTypes.SINGLE)
         dur, dest = self.context.deploy()
         self.move(dur, dest, TimelineEvents.STANDBY if self.context.is_standby else TimelineEvents.ILLUMINATE)
@@ -34,8 +36,6 @@ class StateMachine:
         if self.context.is_standby:
             # send the id of the new standby to group members
             self.broadcast(Message(MessageTypes.ASSIGN_STANDBY).to_swarm(self.context))
-
-        logger.debug(f"STARTED {self.context}, {self.is_mid_flight}")
 
     def move(self, dur, dest, arrival_event):
         if self.move_thread is not None:
@@ -49,14 +49,17 @@ class StateMachine:
         self.is_mid_flight = True
         self.move_thread.start()
 
-    def handle_stop(self, msg, simulate_stop=False):
-        if (msg is not None and (msg.args is None or len(msg.args) == 0)) or simulate_stop:
+    def handle_stop(self, msg):
+        if msg is not None and (msg.args is None or len(msg.args) == 0):
             stop_msg = Message(MessageTypes.STOP).to_all()
             self.broadcast(stop_msg)
+            self.context.handler_stop_time = time.time()
 
         self.cancel_timers()
 
-        write_json(self.context.fid, self.context.metrics.get_final_report_(), self.metrics.results_directory, False)
+        stop_time = self.context.handler_stop_time - self.context.network_stop_time
+        write_json(self.context.fid, self.context.metrics.get_final_report_(stop_time), self.metrics.results_directory,
+                   False)
 
     def fail(self, msg):
         if self.is_terminating:

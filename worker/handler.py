@@ -1,5 +1,4 @@
 import threading
-import time
 from message import MessageTypes
 from state import StateTypes
 from utils import logger
@@ -24,6 +23,10 @@ class HandlerThread(threading.Thread):
             self.context.log_received_message(event, 0)
             self.state_machine.drive(event)
             if event.type == MessageTypes.STOP or event.type == MessageTypes.FAILURE_DETECTED:
+                if self.state_machine.move_thread is not None:
+                    self.state_machine.move_thread.cancel()
+                    self.state_machine.move_thread = None
+                logger.debug(f"HANDLER STOP fid={self.context.fid}")
                 break
 
             # if event.type == MessageTypes.FAILURE_DETECTED:

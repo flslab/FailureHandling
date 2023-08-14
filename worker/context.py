@@ -27,6 +27,9 @@ class WorkerContext:
         self.is_standby = is_standby
         self.standby_id = standby_id
         self.sid = sid
+        self.network_stop_time = 0
+        self.handler_stop_time = 0
+
 
     def set_el(self, el):
         self.el = el

@@ -350,9 +350,10 @@ class Metrics:
     def log_total_dist(self, dist):
         log_sum(self.general_metrics, "20_total_distance_traveled", dist)
 
-    def get_final_report_(self):
+    def get_final_report_(self, stop_time):
         report = {
-            "timeline": self.timeline
+            "timeline": self.timeline,
+            "25_response_stop_time": stop_time
         }
         report.update(self.network_metrics)
         report.update(self.sent_msg_hist)

@@ -362,9 +362,13 @@ class PrimaryNode:
         utils.combine_csvs(self.dir_meta, self.dir_experiment, "reli_" + self.result_name)
 
     def stop_experiment(self):
-        logger.info(f"Stopping the experiment, experiment time={time.time() - self.start_time}")
         self._stop_dispatchers()
+
+        logger.info(f"Stopping the experiment, experiment time={time.time() - self.start_time}")
+
+        stop_send_time = time.time()
         self._stop_secondary_nodes()
+        logger.info(f"Time for All process stop={time.time() - stop_send_time}")
 
         self.stop_flag = True
         self._write_results()

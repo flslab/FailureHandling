@@ -5,6 +5,7 @@ import numpy as np
 from config import Config
 import message
 from utils import logger
+import time
 
 
 class NetworkThread(threading.Thread):
@@ -35,6 +36,7 @@ class NetworkThread(threading.Thread):
                 self.event_queue.put(NetworkThread.prioritize_message(msg))
                 if msg is not None and msg.type == message.MessageTypes.STOP:
                     logger.debug(f"END NETWORK {self.context}")
+                    self.context.network_stop_time = time.time()
                     break
                 # if msg is not None and msg.type == message.MessageTypes.STOP or stop_flag:
                 #     stop_flag = True

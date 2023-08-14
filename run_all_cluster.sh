@@ -3,9 +3,12 @@
 bash gen_conf_cluster.sh
 sleep 10
 
-for i in {0..15}
+for i in {0..0}
 do
-#   bash set_conf_cluster.sh "$i"
-   sleep 10
-   bash start_cluster.sh "$i"
+   for j in {0..1}
+   do
+     sleep 10
+     echo "$i" "$j"
+     bash start_cluster.sh "$i"
+   done
 done

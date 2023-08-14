@@ -15,14 +15,13 @@ def_general_conf = {
     "MAX_SPEED": "3",
     "DISPLAY_CELL_SIZE": "0.05",
     "BUSY_WAITING": "False",
-    "DURATION": "60 * 5",
+    "DURATION": "60 * 10",
     "K": "20",
-    "H": "2",
     "SHAPE": "'chess'",
-    "RESULTS_PATH": "'/proj/nova-PG0/hamed/results'",
+    "RESULTS_PATH": "'/proj/nova-PG0/shuqin/results'",
     "DEBUG": "False",
-    "FILE_NAME_KEYS": "['K', ('DISPATCHERS', 'D'), ('DISPATCH_RATE', 'R'), ('FAILURE_TIMEOUT', 'T')]",
-    "DIR_KEYS": "['H']",
+    "FILE_NAME_KEYS": "[('DISPATCHERS', 'D'), ('DISPATCH_RATE', 'R'), ('FAILURE_TIMEOUT', 'T')]",
+    "DIR_KEYS": "['K']",
     "SERVER_TIMEOUT": "120",
     "PROCESS_JOIN_TIMEOUT": "120",
     "DISPATCHERS": "1",
@@ -34,23 +33,25 @@ def_general_conf = {
 general_props = [
     {
         "keys": ["DISPATCH_RATE"],
-        "values": ["1", "'inf'"]
+        # "values": ["1", "'inf'"]
+        "values": ["'inf'"]
     },
     {
         "keys": ["K", "INPUT"],
         "values": [
-            # {"K": "0", "INPUT": "'chess_K3'"},
-            {"K": "3", "INPUT": "'chess_K3'"},
+            {"K": "0", "INPUT": "'chess_K3'"},
+            # {"K": "3", "INPUT": "'chess_K3'"},
             # {"K": "20", "INPUT": "'chess_K20'"},
         ]
     },
     {
         "keys": ["DISPATCHERS"],
-        "values": ["5"]
+        "values": ["1"]
     },
     {
         "keys": ["FAILURE_TIMEOUT"],
-        "values": ["30", "120"]
+        # "values": ["30", "60"]
+        "values": ["30"]
         # "values": ["1", "3", "6", "30", "60", "120", "600"]
     }
     # {

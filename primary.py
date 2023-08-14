@@ -146,8 +146,8 @@ class PrimaryNode:
             os.makedirs(self.dir_figure, exist_ok=True)
 
     def _define_dispatcher_coords(self):
-        l = 50
-        w = 100
+        l = 60
+        w = 60
         if Config.DISPATCHERS == 1:
             self.dispatchers_coords = np.array([[l / 2, w / 2, 0]])
         elif Config.DISPATCHERS == 3:

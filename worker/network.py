@@ -24,7 +24,7 @@ class NetworkThread(threading.Thread):
         return self._stop_event.is_set()
 
     def run(self):
-        stop_flag = False
+        # stop_flag = False
         while not self.stopped():
             # if self.sock.is_ready():
             msg, length = self.sock.receive()

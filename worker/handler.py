@@ -21,38 +21,38 @@ class HandlerThread(threading.Thread):
                 continue
 
             event = item.event
-            # self.context.log_received_message(event, 0)
-            # self.state_machine.drive(event)
-            # if event.type == MessageTypes.STOP or event.type == MessageTypes.FAILURE_DETECTED:
-            #     break
+            self.context.log_received_message(event, 0)
+            self.state_machine.drive(event)
+            if event.type == MessageTypes.STOP or event.type == MessageTypes.FAILURE_DETECTED:
+                break
 
-            if event.type == MessageTypes.FAILURE_DETECTED:
-                if not stop_flag:
-                    self.state_machine.drive(event)
-                    logger.debug(f"END HANDLER {self.context} by failure")
-                    break
-                else:
-                    logger.debug(f"CANCEL FAILURE {self.context}")
-
-            elif event.type == MessageTypes.STOP or stop_flag:
-                if not stop_flag:
-                    logger.debug(f"STOP TRIGGERED {self.context}")
-
-                stop_flag = True
-
-                if event.type is MessageTypes.MOVE or (self.state_machine.check_arrived() and event.type is MessageTypes.STOP):
-                    self.state_machine.drive(event)
-                    logger.debug(f"END HANDLER {self.context} by stop message")
-
-                    if event.type is not MessageTypes.STOP:
-                        self.state_machine.handle_stop(event, True)
-                    break
-
-                self.state_machine.cancel_fail()
-                self.state_machine.drive(event)
-
-            else:
-                self.state_machine.drive(event)
+            # if event.type == MessageTypes.FAILURE_DETECTED:
+            #     if not stop_flag:
+            #         self.state_machine.drive(event)
+            #         logger.debug(f"END HANDLER {self.context} by failure")
+            #         break
+            #     else:
+            #         logger.debug(f"CANCEL FAILURE {self.context}")
+            #
+            # elif event.type == MessageTypes.STOP or stop_flag:
+            #     if not stop_flag:
+            #         logger.debug(f"STOP TRIGGERED {self.context}")
+            #
+            #     stop_flag = True
+            #
+            #     if event.type is MessageTypes.MOVE or (self.state_machine.check_arrived() and event.type is MessageTypes.STOP):
+            #         self.state_machine.drive(event)
+            #         logger.debug(f"END HANDLER {self.context} by stop message")
+            #
+            #         if event.type is not MessageTypes.STOP:
+            #             self.state_machine.handle_stop(event, True)
+            #         break
+            #
+            #     self.state_machine.cancel_fail()
+            #     self.state_machine.drive(event)
+            #
+            # else:
+            #     self.state_machine.drive(event)
 
     def flush_all(self):
         with self.event_queue.mutex:

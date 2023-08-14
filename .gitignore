@@ -199,3 +199,4 @@ pip-selfcheck.json
 results/
 decentralized.sh
 decentralized_aws.sh
+decentralized_gen.sh

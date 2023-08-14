@@ -56,7 +56,13 @@ general_props = [
     },
     {
         "keys": ["MAX_SPEED"],
-        "values": ["3"]
+        "values": ["30"]
+    },{
+        "keys": ["ACCELERATION"],
+        "values": ["10"]
+    },{
+        "keys": ["DECELERATION"],
+        "values": ["10"]
     },
     # {
     #     "keys": ["SHAPE"],

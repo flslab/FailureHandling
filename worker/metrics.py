@@ -416,11 +416,22 @@ if __name__ == '__main__':
     with open("/Users/shuqinzhu/Desktop/chess/K0/chess_D1_Rinf_T30/charts.json") as f:
         data = json.load(f)
 
-        plt.step(data["dispatched"]["t"], data["dispatched"]["y"], where='post', label="Dispatched FLSs")
-        plt.step(data["standby"]["t"], data["standby"]["y"], where='post', label="Standby FLSs")
-        plt.step(data["illuminating"]["t"], data["illuminating"]["y"], where='post', label="Illuminating FLSs")
-        plt.step(data["failed"]["t"], data["failed"]["y"], where='post', label="Failed FLSs")
-        plt.step(data["mid_flight"]["t"], data["mid_flight"]["y"], where='post', label="Mid-flight FLSs")
+        plt.step(data["dispatched"]["t"], data["dispatched"]["y"], where='post', label="Dispatched FLSs D1")
+        # plt.step(data["standby"]["t"], data["standby"]["y"], where='post', label="Standby FLSs D1")
+        plt.step(data["illuminating"]["t"], data["illuminating"]["y"], where='post', label="Illuminating FLSs D1")
+        plt.step(data["failed"]["t"], data["failed"]["y"], where='post', label="Failed FLSs D1")
+        plt.step(data["mid_flight"]["t"], data["mid_flight"]["y"], where='post', label="Mid-flight FLSs D1")
+        plt.legend()
+        plt.grid()
+
+    with open("/Users/shuqinzhu/Desktop/chess/K0/chess_D3_Rinf_T30/charts.json") as f:
+        data = json.load(f)
+
+        plt.step(data["dispatched"]["t"], data["dispatched"]["y"], where='post', label="Dispatched FLSs D3")
+        # plt.step(data["standby"]["t"], data["standby"]["y"], where='post', label="Standby FLSs D3")
+        plt.step(data["illuminating"]["t"], data["illuminating"]["y"], where='post', label="Illuminating FLSs D3")
+        plt.step(data["failed"]["t"], data["failed"]["y"], where='post', label="Failed FLSs D3")
+        plt.step(data["mid_flight"]["t"], data["mid_flight"]["y"], where='post', label="Mid-flight FLSs D3")
         plt.legend()
         plt.grid()
         # plt.yscale("log")

@@ -40,29 +40,27 @@ general_props = [
         "keys": ["K", "INPUT"],
         "values": [
             {"K": "0", "INPUT": "'chess_K3'"},
-            # {"K": "3", "INPUT": "'chess_K3'"},
+            {"K": "3", "INPUT": "'chess_K3'"},
             # {"K": "20", "INPUT": "'chess_K20'"},
         ]
     },
     {
         "keys": ["DISPATCHERS"],
-        "values": ["3"]
+        "values": ["0, 3"]
     },
     {
         "keys": ["FAILURE_TIMEOUT"],
-        # "values": ["30", "60"]
-        "values": ["30"]
+        "values": ["30", "60"]
+        # "values": ["30"]
         # "values": ["1", "3", "6", "30", "60", "120", "600"]
     },
     {
-        "keys": ["MAX_SPEED"],
-        "values": ["30"]
-    },{
-        "keys": ["ACCELERATION"],
-        "values": ["10"]
-    },{
-        "keys": ["DECELERATION"],
-        "values": ["10"]
+        "keys": ["MAX_SPEED", "ACCELERATION", "DECELERATION"],
+        "values": [
+            {"MAX_SPEED": "30", "ACCELERATION": "10", "DECELERATION": "10"},
+            {"MAX_SPEED": "3", "ACCELERATION": "1", "DECELERATION": "1"}
+
+        ]
     },
     # {
     #     "keys": ["SHAPE"],

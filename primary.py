@@ -151,8 +151,8 @@ class PrimaryNode:
         if Config.DISPATCHERS == 1:
             self.dispatchers_coords = np.array([[l / 2, w / 2, 0]])
         elif Config.DISPATCHERS == 3:
-            # self.dispatchers_coords = np.array([[l / 2, w / 2, 0], [l, w, 0], [0, 0, 0]])
-            self.dispatchers_coords = np.array([[l / 2, w / 2, 0], [l / 2, w / 2, 0],[l / 2, w / 2, 0]])
+            self.dispatchers_coords = np.array([[l / 2, w / 2, 0], [l, w, 0], [0, 0, 0]])
+            # self.dispatchers_coords = np.array([[l / 2, w / 2, 0], [l / 2, w / 2, 0],[l / 2, w / 2, 0]])
         elif Config.DISPATCHERS == 5:
             self.dispatchers_coords = np.array([[l / 2, w / 2, 0], [l, 0, 0], [0, w, 0], [l, w, 0], [0, 0, 0]])
 

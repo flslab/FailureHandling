@@ -1,4 +1,5 @@
 import itertools
+import os
 import sys
 
 def_general_conf = {
@@ -28,18 +29,6 @@ def_general_conf = {
     "DISPATCH_RATE": "'inf'",
     "MULTICAST": "False",
     "INPUT": "'racecar_K20'"
-}
-
-def_test_conf = {
-    "ENABLED": "True",
-    "NUMBER_OF_FLSS": "165",
-    "K": "3",
-    "R": "100",
-    "H": "1",
-    "ETA": "K-1",
-    "ETA_STR": "'K-1'",
-    "FILE_NAME_KEYS": "['H', 'K', 'R']",
-    "DIR_KEYS": "['H']"
 }
 
 general_props = [
@@ -75,53 +64,20 @@ general_props = [
     #                {"SAMPLE_SIZE": 114, "SHAPE": "'cat'"}]
     # },
 ]
-#
-# test_props = [
-#     {
-#         "keys": ["H", "ETA", "ETA_STR"],
-#         "values": [
-#             {"H": "'vns'", "ETA": "K-1", "ETA_STR": "'K-1'"},
-#             {"H": "'rs'", "ETA": "K-1", "ETA_STR": "'K-1'"},
-#             {"H": "'rs'", "ETA": "K", "ETA_STR": "'K'"},
-#             {"H": "'rs'", "ETA": "3*K//2", "ETA_STR": "'1.5K'"},
-#                    ]
-#     },
-#     {
-#         "keys": ["K"],
-#         "values": ["3", "5", "11"]
-#     },
-#     {
-#         "keys": ["R"],
-#         "values": ["1000", "100", "10", "1"]
-#     },
-# ]
-
-
-test_props = [
-    {
-        "keys": ["H"],
-        "values": ["2", "'vns'"]
-    },
-    {
-        "keys": ["K"],
-        "values": ["11", "15"]
-    },
-    {
-        "keys": ["R"],
-        "values": ["10", "1"]
-    },
-]
 
 if __name__ == '__main__':
+    if not os.path.exists('experiments'):
+        os.makedirs('experiments', exist_ok=True)
+
     file_name = "config"
     class_name = "Config"
     props = general_props
     def_conf = def_general_conf
-    if len(sys.argv) > 1:
-        file_name = "test_config"
-        class_name = "TestConfig"
-        props = test_props
-        def_conf = def_test_conf
+    # if len(sys.argv) > 1:
+    #     file_name = "test_config"
+    #     class_name = "TestConfig"
+    #     props = test_props
+    #     def_conf = def_test_conf
 
     props_values = [p["values"] for p in props]
     print(props_values)

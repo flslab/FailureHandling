@@ -59,7 +59,6 @@ general_props = [
         "values": [
             {"MAX_SPEED": "30", "ACCELERATION": "10", "DECELERATION": "10"},
             {"MAX_SPEED": "3", "ACCELERATION": "1", "DECELERATION": "1"}
-
         ]
     },
     # {

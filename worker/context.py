@@ -27,6 +27,9 @@ class WorkerContext:
         self.is_standby = is_standby
         self.standby_id = standby_id
         self.sid = sid
+        self.network_stop_time = 0
+        self.handler_stop_time = 0
+
 
     def set_el(self, el):
         self.el = el
@@ -133,8 +136,8 @@ class WorkerContext:
         self.metrics.log_sent_msg(msg_type, length)
         self.message_id += 1
 
-    def log_replacement(self, timestamp, dur, failed_fls_id, failed_fls_gtl):
-        self.metrics.log_replacement(timestamp, dur, failed_fls_id, failed_fls_gtl)
+    def log_replacement(self, timestamp, dur, failed_fls_id, failed_fls_gtl, is_mid_flight):
+        self.metrics.log_replacement(timestamp, dur, failed_fls_id, failed_fls_gtl, is_mid_flight)
         self.metrics.log_is_standby(timestamp, False)
 
     def __repr__(self):

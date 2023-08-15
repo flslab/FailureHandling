@@ -153,7 +153,7 @@ def write_hds_round(hds, rounds, directory, nid):
     rows = [headers]
 
     for i in range(len(hds)):
-        row = [i+1, rounds[i+1] - rounds[0], hds[i][1]]
+        row = [i + 1, rounds[i + 1] - rounds[0], hds[i][1]]
         rows.append(row)
 
     with open(os.path.join(directory, f'hd-n{nid}.csv'), 'w', newline='') as csvfile:
@@ -178,7 +178,7 @@ def write_swarms(swarms, rounds, directory, nid):
         num_swarms = len(swarms[i][1])
         sizes = swarms[i][1].values()
 
-        row = [swarms[i][0], t, num_swarms, sum(sizes)/num_swarms, max(sizes), min(sizes)]
+        row = [swarms[i][0], t, num_swarms, sum(sizes) / num_swarms, max(sizes), min(sizes)]
         rows.append(row)
 
     with open(os.path.join(directory, f'swarms-n{nid}.csv'), 'w', newline='') as csvfile:
@@ -207,7 +207,7 @@ def write_configs(directory, date_time):
 def combine_csvs(directory, xslx_dir, file_name):
     csv_files = glob.glob(f"{directory}/*.csv")
 
-    with pd.ExcelWriter(os.path.join(xslx_dir, f'{file_name}.xlsx')) as writer:
+    with pd.ExcelWriter(os.path.join(xslx_dir, f'{file_name}.xlsx'),mode='w') as writer:
         for csv_file in csv_files:
             df = pd.read_csv(csv_file)
             sheet_name = csv_file.split('/')[-1][:-4]
@@ -235,7 +235,20 @@ def combine_xlsx(directory):
 
 def read_cliques_xlsx(path):
     df = pd.read_excel(path, sheet_name='cliques')
-    return [np.array(eval(c)) for c in df["7 coordinates"]], [max(eval(d))+1 for d in df["6 dist between each pair"]]
+    return [np.array(eval(c)) for c in df["7 coordinates"]], [max(eval(d)) + 1 for d in df["6 dist between each pair"]]
+
+
+def delete_previous_json_files(path):
+    try:
+        # Iterate over all files in the folder
+        for root, dirs, files in os.walk(path):
+            for file in files:
+                path = os.path.join(root, file)
+                # Delete the file
+                os.remove(path)
+        print("All files under the folder have been deleted.")
+    except Exception as e:
+        print(f"Error occurred: {e}")
 
 
 if __name__ == "__main__":

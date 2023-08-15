@@ -97,6 +97,8 @@ class PrimaryNode:
         self.num_initial_standbys = 0
         self.num_replaced_flss = 0
         self.num_replaced_standbys = 0
+        self.stop_flag = False
+        self.stop_thread = None
 
     def _create_server_socket(self):
         # Experimental artifact to gather theoretical stats for scientific publications.
@@ -144,12 +146,13 @@ class PrimaryNode:
             os.makedirs(self.dir_figure, exist_ok=True)
 
     def _define_dispatcher_coords(self):
-        l = 50
-        w = 100
+        l = 60
+        w = 60
         if Config.DISPATCHERS == 1:
             self.dispatchers_coords = np.array([[l / 2, w / 2, 0]])
         elif Config.DISPATCHERS == 3:
             self.dispatchers_coords = np.array([[l / 2, w / 2, 0], [l, w, 0], [0, 0, 0]])
+            # self.dispatchers_coords = np.array([[l / 2, w / 2, 0], [l / 2, w / 2, 0],[l / 2, w / 2, 0]])
         elif Config.DISPATCHERS == 5:
             self.dispatchers_coords = np.array([[l / 2, w / 2, 0], [l, 0, 0], [0, w, 0], [l, w, 0], [0, 0, 0]])
 
@@ -276,7 +279,10 @@ class PrimaryNode:
     def _handle_failures(self):
         logger.info("Handling Failures")
 
-        while time.time() - self.start_time <= Config.DURATION:
+        self.stop_thread.start()
+
+        # while time.time() - self.start_time <= Config.DURATION:
+        while not self.stop_flag:
             try:
                 msg, _ = self.failure_handler_socket.receive()
             except socket.timeout:
@@ -329,7 +335,6 @@ class PrimaryNode:
 
     def _stop_secondary_nodes(self):
         logger.info("Stopping secondary nodes")
-
         self._send_msg_to_all_nodes(False)
         client_threads = []
         for nid in range(len(self.client_sockets)):
@@ -352,21 +357,28 @@ class PrimaryNode:
 
     def _write_results(self):
         logger.info("Writing results")
-
         utils.write_csv(self.dir_meta, self._get_metrics(), 'metrics')
         utils.create_csv_from_json(self.dir_meta, os.path.join(self.dir_figure, f'{self.result_name}.jpg'))
         utils.write_configs(self.dir_meta, self.start_time)
         utils.combine_csvs(self.dir_meta, self.dir_experiment, "reli_" + self.result_name)
 
     def stop_experiment(self):
-        logger.info("Stopping the experiment")
-
         self._stop_dispatchers()
+
+        logger.info(f"Stopping the experiment, experiment time={time.time() - self.start_time}")
+
+        stop_send_time = time.time()
         self._stop_secondary_nodes()
+        logger.info(f"Time for All process stop={time.time() - stop_send_time}")
+
+        self.stop_flag = True
         self._write_results()
 
     def start_experiment(self):
         self._setup_results_directory()
+
+        utils.file.delete_previous_json_files(self.dir_meta)
+
         self._create_server_socket()
         self._bind_server_socket()
         self._listen_to_secondary_nodes()
@@ -379,6 +391,9 @@ class PrimaryNode:
         self._start_dispatchers()
         self._handle_failures()
 
+    def start_termination_timer(self):
+        self.stop_thread = threading.Timer(Config.DURATION, self.stop_experiment)
+
 
 if __name__ == '__main__':
     N = 1
@@ -388,5 +403,7 @@ if __name__ == '__main__':
         name = sys.argv[2]
 
     primary_node = PrimaryNode(N, name)
+
+    primary_node.start_termination_timer()
     primary_node.start_experiment()
-    primary_node.stop_experiment()
+    # primary_node.stop_experiment()

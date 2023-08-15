@@ -79,16 +79,18 @@ class SecondaryNode:
         self.sock.sendall(pickle.dumps(True))
 
     def _stop_processes(self):
-        logger.info("Stopping FLS processes")
+        logger.info(f"Stopping FLS processes {time.time()}")
 
         stop.stop_all()
 
         for p in self.processes.values():
             if p.is_alive():
+                logger.debug(f"Process UNFINISHED: {p.name}")
                 p.join(Config.PROCESS_JOIN_TIMEOUT)
 
         for p in self.processes.values():
             if p.is_alive():
+                logger.debug(f"Process Alive: {p.name}")
                 p.terminate()
 
     def start_node(self):

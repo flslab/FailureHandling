@@ -1,4 +1,5 @@
 import itertools
+import os
 import sys
 
 def_general_conf = {
@@ -14,14 +15,13 @@ def_general_conf = {
     "MAX_SPEED": "3",
     "DISPLAY_CELL_SIZE": "0.05",
     "BUSY_WAITING": "False",
-    "DURATION": "60 * 5",
+    "DURATION": "60 * 10",
     "K": "20",
-    "H": "2",
     "SHAPE": "'chess'",
-    "RESULTS_PATH": "'/proj/nova-PG0/hamed/results'",
+    "RESULTS_PATH": "'/proj/nova-PG0/shuqin/results'",
     "DEBUG": "False",
-    "FILE_NAME_KEYS": "['K', ('DISPATCHERS', 'D'), ('DISPATCH_RATE', 'R'), ('FAILURE_TIMEOUT', 'T')]",
-    "DIR_KEYS": "['H']",
+    "FILE_NAME_KEYS": "[('DISPATCHERS', 'D'), ('DISPATCH_RATE', 'R'), ('FAILURE_TIMEOUT', 'T')]",
+    "DIR_KEYS": "['K']",
     "SERVER_TIMEOUT": "120",
     "PROCESS_JOIN_TIMEOUT": "120",
     "DISPATCHERS": "1",
@@ -30,40 +30,38 @@ def_general_conf = {
     "INPUT": "'racecar_K20'"
 }
 
-def_test_conf = {
-    "ENABLED": "True",
-    "NUMBER_OF_FLSS": "165",
-    "K": "3",
-    "R": "100",
-    "H": "1",
-    "ETA": "K-1",
-    "ETA_STR": "'K-1'",
-    "FILE_NAME_KEYS": "['H', 'K', 'R']",
-    "DIR_KEYS": "['H']"
-}
-
 general_props = [
     {
         "keys": ["DISPATCH_RATE"],
-        "values": ["1", "'inf'"]
+        # "values": ["1", "'inf'"]
+        "values": ["'inf'"]
     },
     {
         "keys": ["K", "INPUT"],
         "values": [
-            # {"K": "0", "INPUT": "'chess_K3'"},
+            {"K": "0", "INPUT": "'chess_K3'"},
             {"K": "3", "INPUT": "'chess_K3'"},
             # {"K": "20", "INPUT": "'chess_K20'"},
         ]
     },
     {
         "keys": ["DISPATCHERS"],
-        "values": ["5"]
+        "values": ["1", "3"]
     },
     {
         "keys": ["FAILURE_TIMEOUT"],
-        "values": ["30", "120"]
+        "values": ["30", "60"]
+        # "values": ["30"]
         # "values": ["1", "3", "6", "30", "60", "120", "600"]
-    }
+    },
+    {
+        "keys": ["MAX_SPEED", "ACCELERATION", "DECELERATION"],
+        "values": [
+            {"MAX_SPEED": "30", "ACCELERATION": "10", "DECELERATION": "10"},
+            {"MAX_SPEED": "3", "ACCELERATION": "1", "DECELERATION": "1"}
+
+        ]
+    },
     # {
     #     "keys": ["SHAPE"],
     #     "values": ["'racecar'", "'skateboard'"]
@@ -75,53 +73,20 @@ general_props = [
     #                {"SAMPLE_SIZE": 114, "SHAPE": "'cat'"}]
     # },
 ]
-#
-# test_props = [
-#     {
-#         "keys": ["H", "ETA", "ETA_STR"],
-#         "values": [
-#             {"H": "'vns'", "ETA": "K-1", "ETA_STR": "'K-1'"},
-#             {"H": "'rs'", "ETA": "K-1", "ETA_STR": "'K-1'"},
-#             {"H": "'rs'", "ETA": "K", "ETA_STR": "'K'"},
-#             {"H": "'rs'", "ETA": "3*K//2", "ETA_STR": "'1.5K'"},
-#                    ]
-#     },
-#     {
-#         "keys": ["K"],
-#         "values": ["3", "5", "11"]
-#     },
-#     {
-#         "keys": ["R"],
-#         "values": ["1000", "100", "10", "1"]
-#     },
-# ]
-
-
-test_props = [
-    {
-        "keys": ["H"],
-        "values": ["2", "'vns'"]
-    },
-    {
-        "keys": ["K"],
-        "values": ["11", "15"]
-    },
-    {
-        "keys": ["R"],
-        "values": ["10", "1"]
-    },
-]
 
 if __name__ == '__main__':
+    if not os.path.exists('experiments'):
+        os.makedirs('experiments', exist_ok=True)
+
     file_name = "config"
     class_name = "Config"
     props = general_props
     def_conf = def_general_conf
-    if len(sys.argv) > 1:
-        file_name = "test_config"
-        class_name = "TestConfig"
-        props = test_props
-        def_conf = def_test_conf
+    # if len(sys.argv) > 1:
+    #     file_name = "test_config"
+    #     class_name = "TestConfig"
+    #     props = test_props
+    #     def_conf = def_test_conf
 
     props_values = [p["values"] for p in props]
     print(props_values)

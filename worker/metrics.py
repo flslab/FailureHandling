@@ -75,6 +75,7 @@ def _max(values):
         return max(values)
     return 0
 
+
 def point_to_id(point):
     return '_'.join([str(p) for p in point])
 
@@ -118,14 +119,24 @@ def gen_point_metrics(events):
         e = event[1]
         fid = event[-1]
 
-        if e == TimelineEvents.FAIL and event[2] is False:
+        if e == TimelineEvents.DISPATCH:
+            pid = point_to_id(event[2])
+            fid_to_point[fid] = pid
+
+        elif e == TimelineEvents.FAIL and event[2] is False:
             pid = fid_to_point[fid]
             illuminating_events[pid].append([t, e])
             illuminating_metrics[pid][1] += 1
 
         elif e == TimelineEvents.STANDBY_FAIL:
+            # Check if the stand by FLS is in mid-flight
             pid = fid_to_point[fid]
-            standby_events[pid].append([t, e])
+            if pid in standby_events:
+                standby_events[pid].append([t, e])
+            else:
+                standby_events[pid] = [[t, e]]
+                standby_metrics[pid] = [pid, 0, 0, 0, []]
+
             standby_metrics[pid][1] += 1
 
         elif e == TimelineEvents.ILLUMINATE:
@@ -142,9 +153,15 @@ def gen_point_metrics(events):
         elif e == TimelineEvents.ILLUMINATE_STANDBY:
             pid = point_to_id(event[2])
             fid_to_point[fid] = pid
-            illuminating_events[pid].append([t, e])
-            illuminating_metrics[pid][3] += 1
-            illuminating_metrics[pid][5].append(t - illuminating_events[pid][-2][0])
+
+            if pid in illuminating_events:
+                illuminating_events[pid].append([t, e])
+                illuminating_metrics[pid][3] += 1
+                illuminating_metrics[pid][5].append(t - illuminating_events[pid][-2][0])
+            else:
+                # Situations when the previous FLS who was assigned with this point never arrived
+                illuminating_events[pid] = [[t, e]]
+                illuminating_metrics[pid] = [pid, 0, 0, 0, [], []]
 
         elif e == TimelineEvents.STANDBY:
             pid = point_to_id(event[2])
@@ -159,7 +176,12 @@ def gen_point_metrics(events):
 
         elif e == TimelineEvents.REPLACE:
             pid = fid_to_point[fid]
-            standby_events[pid].append([t, e])
+            if pid in standby_events:
+                standby_events[pid].append([t, e])
+            else:
+                standby_events[pid] = [[t, e]]
+                standby_metrics[pid] = [pid, 0, 0, 0, []]
+
             standby_metrics[pid][2] += 1
 
     # print(illuminating_events)
@@ -182,8 +204,8 @@ def gen_point_metrics(events):
         row.append(_avg(hub_w_t))
         row.append(_max(hub_w_t))
 
-    return [metric_keys] + i_rows,\
-        [standby_metric_keys] + s_rows
+    return [metric_keys] + i_rows, \
+           [standby_metric_keys] + s_rows
 
 
 def gen_charts(events, fig_dir):
@@ -230,10 +252,11 @@ def gen_charts(events, fig_dir):
                 standby["t"].append(t)
                 standby["y"].append(standby["y"][-1] - 1)
         elif e == TimelineEvents.REPLACE:
-            mid_flight["t"].append(t)
-            mid_flight["y"].append(mid_flight["y"][-1] + 1)
-            standby["t"].append(t)
-            standby["y"].append(standby["y"][-1] - 1)
+            if not event[2]:  # enter this situation when FLS has arrived (standby or illuminating)
+                mid_flight["t"].append(t)
+                mid_flight["y"].append(mid_flight["y"][-1] + 1)
+                standby["t"].append(t)
+                standby["y"].append(standby["y"][-1] - 1)
 
     dispatched["t"].append(events[-1][0])
     dispatched["y"].append(dispatched["y"][-1])
@@ -252,7 +275,8 @@ def gen_charts(events, fig_dir):
     plt.step(illuminating["t"], illuminating["y"], where='post', label="Illuminating FLSs")
     plt.step(failed["t"], failed["y"], where='post', label="Failed FLSs")
     plt.step(mid_flight["t"], mid_flight["y"], where='post', label="Mid-flight FLSs")
-
+    plt.gca().xaxis.set_major_locator(mpl.ticker.MaxNLocator(integer=True))
+    plt.gca().yaxis.set_major_locator(mpl.ticker.MaxNLocator(integer=True))
     # Add a legend
     plt.legend()
     if Config.DEBUG:
@@ -326,9 +350,10 @@ class Metrics:
     def log_total_dist(self, dist):
         log_sum(self.general_metrics, "20_total_distance_traveled", dist)
 
-    def get_final_report_(self):
+    def get_final_report_(self, stop_time):
         report = {
-            "timeline": self.timeline
+            "timeline": self.timeline,
+            "25_response_stop_time": stop_time
         }
         report.update(self.network_metrics)
         report.update(self.sent_msg_hist)
@@ -346,7 +371,7 @@ class Metrics:
         self.general_metrics["13_dispatch_duration"] = dispatch_duration
         self.log_standby_id(timestamp, standby_id)
         self.log_is_standby(timestamp, is_standby)
-        self.timeline.append((t, TimelineEvents.DISPATCH))
+        self.timeline.append((t, TimelineEvents.DISPATCH, el.tolist()))
         # if is_standby:
         #     self.timeline.append((t + dispatch_duration, TimelineEvents.STANDBY, el.tolist()))
         # else:
@@ -354,7 +379,7 @@ class Metrics:
 
     def log_arrival(self, timestamp, event, coord):
         t = timestamp - self.start_time
-        self.timeline.append((timestamp, event, coord.tolist()))
+        self.timeline.append((t, event, coord.tolist()))
 
     def log_standby_id(self, timestamp, standby_id):
         self.general_metrics["05_standby_id"].append((timestamp - self.start_time, standby_id))
@@ -370,33 +395,44 @@ class Metrics:
         else:
             self.timeline.append((t, TimelineEvents.FAIL, is_mid_flight))
 
-    def log_replacement(self, replacement_time, replacement_duration, failed_fls_id, failed_fls_gtl):
+    def log_replacement(self, replacement_time, replacement_duration, failed_fls_id, failed_fls_gtl, is_mid_flight):
         t = replacement_time - self.start_time
         self.general_metrics["31_replacement_start_time"] = t
         self.general_metrics["32_replacement_arrival_time"] = t + replacement_duration
         self.general_metrics["33_replacement_duration"] = replacement_duration
         self.general_metrics["34_failed_fls_id"] = failed_fls_id
-        self.timeline.append((t, TimelineEvents.REPLACE))
+        self.timeline.append((t, TimelineEvents.REPLACE, is_mid_flight))
         # self.timeline.append((t + replacement_duration, TimelineEvents.ILLUMINATE_STANDBY, failed_fls_gtl.tolist()))
 
 
 if __name__ == '__main__':
     mpl.use('macosx')
 
-    with open("../results/racecar/H2/racecar_D5_H2/timeline.json") as f:
-        data = json.load(f)
-
-        gen_point_metrics(data)
-
-    # with open("/Users/hamed/Desktop/chess_5min/chess_K3_D5_R1_T30/charts.json") as f:
+    # with open("../results/racecar/H2/racecar_D5_H2/timeline.json") as f:
     #     data = json.load(f)
     #
-    #     plt.step(data["dispatched"]["t"], data["dispatched"]["y"], where='post', label="Dispatched FLSs")
-    #     plt.step(data["standby"]["t"], data["standby"]["y"], where='post', label="Standby FLSs")
-    #     plt.step(data["illuminating"]["t"], data["illuminating"]["y"], where='post', label="Illuminating FLSs")
-    #     plt.step(data["failed"]["t"], data["failed"]["y"], where='post', label="Failed FLSs")
-    #     plt.step(data["mid_flight"]["t"], data["mid_flight"]["y"], where='post', label="Mid-flight FLSs")
-    #     plt.legend()
-    #     plt.grid()
-    #     # plt.yscale("log")
-    #     plt.show()
+    #     gen_point_metrics(data)
+
+    with open("/Users/shuqinzhu/Desktop/chess/K0/chess_D1_Rinf_T30/charts.json") as f:
+        data = json.load(f)
+
+        plt.step(data["dispatched"]["t"], data["dispatched"]["y"], where='post', label="Dispatched FLSs D1")
+        # plt.step(data["standby"]["t"], data["standby"]["y"], where='post', label="Standby FLSs D1")
+        plt.step(data["illuminating"]["t"], data["illuminating"]["y"], where='post', label="Illuminating FLSs D1")
+        plt.step(data["failed"]["t"], data["failed"]["y"], where='post', label="Failed FLSs D1")
+        plt.step(data["mid_flight"]["t"], data["mid_flight"]["y"], where='post', label="Mid-flight FLSs D1")
+        plt.legend()
+        plt.grid()
+
+    with open("/Users/shuqinzhu/Desktop/chess/K0/chess_D3_Rinf_T30/charts.json") as f:
+        data = json.load(f)
+
+        plt.step(data["dispatched"]["t"], data["dispatched"]["y"], where='post', label="Dispatched FLSs D3")
+        # plt.step(data["standby"]["t"], data["standby"]["y"], where='post', label="Standby FLSs D3")
+        plt.step(data["illuminating"]["t"], data["illuminating"]["y"], where='post', label="Illuminating FLSs D3")
+        plt.step(data["failed"]["t"], data["failed"]["y"], where='post', label="Failed FLSs D3")
+        plt.step(data["mid_flight"]["t"], data["mid_flight"]["y"], where='post', label="Mid-flight FLSs D3")
+        plt.legend()
+        plt.grid()
+        # plt.yscale("log")
+        plt.show()

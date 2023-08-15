@@ -22,8 +22,13 @@ class StateMachine:
         self.handled_failure = dict()
         self.move_thread = None
         self.is_mid_flight = False
+        self.is_terminating = False
+        self.is_arrived = False
+        self.unhandled_move = None
 
     def start(self):
+        logger.debug(f"STARTED {self.context}, {self.is_mid_flight}")
+
         self.enter(StateTypes.SINGLE)
         dur, dest = self.context.deploy()
         self.move(dur, dest, TimelineEvents.STANDBY if self.context.is_standby else TimelineEvents.ILLUMINATE)
@@ -32,42 +37,51 @@ class StateMachine:
             # send the id of the new standby to group members
             self.broadcast(Message(MessageTypes.ASSIGN_STANDBY).to_swarm(self.context))
 
-        logger.debug(f"STARTED {self.context}")
-
     def move(self, dur, dest, arrival_event):
         if self.move_thread is not None:
             self.move_thread.cancel()
             self.move_thread = None
-            self.is_mid_flight = False
-        self.move_thread = threading.Timer(dur, self.put_state_in_q, (MessageTypes.MOVE, (dest, arrival_event)))
-        self.move_thread.start()
+            self.is_mid_flight = True
+            logger.debug(f"PREEMPT MOVEMENT fid={self.context.fid}, mid_flight={self.is_mid_flight}")
+        self.move_thread = threading.Timer(dur, self.change_move_state, (MessageTypes.MOVE, (dest, arrival_event)))
+        self.is_arrived = False
+        logger.debug(f"START MOVING fid={self.context.fid}")
         self.is_mid_flight = True
+        self.move_thread.start()
 
     def handle_stop(self, msg):
         if msg is not None and (msg.args is None or len(msg.args) == 0):
             stop_msg = Message(MessageTypes.STOP).to_all()
             self.broadcast(stop_msg)
+            self.context.handler_stop_time = time.time()
 
         self.cancel_timers()
 
-        write_json(self.context.fid, self.context.metrics.get_final_report_(), self.metrics.results_directory, False)
+        stop_time = self.context.handler_stop_time - self.context.network_stop_time
+        write_json(self.context.fid, self.context.metrics.get_final_report_(stop_time), self.metrics.results_directory,
+                   False)
 
     def fail(self, msg):
+        if self.is_terminating:
+            return
+
         self.context.metrics.log_failure_time(time.time(), self.context.is_standby, self.is_mid_flight)
         # self.put_state_in_q(MessageTypes.STOP, args=(False,))  # False for not broadcasting stop msg
         if self.context.is_standby:
             # notify group
             self.broadcast(Message(MessageTypes.STANDBY_FAILED).to_swarm(self.context))
-            # request a standby FLS from the hub, arg False is for standby FLS
             self.send_to_server(Message(MessageTypes.REPLICA_REQUEST_HUB, args=(False,)))
+            logger.debug(f"REQUEST NEW STANDBY {self.context} {time.time()}")
         elif self.context.standby_id is None:
             # request an illuminating FLS from the hub, arg True is for illuminating FLS
             self.send_to_server(Message(MessageTypes.REPLICA_REQUEST_HUB, args=(True,)))
+            logger.debug(f"RECOVER BY HUB {self.context} {time.time()}")
         else:
             # notify group
             self.broadcast(Message(MessageTypes.REPLICA_REQUEST).to_swarm(self.context))
             # request standby from server
             self.send_to_server(Message(MessageTypes.REPLICA_REQUEST_HUB, args=(False,)))
+            logger.debug(f"RECOVER BY STANDBY {self.context} standby fid={self.context.standby_id}")
 
         self.handle_stop(None)
         logger.debug(f"FAILED {self.context}")
@@ -84,10 +98,21 @@ class StateMachine:
         v = msg.gtl - self.context.gtl
         self.context.gtl = msg.gtl
         timestamp, dur, dest = self.context.move(v)
-        self.move(dur, dest, TimelineEvents.ILLUMINATE_STANDBY)
-        self.context.log_replacement(timestamp, dur, msg.fid, msg.gtl)
 
-        logger.debug(f"REPLACED {self.context} failed_fid={msg.fid} failed_el={msg.el}")
+        if self.unhandled_move is not None:
+            self.unhandled_move.stale = True
+            mid_flight_state = True
+            logger.debug(f"UNHANDLED MOVE CANCEL fid={self.context.fid}")
+            self.unhandled_move = None
+        else:
+            mid_flight_state = self.is_mid_flight
+            logger.debug(f"STANDBY MID_FLIGHT STATE {mid_flight_state} fid={self.context.fid}")
+
+        self.move(dur, dest, TimelineEvents.ILLUMINATE_STANDBY)
+
+        self.context.log_replacement(timestamp, dur, msg.fid, msg.gtl, mid_flight_state)
+
+        logger.debug(f"REPLACED {self.context} failed_fid={msg.fid} failed_el={msg.el} mid flight={mid_flight_state}")
 
     def handle_replica_request(self, msg):
         if self.context.is_standby:
@@ -114,7 +139,10 @@ class StateMachine:
         self.context.el = msg.args[0]
         self.context.metrics.log_arrival(time.time(), msg.args[1], self.context.gtl)
         self.move_thread = None
-        self.is_mid_flight = False
+        self.is_arrived = True
+        self.unhandled_move = None
+
+        logger.debug(f"MOVE HANDLED fid={self.context.fid}")
 
     def enter(self, state):
         self.leave(self.state)
@@ -123,10 +151,16 @@ class StateMachine:
         if self.state == StateTypes.SINGLE:
             self.set_timer_to_fail()
 
+    def change_move_state(self, event, args=()):
+        self.is_mid_flight = False
+        logger.debug(f"MOVE ENQUEUE fid={self.context.fid}")
+        self.unhandled_move = self.put_state_in_q(event, args=args)
+
     def put_state_in_q(self, event, args=()):
         msg = Message(event, args=args).to_fls(self.context)
         item = PrioritizedItem(1, msg, False)
         self.event_queue.put(item)
+        return item
 
     def leave(self, state):
         pass
@@ -164,3 +198,9 @@ class StateMachine:
         if self.timer_failure is not None:
             self.timer_failure.cancel()
             self.timer_failure = None
+
+    def check_arrived(self):
+        return self.is_arrived
+
+    def cancel_fail(self):
+        self.is_terminating = True

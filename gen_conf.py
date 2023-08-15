@@ -20,7 +20,7 @@ def_general_conf = {
     "SHAPE": "'chess'",
     "RESULTS_PATH": "'/proj/nova-PG0/shuqin/results'",
     "DEBUG": "False",
-    "FILE_NAME_KEYS": "[('DISPATCHERS', 'D'), ('DISPATCH_RATE', 'R'), ('FAILURE_TIMEOUT', 'T')]",
+    "FILE_NAME_KEYS": "[('DISPATCHERS', 'D'), ('DISPATCH_RATE', 'R'), ('FAILURE_TIMEOUT', 'T'), ('MAX_SPEED', 'S')]",
     "DIR_KEYS": "['K']",
     "SERVER_TIMEOUT": "120",
     "PROCESS_JOIN_TIMEOUT": "120",
@@ -41,9 +41,9 @@ general_props = [
         "values": [
             {"K": "0", "INPUT": "'chess_K3'"},
             {"K": "3", "INPUT": "'chess_K3'"},
-            {"K": "5", "INPUT": "'chess_K5'"},
-            {"K": "10", "INPUT": "'chess_K10'"},
-            {"K": "20", "INPUT": "'chess_K20'"},
+            # {"K": "5", "INPUT": "'chess_K5'"},
+            # {"K": "10", "INPUT": "'chess_K10'"},
+            # {"K": "20", "INPUT": "'chess_K20'"},
         ]
     },
     {
@@ -52,17 +52,17 @@ general_props = [
     },
     {
         "keys": ["FAILURE_TIMEOUT"],
-        "values": ["30", "60", "120"]
+        "values": ["30", "60"]
         # "values": ["30"]
         # "values": ["1", "3", "6", "30", "60", "120", "600"]
     },
-    # {
-    #     "keys": ["MAX_SPEED", "ACCELERATION", "DECELERATION"],
-    #     "values": [
-    #         {"MAX_SPEED": "30", "ACCELERATION": "10", "DECELERATION": "10"},
-    #         {"MAX_SPEED": "3", "ACCELERATION": "1", "DECELERATION": "1"}
-    #     ]
-    # },
+    {
+        "keys": ["MAX_SPEED", "ACCELERATION", "DECELERATION"],
+        "values": [
+            {"MAX_SPEED": "30", "ACCELERATION": "10", "DECELERATION": "10"},
+            {"MAX_SPEED": "3", "ACCELERATION": "1", "DECELERATION": "1"}
+        ]
+    },
     # {
     #     "keys": ["SHAPE"],
     #     "values": ["'racecar'", "'skateboard'"]

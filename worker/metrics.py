@@ -377,7 +377,7 @@ class Metrics:
         # else:
         #     self.timeline.append((t + dispatch_duration, TimelineEvents.ILLUMINATE, el.tolist()))
 
-    def log_arrival(self, timestamp, event, coord):
+    def log_arrival(self, timestamp, event, coord, dist = 0):  # todo
         t = timestamp - self.start_time
         self.timeline.append((t, event, coord.tolist()))
 

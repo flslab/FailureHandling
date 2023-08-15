@@ -91,7 +91,7 @@ class PrimaryNode:
         self.group_standby_coord = {}
         self.group_radio_range = {}
         self.pid = 0
-        self.dispatch_policy = PoDPolicy()
+        self.dispatch_policy = ShortestDistancePolicy()
         self.num_handled_failures = 0
         self.num_initial_flss = 0
         self.num_initial_standbys = 0

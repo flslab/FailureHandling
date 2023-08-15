@@ -37,13 +37,14 @@ class StateMachine:
             # send the id of the new standby to group members
             self.broadcast(Message(MessageTypes.ASSIGN_STANDBY).to_swarm(self.context))
 
-    def move(self, dur, dest, arrival_event):
+    def move(self, dur, dest, arrival_event, dist=0):
         if self.move_thread is not None:
             self.move_thread.cancel()
             self.move_thread = None
             self.is_mid_flight = True
+            # todo： define another method to log the previous dist traveled
             logger.debug(f"PREEMPT MOVEMENT fid={self.context.fid}, mid_flight={self.is_mid_flight}")
-        self.move_thread = threading.Timer(dur, self.change_move_state, (MessageTypes.MOVE, (dest, arrival_event)))
+        self.move_thread = threading.Timer(dur, self.change_move_state, (MessageTypes.MOVE, (dest, arrival_event, dist)))
         self.is_arrived = False
         logger.debug(f"START MOVING fid={self.context.fid}")
         self.is_mid_flight = True
@@ -136,8 +137,9 @@ class StateMachine:
         self.timer_failure.start()
 
     def handle_move(self, msg):
+        # el, destination, dist
         self.context.el = msg.args[0]
-        self.context.metrics.log_arrival(time.time(), msg.args[1], self.context.gtl)
+        self.context.metrics.log_arrival(time.time(), msg.args[1], self.context.gtl, msg.args[2])
         self.move_thread = None
         self.is_arrived = True
         self.unhandled_move = None

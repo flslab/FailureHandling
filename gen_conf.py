@@ -20,7 +20,7 @@ def_general_conf = {
     "SHAPE": "'chess'",
     "RESULTS_PATH": "'/proj/nova-PG0/shuqin/results'",
     "DEBUG": "False",
-    "FILE_NAME_KEYS": "[('DISPATCHERS', 'D'), ('DISPATCH_RATE', 'R'), ('FAILURE_TIMEOUT', 'T')]",
+    "FILE_NAME_KEYS": "[('DISPATCHERS', 'D'), ('DISPATCH_RATE', 'R'), ('FAILURE_TIMEOUT', 'T'), ('MAX_SPEED', 'S')]",
     "DIR_KEYS": "['K']",
     "SERVER_TIMEOUT": "120",
     "PROCESS_JOIN_TIMEOUT": "120",

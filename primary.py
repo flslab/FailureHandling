@@ -63,7 +63,7 @@ class RRPolicy(DispatchPolicy):
 class ShortestDistancePolicy(DispatchPolicy):
     def assign(self, **kwargs):
         ds = kwargs["dispatchers"]
-        coord = kwargs["coord"]
+        coord = kwargs["gtl"]
 
         dispatcher_coords = np.stack([d.coord for d in ds])
         return ds[np.argmin(np.linalg.norm(dispatcher_coords - coord, axis=1))]

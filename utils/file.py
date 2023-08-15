@@ -204,10 +204,10 @@ def write_configs(directory, date_time):
         writer.writerows(rows)
 
 
-def combine_csvs(directory, xslx_dir, file_name):
+def combine_csvs(directory, xlsx_dir, file_name):
     csv_files = glob.glob(f"{directory}/*.csv")
 
-    with pd.ExcelWriter(os.path.join(xslx_dir, f'{file_name}.xlsx'),mode='w') as writer:
+    with pd.ExcelWriter(os.path.join(xlsx_dir, f'{file_name}.xlsx'), mode='w') as writer:
         for csv_file in csv_files:
             df = pd.read_csv(csv_file)
             sheet_name = csv_file.split('/')[-1][:-4]

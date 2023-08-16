@@ -34,8 +34,6 @@ class StateMachine:
 
         self.enter(StateTypes.SINGLE)
         dur, dest, dist = self.context.deploy()
-        if dist == 0:
-            print(dist)
         self.move(dur, dest, TimelineEvents.STANDBY if self.context.is_standby else TimelineEvents.ILLUMINATE, dist)
 
         if self.context.is_standby:
@@ -113,8 +111,6 @@ class StateMachine:
         self.context.gtl = msg.gtl
 
         dist = np.linalg.norm(v)
-        if dist == 0:
-            print(dist)
         timestamp, dur, dest = self.context.move(v)
 
         if self.unhandled_move is not None:
@@ -157,8 +153,6 @@ class StateMachine:
         # el, destination, dist
         self.context.el = msg.args[0]
         self.context.dist_traveled += msg.args[2]
-        if msg.args[2] == 0:
-            print(str(msg.args[2]))
         self.context.metrics.log_arrival(time.time(), msg.args[1], self.context.gtl, msg.args[2])
         self.move_thread = None
         self.is_arrived = True

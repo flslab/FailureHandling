@@ -2,6 +2,9 @@ import random
 import time
 
 import threading
+
+import numpy as np
+
 from message import Message, MessageTypes
 from config import Config
 from worker.metrics import TimelineEvents
@@ -30,21 +33,25 @@ class StateMachine:
         logger.debug(f"STARTED {self.context}, {self.is_mid_flight}")
 
         self.enter(StateTypes.SINGLE)
-        dur, dest = self.context.deploy()
-        self.move(dur, dest, TimelineEvents.STANDBY if self.context.is_standby else TimelineEvents.ILLUMINATE)
+        dur, dest, dist = self.context.deploy()
+        if dist == 0:
+            print(dist)
+        self.move(dur, dest, TimelineEvents.STANDBY if self.context.is_standby else TimelineEvents.ILLUMINATE, dist)
 
         if self.context.is_standby:
             # send the id of the new standby to group members
             self.broadcast(Message(MessageTypes.ASSIGN_STANDBY).to_swarm(self.context))
 
-    def move(self, dur, dest, arrival_event, dist=0):
+    def move(self, dur, dest, arrival_event, dist):
         if self.move_thread is not None:
             self.move_thread.cancel()
             self.move_thread = None
             self.is_mid_flight = True
-            # todo： define another method to log the previous dist traveled
+            self.update_movement()
             logger.debug(f"PREEMPT MOVEMENT fid={self.context.fid}, mid_flight={self.is_mid_flight}")
-        self.move_thread = threading.Timer(dur, self.change_move_state, (MessageTypes.MOVE, (dest, arrival_event, dist)))
+
+        self.move_thread = threading.Timer(dur, self.change_move_state,
+                                           (MessageTypes.MOVE, (dest, arrival_event, dist)))
         self.is_arrived = False
         logger.debug(f"START MOVING fid={self.context.fid}")
         self.is_mid_flight = True
@@ -56,10 +63,16 @@ class StateMachine:
             self.broadcast(stop_msg)
             self.context.handler_stop_time = time.time()
 
+        if self.move_thread is not None:
+            self.move_thread.cancel()
+            self.update_movement()
+            self.move_thread = None
+
         self.cancel_timers()
 
         stop_time = self.context.handler_stop_time - self.context.network_stop_time
-        write_json(self.context.fid, self.context.metrics.get_final_report_(stop_time), self.metrics.results_directory,
+        write_json(self.context.fid, self.context.metrics.get_final_report_(stop_time, self.context.dist_traveled),
+                   self.metrics.results_directory,
                    False)
 
     def fail(self, msg):
@@ -98,6 +111,10 @@ class StateMachine:
         self.context.is_standby = False
         v = msg.gtl - self.context.gtl
         self.context.gtl = msg.gtl
+
+        dist = np.linalg.norm(v)
+        if dist == 0:
+            print(dist)
         timestamp, dur, dest = self.context.move(v)
 
         if self.unhandled_move is not None:
@@ -109,7 +126,7 @@ class StateMachine:
             mid_flight_state = self.is_mid_flight
             logger.debug(f"STANDBY MID_FLIGHT STATE {mid_flight_state} fid={self.context.fid}")
 
-        self.move(dur, dest, TimelineEvents.ILLUMINATE_STANDBY)
+        self.move(dur, dest, TimelineEvents.ILLUMINATE_STANDBY, dist)
 
         self.context.log_replacement(timestamp, dur, msg.fid, msg.gtl, mid_flight_state)
 
@@ -139,6 +156,9 @@ class StateMachine:
     def handle_move(self, msg):
         # el, destination, dist
         self.context.el = msg.args[0]
+        self.context.dist_traveled += msg.args[2]
+        if msg.args[2] == 0:
+            print(str(msg.args[2]))
         self.context.metrics.log_arrival(time.time(), msg.args[1], self.context.gtl, msg.args[2])
         self.move_thread = None
         self.is_arrived = True
@@ -206,3 +226,7 @@ class StateMachine:
 
     def cancel_fail(self):
         self.is_terminating = True
+
+    def update_movement(self):
+        self.context.el = self.context.vm.get_location(time.time())
+        self.context.dist_traveled += np.linalg.norm(self.context.vm.x0 - self.context.el)

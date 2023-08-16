@@ -14,11 +14,15 @@ class Dispatcher(threading.Thread):
         self.delay = 1 / r if isinstance(r, int) else 0
         self.coord = coord
         self.should_stop = False
+        self.num_dispatched = 0
+        self.time_q = queue.Queue()
+        self.delay_list = []
 
     def run(self):
         while not self.should_stop:
             try:
                 item = self.q.get(timeout=1)
+                enque_time = self.time_q.get()
             except queue.Empty:
                 continue
             if isinstance(item, WorkerProcess):
@@ -28,6 +32,9 @@ class Dispatcher(threading.Thread):
                     item()
                 except BrokenPipeError:
                     continue
+
+            que_delay = time.time() - enque_time
+            self.delay_list.append(que_delay)
 
             if self.delay:
                 time.sleep(self.delay)

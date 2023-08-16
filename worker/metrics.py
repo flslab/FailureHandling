@@ -350,7 +350,7 @@ class Metrics:
     def log_total_dist(self, dist):
         log_sum(self.general_metrics, "20_total_distance_traveled", dist)
 
-    def get_final_report_(self, stop_time):
+    def get_final_report_(self, stop_time, dist):
         report = {
             "timeline": self.timeline,
             "25_response_stop_time": stop_time
@@ -358,6 +358,10 @@ class Metrics:
         report.update(self.network_metrics)
         report.update(self.sent_msg_hist)
         report.update(self.received_msg_hist)
+        dist_traveled = {
+            "26_dist_traveled": dist
+        }
+        report.update(dist_traveled)
         return report
 
     def log_initial_metrics(self, gtl, is_standby, group_id, radio_range, standby_id,
@@ -377,9 +381,9 @@ class Metrics:
         # else:
         #     self.timeline.append((t + dispatch_duration, TimelineEvents.ILLUMINATE, el.tolist()))
 
-    def log_arrival(self, timestamp, event, coord, dist = 0):  # todo
+    def log_arrival(self, timestamp, event, coord, dist):  # todo
         t = timestamp - self.start_time
-        self.timeline.append((t, event, coord.tolist()))
+        self.timeline.append((t, event, coord.tolist(), dist))
 
     def log_standby_id(self, timestamp, standby_id):
         self.general_metrics["05_standby_id"].append((timestamp - self.start_time, standby_id))

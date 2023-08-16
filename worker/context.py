@@ -29,7 +29,8 @@ class WorkerContext:
         self.sid = sid
         self.network_stop_time = 0
         self.handler_stop_time = 0
-
+        self.vm = None
+        self.dist_traveled = 0
 
     def set_el(self, el):
         self.el = el
@@ -45,12 +46,15 @@ class WorkerContext:
         self.radio_range = radio_range
 
     def deploy(self):
+
+        dist = np.linalg.norm(self.gtl - self.el)
+        print(dist)
         timestamp, dur, dest = self.move(self.gtl - self.el)
         # self.metrics.log_initial_metrics(self.gtl, self.is_standby, self.swarm_id, self.radio_range,
         #                                  self.standby_id, timestamp, dur, dest)
         self.metrics.log_initial_metrics(self.gtl, self.is_standby, self.swarm_id, self.radio_range,
                                          self.standby_id, timestamp, dur, dest)
-        return dur, dest
+        return dur, dest, dist
         # if self.shm_name:
         #     shared_mem = shared_memory.SharedMemory(name=self.shm_name)
         #     shared_array = np.ndarray((5,), dtype=np.float64, buffer=shared_mem.buf)
@@ -62,10 +66,10 @@ class WorkerContext:
         dest = self.el + erred_v
         # self.history.log(MetricTypes.LOCATION, self.el)
         self.metrics.log_total_dist(np.linalg.norm(vector))
-        vm = velocity.VelocityModel(self.el, dest)
-        vm.solve()
-        dur = vm.total_time
-        timestamp = vm.start_t
+        self.vm = velocity.VelocityModel(self.el, dest)
+        self.vm.solve()
+        dur = self.vm.total_time
+        timestamp = self.vm.start_t
 
         if Config.BUSY_WAITING:
             fin_time = time.time() + dur
@@ -76,6 +80,7 @@ class WorkerContext:
             time.sleep(dur)
 
         self.set_el(dest)
+
         return timestamp, dur, dest
 
     def add_dead_reckoning_error(self, vector):

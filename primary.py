@@ -222,6 +222,8 @@ class PrimaryNode:
         if properties["el"] is None:
             properties["el"] = dispatcher.coord
         dispatcher.q.put(lambda: self._send_msg_to_node(nid, properties))
+        dispatcher.time_q.put(time.time())
+        dispatcher.num_dispatched += 1
 
     def _dispatch_initial_formation(self):
         logger.info("Assigning FLSs to dispatchers")
@@ -328,10 +330,13 @@ class PrimaryNode:
     def _stop_dispatchers(self):
         logger.info("Stopping dispatchers")
 
+        delay_list = []
+
         for d in self.dispatchers:
             d.stop()
         for d in self.dispatchers:
             d.join()
+        return delay_list
 
     def _stop_secondary_nodes(self):
         logger.info("Stopping secondary nodes")
@@ -355,8 +360,18 @@ class PrimaryNode:
             ["Queued FLSs", sum([d.q.qsize() for d in self.dispatchers])],
         ]
 
+    def _get_dispatched_num(self):
+        info = [['dispatcher_coord', 'num_dispatched', 'avg_delay', 'delay_info']]
+        for dispatcher in self.dispatchers:
+
+            info.append([dispatcher.coord.tolist(), dispatcher.num_dispatched,
+                         sum(dispatcher.delay_list)/len(dispatcher.delay_list) if len(dispatcher.delay_list) > 0 else 0,
+                         dispatcher.delay_list])
+        return info
+
     def _write_results(self):
         logger.info("Writing results")
+        utils.write_csv(self.dir_meta, self._get_dispatched_num(), 'dispatcher')
         utils.write_csv(self.dir_meta, self._get_metrics(), 'metrics')
         utils.create_csv_from_json(self.dir_meta, os.path.join(self.dir_figure, f'{self.result_name}.jpg'))
         utils.write_configs(self.dir_meta, self.start_time)

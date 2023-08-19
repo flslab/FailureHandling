@@ -145,8 +145,12 @@ class StateMachine:
             logger.debug(f"STANDBY CHANGED {self.context} standby={self.context.standby_id}")
 
     def set_timer_to_fail(self):
-        self.timer_failure = threading.Timer(
-            random.random() * Config.FAILURE_TIMEOUT, self.put_state_in_q, (MessageTypes.FAILURE_DETECTED,))
+        if Config.SANITY_TEST:
+            failure_timeout = random.random() * Config.FAILURE_TIMEOUT
+        else:
+            failure_timeout = random.random() * Config.FAILURE_TIMEOUT
+
+        self.timer_failure = threading.Timer(failure_timeout, self.put_state_in_q, (MessageTypes.FAILURE_DETECTED,))
         self.timer_failure.start()
 
     def handle_move(self, msg):

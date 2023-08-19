@@ -48,7 +48,6 @@ class WorkerContext:
     def deploy(self):
 
         dist = np.linalg.norm(self.gtl - self.el)
-        print(dist)
         timestamp, dur, dest = self.move(self.gtl - self.el)
         # self.metrics.log_initial_metrics(self.gtl, self.is_standby, self.swarm_id, self.radio_range,
         #                                  self.standby_id, timestamp, dur, dest)

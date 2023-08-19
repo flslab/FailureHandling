@@ -11,3 +11,4 @@ from .file import write_configs
 from .file import write_swarms
 from .file import write_csv
 from .dict_hash import dict_hash
+from .generate_circle_coord import generate_circle_coordinates

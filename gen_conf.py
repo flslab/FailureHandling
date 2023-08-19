@@ -27,7 +27,10 @@ def_general_conf = {
     "DISPATCHERS": "1",
     "DISPATCH_RATE": "'inf'",
     "MULTICAST": "False",
-    "INPUT": "'racecar_K20'"
+    "INPUT": "'racecar_K20'",
+    "SANITY_TEST": "False",
+    "SANITY_TEST_CONFIG": "[('NUMBER_OF_FLS', '100'), ('DIST_TO_POINT', '10'), ('CHECK_TIME_RANGE', '60 * 3', "
+                          "'60 * 5'), ('FAILURE_TIMEOUT', '20')]"
 }
 
 general_props = [
@@ -40,7 +43,7 @@ general_props = [
         "keys": ["K", "INPUT"],
         "values": [
             {"K": "0", "INPUT": "'chess_K3'"},
-            {"K": "3", "INPUT": "'chess_K3'"},
+            # {"K": "3", "INPUT": "'chess_K3'"},
             # {"K": "5", "INPUT": "'chess_K5'"},
             # {"K": "10", "INPUT": "'chess_K10'"},
             # {"K": "20", "INPUT": "'chess_K20'"},
@@ -48,20 +51,26 @@ general_props = [
     },
     {
         "keys": ["DISPATCHERS"],
-        "values": ["1", "3"]
+        "values": ["1"]
+        # "values": ["1", "3"]
     },
     {
         "keys": ["FAILURE_TIMEOUT"],
-        "values": ["30", "60"]
-        # "values": ["30"]
+        # "values": ["30", "60"]
+        "values": ["30"]
         # "values": ["1", "3", "6", "30", "60", "120", "600"]
     },
     {
         "keys": ["MAX_SPEED", "ACCELERATION", "DECELERATION"],
         "values": [
-            {"MAX_SPEED": "30", "ACCELERATION": "10", "DECELERATION": "10"},
+            # {"MAX_SPEED": "30", "ACCELERATION": "10", "DECELERATION": "10"},
             {"MAX_SPEED": "3", "ACCELERATION": "1", "DECELERATION": "1"}
         ]
+    },
+    {
+        "keys": ["SANITY_TEST"],
+        "values": ["True"]
+        # "values": ["1", "3", "6", "30", "60", "120", "600"]
     },
     # {
     #     "keys": ["SHAPE"],

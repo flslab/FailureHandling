@@ -1,3 +1,4 @@
+import math
 import queue
 import socket
 import random
@@ -18,14 +19,17 @@ import utils
 from utils import logger
 from utils.file import read_cliques_xlsx
 from utils.socket import send_msg
-
+from utils.generate_circle_coord import generate_circle_coordinates
+from utils.sanity_metrics import *
+from utils.jsonToExcel import *
 
 CONFIG = TestConfig if TestConfig.ENABLED else Config
 
 
 def join_config_properties(conf, props):
     return "_".join(
-        f"{k[1] if isinstance(k, tuple) else k}{int(getattr(conf, k[0] if isinstance(k, tuple) else k)) if isinstance(getattr(conf, k[0] if isinstance(k, tuple) else k), float) else getattr(conf, k[0] if isinstance(k, tuple) else k)}" for k in
+        f"{k[1] if isinstance(k, tuple) else k}{int(getattr(conf, k[0] if isinstance(k, tuple) else k)) if isinstance(getattr(conf, k[0] if isinstance(k, tuple) else k), float) else getattr(conf, k[0] if isinstance(k, tuple) else k)}"
+        for k in
         props)
 
 
@@ -186,9 +190,18 @@ class PrimaryNode:
         self._send_msg_to_all_nodes((self.start_time, self.dir_meta))
 
     def _read_groups(self):
-        self.groups, self.radio_ranges = read_cliques_xlsx(os.path.join(self.dir_experiment, f'{Config.INPUT}.xlsx'))
+        if not Config.SANITY_TEST:
+            self.groups, self.radio_ranges = read_cliques_xlsx(
+                os.path.join(self.dir_experiment, f'{Config.INPUT}.xlsx'))
+        else:
 
-        if Config.DEBUG:
+            height = min([2, math.sqrt(Config.SANITY_TEST_CONFIG[1][1])])
+            radius = math.sqrt(Config.SANITY_TEST_CONFIG[1][1] ** 2 - height ** 2)
+            center = [radius + 1, radius + 1, 0]
+            self.groups = generate_circle_coordinates(center, radius, height, Config.SANITY_TEST_CONFIG[0][1])
+            self.radio_ranges = [Config.MAX_RANGE] * len(self.groups)
+
+        if Config.DEBUG and not Config.SANITY_TEST:
             self.groups = self.groups[:2]
             self.radio_ranges = self.radio_ranges[:2]
 
@@ -363,11 +376,15 @@ class PrimaryNode:
     def _get_dispatched_num(self):
         info = [['dispatcher_coord', 'num_dispatched', 'avg_delay', 'delay_info']]
         for dispatcher in self.dispatchers:
-
             info.append([dispatcher.coord.tolist(), dispatcher.num_dispatched,
-                         sum(dispatcher.delay_list)/len(dispatcher.delay_list) if len(dispatcher.delay_list) > 0 else 0,
+                         sum(dispatcher.delay_list) / len(dispatcher.delay_list) if len(
+                             dispatcher.delay_list) > 0 else 0,
                          dispatcher.delay_list])
         return info
+
+    def write_standard_results(self):
+
+        pass
 
     def _write_results(self):
         logger.info("Writing results")
@@ -376,6 +393,34 @@ class PrimaryNode:
         utils.create_csv_from_json(self.dir_meta, os.path.join(self.dir_figure, f'{self.result_name}.jpg'))
         utils.write_configs(self.dir_meta, self.start_time)
         utils.combine_csvs(self.dir_meta, self.dir_experiment, "reli_" + self.result_name)
+
+        if Config.SANITY_TEST:
+            sanity_result = [['', 'Stander Result', 'Experiment Result']]
+
+            stander_mttr = time_to_arrive(Config.MAX_SPEED, Config.ACCELERATION, Config.DECELERATION,
+                                          Config.SANITY_TEST_CONFIG[1][1] * Config.DISPLAY_CELL_SIZE)
+            cur_midflight = 0
+            num_illuminate = 0
+            num_midflight = 0
+            for t in range(round(Config.SANITY_TEST_CONFIG[2][1]), round(Config.SANITY_TEST_CONFIG[2][2], 5)):
+                cur_midflight = num_mid_flight(Config.SANITY_TEST_CONFIG[0][1], stander_mttr, Config.FAILURE_TIMEOUT)
+                num_midflight += cur_midflight
+                num_illuminate += num_illuminating(Config.SANITY_TEST_CONFIG[0][1], cur_midflight)
+
+            num_midflight /= len(
+                range(round(Config.SANITY_TEST_CONFIG[2][1]), round(Config.SANITY_TEST_CONFIG[2][2], 5)))
+            num_illuminate /= len(
+                range(round(Config.SANITY_TEST_CONFIG[2][1]), round(Config.SANITY_TEST_CONFIG[2][2], 5)))
+            num_failed = num_of_failed(Config.SANITY_TEST_CONFIG[2][2], Config.FAILURE_TIMEOUT / 2, Config.SANITY_TEST_CONFIG[0][1])
+
+            experiment_result = read_metrics(self.dir_meta, [round(Config.SANITY_TEST_CONFIG[2][1]),
+                                                             round(Config.SANITY_TEST_CONFIG[2][2], 5)])
+            sanity_result.append(['Total Failed', num_failed, experiment_result[0]])
+            sanity_result.append(['Avg mid_flight', num_midflight, experiment_result[1]])
+            sanity_result.append(['Avg_illuminate', num_illuminate, experiment_result[2]])
+            sanity_result.append(['MTTF', Config.FAILURE_TIMEOUT / 2, experiment_result[3]])
+            sanity_result.append(['MTTR', stander_mttr, experiment_result[4]])
+            utils.write_csv(self.dir_meta, sanity_result, 'sanity_check')
 
     def stop_experiment(self):
         self._stop_dispatchers()

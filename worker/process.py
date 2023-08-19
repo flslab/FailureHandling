@@ -1,5 +1,6 @@
 import multiprocessing
 import queue
+import time
 
 import state
 from .network import NetworkThread

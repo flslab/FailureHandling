@@ -1,6 +1,8 @@
 import json
 import math
 import heapq
+import time
+
 import numpy as np
 from config import Config
 import matplotlib.pyplot as plt
@@ -310,6 +312,7 @@ class Metrics:
         self.results_directory = results_directory
         self.history = history
         self.start_time = start_time
+        self.dispatched_time = 0
         self.timeline = []
         self.general_metrics = {
             "00_gtl": None,
@@ -320,12 +323,13 @@ class Metrics:
             "10_dispatch_time": -1,
             "12_arrival_time": -1,
             "13_dispatch_duration": -1,
-            "30_failure_time": -1,
+            "14_time_to_recover": -1,
+            "30_time_to_fail": -1,
             "31_replacement_start_time": -1,
             "32_replacement_arrival_time": -1,
             "33_replacement_duration": -1,
             "34_failed_fls_id": -1,
-            "20_total_distance_traveled": 0,
+            "20_total_distance_traveled": 0
             # "A4_num_dropped_messages": 0,
         }
         self.network_metrics = {
@@ -362,11 +366,17 @@ class Metrics:
             "26_dist_traveled": dist
         }
         report.update(dist_traveled)
+        time_log = {
+            "27_time_to_fail": self.general_metrics["30_time_to_fail"],
+            "28_time_to_arrive": self.general_metrics["14_time_to_recover"]
+        }
+        report.update(time_log)
         return report
 
     def log_initial_metrics(self, gtl, is_standby, group_id, radio_range, standby_id,
                             timestamp, dispatch_duration, el):
         t = timestamp - self.start_time
+        self.dispatched_time = time.time()
         self.general_metrics["00_gtl"] = gtl.tolist()
         self.general_metrics["02_group_id"] = group_id
         self.general_metrics["03_radio_range"] = radio_range
@@ -383,6 +393,8 @@ class Metrics:
 
     def log_arrival(self, timestamp, event, coord, dist):  # todo
         t = timestamp - self.start_time
+        # self.general_metrics["05_standby_id"]
+        self.general_metrics["14_time_to_recover"] = timestamp - self.dispatched_time
         self.timeline.append((t, event, coord.tolist(), dist))
 
     def log_standby_id(self, timestamp, standby_id):
@@ -393,7 +405,8 @@ class Metrics:
 
     def log_failure_time(self, timestamp, is_standby, is_mid_flight):
         t = timestamp - self.start_time
-        self.general_metrics["30_failure_time"] = t
+        self.general_metrics["30_time_to_fail"] = timestamp - self.dispatched_time
+        self.general_metrics["14_time_to_recover"] = -1
         if is_standby:
             self.timeline.append((t, TimelineEvents.STANDBY_FAIL, is_mid_flight))
         else:

@@ -11,8 +11,8 @@ class Config:
     MAX_SPEED = 3
     DISPLAY_CELL_SIZE = 0.05
     BUSY_WAITING = False
-    DURATION = 60 * 0.3
-    K = 5  # if k = 0 no standbys are deployed
+    DURATION = 60 * 5
+    K = 0  # if k = 0 no standbys are deployed
     SHAPE = 'racecar'
     RESULTS_PATH = 'results'
     DEBUG = True
@@ -21,6 +21,10 @@ class Config:
     SERVER_TIMEOUT = 120
     PROCESS_JOIN_TIMEOUT = 120
     DISPATCHERS = 5  # valid values 1 3 5
-    DISPATCH_RATE = 1  # valid values 'inf' or a non-zero number
+    DISPATCH_RATE = "inf"  # valid values 'inf' or a non-zero number
     MULTICAST = False  # should be False for cloudlab and True for AWS
     INPUT = 'racecar_K5'  # place the file int the results directory
+    SANITY_TEST = True
+    SANITY_TEST_CONFIG = [('NUMBER_OF_FLS', 100), ('DIST_TO_POINT', 10), ('CHECK_TIME_RANGE', 60 * 3, 60 * 5), ('FAILURE_TIMEOUT', 20)]
+
+

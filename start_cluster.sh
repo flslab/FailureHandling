@@ -9,4 +9,4 @@ for (( i=1; i<num_of_total_servers; i++ )); do
     ssh -oStrictHostKeyChecking=no -f "${server_addr}" "ulimit -n 99999 && cd FailureHandling && cp experiments/config$1.py config.py && sleep 10 && nohup python3 secondary.py > my.log 2>&1 &" &
 done
 
-ulimit -n 99999 && cp "experiments/config$1.py" config.py && sleep 1 && python3 primary.py "${N}" "${now}"
+ulimit -n 99999 && cp "experiments/config$1.py" config.py && sleep 1 && sudo python3 primary.py "${N}" "${now}"

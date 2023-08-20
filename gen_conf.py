@@ -29,7 +29,7 @@ def_general_conf = {
     "DISPATCH_RATE": "'inf'",
     "MULTICAST": "False",
     "INPUT": "'racecar_K20'",
-    "SANITY_TEST": "False",
+    "SANITY_TEST": "True",
     "SANITY_TEST_CONFIG": "[('NUMBER_OF_FLS', 100), ('DIST_TO_POINT', 10), ('CHECK_TIME_RANGE', 60 * 5, "
                           "60 * 10), ('FAILURE_TIMEOUT', 20)]"
 }

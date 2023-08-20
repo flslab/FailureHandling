@@ -10,6 +10,8 @@ from test_config import TestConfig
 import pandas as pd
 import glob
 import re
+import utils
+from utils import logger
 
 from worker.metrics import merge_timelines, gen_charts, gen_point_metrics
 
@@ -21,6 +23,7 @@ def write_json(fid, results, directory, is_clique):
 
 
 def write_csv(directory, rows, file_name):
+    logger.debug(f"WRITE_CSV_FILE {file_name}")
     with open(os.path.join(directory, f'{file_name}.csv'), 'w', newline='') as csvfile:
         writer = csv.writer(csvfile)
         writer.writerows(rows)

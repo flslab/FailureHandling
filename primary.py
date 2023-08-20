@@ -374,7 +374,7 @@ class PrimaryNode:
         ]
 
     def _get_dispatched_num(self):
-        info = [['dispatcher_coord', 'num_dispatched', 'avg_delay', 'delay_info']]
+        info = [["dispatcher_coord", "num_dispatched", "avg_delay", "delay_info"]]
         for dispatcher in self.dispatchers:
             info.append([dispatcher.coord.tolist(), dispatcher.num_dispatched,
                          sum(dispatcher.delay_list) / len(dispatcher.delay_list) if len(

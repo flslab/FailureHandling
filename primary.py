@@ -21,7 +21,7 @@ from utils.file import read_cliques_xlsx
 from utils.socket import send_msg
 from utils.generate_circle_coord import generate_circle_coordinates
 from utils.sanity_metrics import *
-from utils.jsonToExcel import *
+from utils.sanity_test_check import *
 
 CONFIG = TestConfig if TestConfig.ENABLED else Config
 
@@ -383,7 +383,6 @@ class PrimaryNode:
         return info
 
     def write_standard_results(self):
-
         pass
 
     def _write_results(self):

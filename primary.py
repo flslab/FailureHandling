@@ -194,7 +194,7 @@ class PrimaryNode:
             self.groups, self.radio_ranges = read_cliques_xlsx(
                 os.path.join(self.dir_experiment, f'{Config.INPUT}.xlsx'))
         else:
-
+            logger.debug(f"Height Config={Config.SANITY_TEST_CONFIG[1][1]}, {type(Config.SANITY_TEST_CONFIG[1][1])}")
             height = min([2, math.sqrt(Config.SANITY_TEST_CONFIG[1][1])])
             radius = math.sqrt(Config.SANITY_TEST_CONFIG[1][1] ** 2 - height ** 2)
             center = [radius + 1, radius + 1, 0]

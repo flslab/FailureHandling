@@ -15,11 +15,19 @@ def read_metrics(dir_meta, time_range):
 
         metrics = []
 
-        for metric_name in ['failed', 'mid_flight', 'illuminating']:
+        if data['failed']['t'][-1] < time_range[1]:
+            metrics.append(data['failed']['y'][-1])
+        else:
+            for i in range(len(data['failed']['t']) - 1, -1, -1):
+                if data['failed']['t'][i] <= time_range[1]:
+                    metrics.append(data['failed']['y'][i])
+                    break
+
+        for metric_name in ['mid_flight', 'illuminating']:
             avg_value = 0
             counter = 0
             for i in range(len(data[metric_name]['t'])):
-                if time_range[0] <= data[metric_name]['t'][i] <= time_range[1]:
+                if time_range[0] <= data[metric_name]['t'][i] <= time_range[1] :
                     avg_value += data[metric_name]['y'][i]
                     counter += 1
             try:

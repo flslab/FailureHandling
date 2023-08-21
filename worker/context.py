@@ -49,10 +49,13 @@ class WorkerContext:
 
         dist = np.linalg.norm(self.gtl - self.el)
         timestamp, dur, dest = self.move(self.gtl - self.el)
+
         # self.metrics.log_initial_metrics(self.gtl, self.is_standby, self.swarm_id, self.radio_range,
         #                                  self.standby_id, timestamp, dur, dest)
         self.metrics.log_initial_metrics(self.gtl, self.is_standby, self.swarm_id, self.radio_range,
                                          self.standby_id, timestamp, dur, dest)
+        print(f"DEPLOY EVENT fid={self.fid} time={timestamp-self.metrics.start_time}")
+
         return dur, dest, dist
         # if self.shm_name:
         #     shared_mem = shared_memory.SharedMemory(name=self.shm_name)
@@ -75,10 +78,10 @@ class WorkerContext:
             while True:
                 if time.time() >= fin_time:
                     break
-        else:
-            time.sleep(dur)
+        # else: #Need Asking
+        #     time.sleep(dur)
 
-        self.set_el(dest)
+        # self.set_el(dest)
 
         return timestamp, dur, dest
 

@@ -14,6 +14,7 @@ from utils import write_json, logger
 
 
 class StateMachine:
+
     def __init__(self, context, sock, metrics, event_queue):
         self.state = None
         self.context = context
@@ -28,13 +29,17 @@ class StateMachine:
         self.is_terminating = False
         self.is_arrived = False
         self.unhandled_move = None
+        self.move_time = 0
 
     def start(self):
-        logger.debug(f"STARTED {self.context}, {self.is_mid_flight}")
+        logger.debug(f"STARTED {self.context} {self.is_mid_flight}" )
 
         self.enter(StateTypes.SINGLE)
         dur, dest, dist = self.context.deploy()
+
+        # print(f"MOVE READY {time.time() - self.metrics.start_time} fid={self.context.fid}")
         self.move(dur, dest, TimelineEvents.STANDBY if self.context.is_standby else TimelineEvents.ILLUMINATE, dist)
+        self.move_time = time.time()
 
         if self.context.is_standby:
             # send the id of the new standby to group members
@@ -48,6 +53,7 @@ class StateMachine:
             self.update_movement()
             logger.debug(f"PREEMPT MOVEMENT fid={self.context.fid}, mid_flight={self.is_mid_flight}")
 
+        # print(f"MOVE AT {time.time()- self.metrics.start_time} fid={self.context.fid}")
         self.move_thread = threading.Timer(dur, self.change_move_state,
                                            (MessageTypes.MOVE, (dest, arrival_event, dist)))
         self.is_arrived = False
@@ -83,11 +89,11 @@ class StateMachine:
             # notify group
             self.broadcast(Message(MessageTypes.STANDBY_FAILED).to_swarm(self.context))
             self.send_to_server(Message(MessageTypes.REPLICA_REQUEST_HUB, args=(False,)))
-            logger.debug(f"REQUEST NEW STANDBY {self.context} {time.time()}")
+            logger.debug(f"REQUEST NEW STANDBY {self.context}")
         elif self.context.standby_id is None:
             # request an illuminating FLS from the hub, arg True is for illuminating FLS
             self.send_to_server(Message(MessageTypes.REPLICA_REQUEST_HUB, args=(True,)))
-            logger.debug(f"RECOVER BY HUB {self.context} {time.time()}")
+            logger.debug(f"RECOVER BY HUB {self.context}")
         else:
             # notify group
             self.broadcast(Message(MessageTypes.REPLICA_REQUEST).to_swarm(self.context))
@@ -162,7 +168,7 @@ class StateMachine:
         self.is_arrived = True
         self.unhandled_move = None
 
-        logger.debug(f"MOVE HANDLED fid={self.context.fid}")
+        logger.debug(f"MOVE HANDLED fid={self.context.fid}, delay_time={time.time() - self.metrics.start_time}")
 
     def enter(self, state):
         self.leave(self.state)
@@ -173,7 +179,7 @@ class StateMachine:
 
     def change_move_state(self, event, args=()):
         self.is_mid_flight = False
-        logger.debug(f"MOVE ENQUEUE fid={self.context.fid}")
+        logger.debug(f"MOVE ENQUEUE fid={self.context.fid} time={time.time()-self.metrics.start_time}")
         self.unhandled_move = self.put_state_in_q(event, args=args)
 
     def put_state_in_q(self, event, args=()):

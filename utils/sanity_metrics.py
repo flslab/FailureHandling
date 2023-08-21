@@ -1,8 +1,23 @@
 import math
+from scipy.stats import norm
 
 
-def num_of_failed(time, failure_time, num_init):
-    return round(num_init * time / failure_time)
+def num_of_failed(time, avg_failure_time, num_init):
+    failed_num = num_init
+    i = 1
+    total_failed = 0
+    while failed_num >= 1:
+        distribution_range = avg_failure_time * (2 ** i)
+        if distribution_range <= time:
+            failed_num = num_init
+        else:
+            percentage = time / distribution_range
+            failed_num = (0.5 + norm.ppf(percentage)+3)/12 * num_init
+
+        total_failed += failed_num
+        i += 1
+
+    return round(total_failed)
 
 
 def num_mid_flight(num_init, recover_time, failure_time):

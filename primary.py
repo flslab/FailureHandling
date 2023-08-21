@@ -103,6 +103,7 @@ class PrimaryNode:
         self.num_replaced_standbys = 0
         self.stop_flag = False
         self.stop_thread = None
+        self.center = []
 
     def _create_server_socket(self):
         # Experimental artifact to gather theoretical stats for scientific publications.
@@ -153,7 +154,10 @@ class PrimaryNode:
         l = 60
         w = 60
         if Config.DISPATCHERS == 1:
-            self.dispatchers_coords = np.array([[l / 2, w / 2, 0]])
+            if Config.SANITY_TEST:
+                self.dispatchers_coords = np.array([self.center])
+            else:
+                self.dispatchers_coords = np.array([[l / 2, w / 2, 0]])
         elif Config.DISPATCHERS == 3:
             self.dispatchers_coords = np.array([[l / 2, w / 2, 0], [l, w, 0], [0, 0, 0]])
             # self.dispatchers_coords = np.array([[l / 2, w / 2, 0], [l / 2, w / 2, 0],[l / 2, w / 2, 0]])
@@ -197,8 +201,8 @@ class PrimaryNode:
             logger.debug(f"Height Config={Config.SANITY_TEST_CONFIG[1][1]}, {type(Config.SANITY_TEST_CONFIG[1][1])}")
             height = min([2, math.sqrt(Config.SANITY_TEST_CONFIG[1][1])])
             radius = math.sqrt(Config.SANITY_TEST_CONFIG[1][1] ** 2 - height ** 2)
-            center = [radius + 1, radius + 1, 0]
-            self.groups = generate_circle_coordinates(center, radius, height, Config.SANITY_TEST_CONFIG[0][1])
+            self.center = [radius + 1, radius + 1, 0]
+            self.groups = generate_circle_coordinates(self.center, radius, height, Config.SANITY_TEST_CONFIG[0][1])
             self.radio_ranges = [Config.MAX_RANGE] * len(self.groups)
 
         if Config.DEBUG and not Config.SANITY_TEST:
@@ -396,13 +400,16 @@ class PrimaryNode:
         if Config.SANITY_TEST:
             sanity_result = [['', 'Stander Result', 'Experiment Result']]
 
+            experiment_result = read_metrics(self.dir_meta, [round(Config.SANITY_TEST_CONFIG[2][1]),
+                                                             round(Config.SANITY_TEST_CONFIG[2][2], 5)])
+
             stander_mttr = time_to_arrive(Config.MAX_SPEED, Config.ACCELERATION, Config.DECELERATION,
                                           Config.SANITY_TEST_CONFIG[1][1] * Config.DISPLAY_CELL_SIZE)
             cur_midflight = 0
             num_illuminate = 0
             num_midflight = 0
             for t in range(round(Config.SANITY_TEST_CONFIG[2][1]), round(Config.SANITY_TEST_CONFIG[2][2], 5)):
-                cur_midflight = num_mid_flight(Config.SANITY_TEST_CONFIG[0][1], stander_mttr, Config.FAILURE_TIMEOUT)
+                cur_midflight = num_mid_flight(Config.SANITY_TEST_CONFIG[0][1], experiment_result[4], experiment_result[3])
                 num_midflight += cur_midflight
                 num_illuminate += num_illuminating(Config.SANITY_TEST_CONFIG[0][1], cur_midflight)
 
@@ -410,10 +417,8 @@ class PrimaryNode:
                 range(round(Config.SANITY_TEST_CONFIG[2][1]), round(Config.SANITY_TEST_CONFIG[2][2], 5)))
             num_illuminate /= len(
                 range(round(Config.SANITY_TEST_CONFIG[2][1]), round(Config.SANITY_TEST_CONFIG[2][2], 5)))
-            num_failed = num_of_failed(Config.SANITY_TEST_CONFIG[2][2], Config.FAILURE_TIMEOUT / 2, Config.SANITY_TEST_CONFIG[0][1])
+            num_failed = num_of_failed(Config.SANITY_TEST_CONFIG[2][2], experiment_result[3], Config.SANITY_TEST_CONFIG[0][1])
 
-            experiment_result = read_metrics(self.dir_meta, [round(Config.SANITY_TEST_CONFIG[2][1]),
-                                                             round(Config.SANITY_TEST_CONFIG[2][2], 5)])
             sanity_result.append(['Total Failed', num_failed, experiment_result[0]])
             sanity_result.append(['Avg mid_flight', num_midflight, experiment_result[1]])
             sanity_result.append(['Avg_illuminate', num_illuminate, experiment_result[2]])

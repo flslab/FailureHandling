@@ -69,8 +69,9 @@ general_props = [
         ]
     },
     {
-        "keys": ["SANITY_TEST"],
-        "values": ["True"]
+        "keys": ["SANITY_TEST", "DISPATCHERS"],
+        "values": [
+            {"SANITY_TEST": "True", "DISPATCHERS": "1"}]
         # "values": ["1", "3", "6", "30", "60", "120", "600"]
     },
     # {

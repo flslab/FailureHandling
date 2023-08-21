@@ -159,7 +159,7 @@ def gen_point_metrics(events):
             if pid in illuminating_events:
                 illuminating_events[pid].append([t, e])
                 illuminating_metrics[pid][3] += 1
-                illuminating_metrics[pid][5].append(t - illuminating_events[pid][-2][0])
+                illuminating_metrics[pid][5].append(t - illuminating_events[pid][0][0])
             else:
                 # Situations when the previous FLS who was assigned with this point never arrived
                 illuminating_events[pid] = [[t, e]]
@@ -186,8 +186,7 @@ def gen_point_metrics(events):
 
             standby_metrics[pid][2] += 1
 
-    # print(illuminating_events)
-    # print(standby_events)
+
     i_rows = list(illuminating_metrics.values())
     s_rows = list(standby_metrics.values())
     for row in i_rows:
@@ -271,7 +270,6 @@ def gen_charts(events, fig_dir):
     mid_flight["t"].append(events[-1][0])
     mid_flight["y"].append(mid_flight["y"][-1])
 
-    # print(dispatched["t"], dispatched["y"])
     plt.step(dispatched["t"], dispatched["y"], where='post', label="Dispatched FLSs")
     plt.step(standby["t"], standby["y"], where='post', label="Standby FLSs")
     plt.step(illuminating["t"], illuminating["y"], where='post', label="Illuminating FLSs")

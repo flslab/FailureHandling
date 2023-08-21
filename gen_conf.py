@@ -70,7 +70,7 @@ general_props = [
     },
     {
         "keys": ["SANITY_TEST"],
-        "values": ["False"]
+        "values": ["True"]
         # "values": ["1", "3", "6", "30", "60", "120", "600"]
     },
     # {

@@ -104,6 +104,7 @@ class PrimaryNode:
         self.stop_flag = False
         self.stop_thread = None
         self.center = []
+        self.init_num = 0
 
     def _create_server_socket(self):
         # Experimental artifact to gather theoretical stats for scientific publications.
@@ -208,6 +209,10 @@ class PrimaryNode:
         if Config.DEBUG and not Config.SANITY_TEST:
             self.groups = self.groups[:2]
             self.radio_ranges = self.radio_ranges[:2]
+
+        for group in self.groups:
+            for coord in group:
+                self.init_num += 1
 
         single_members = []
         single_indexes = []
@@ -380,10 +385,16 @@ class PrimaryNode:
     def _get_dispatched_num(self):
         info = [["dispatcher_coord", "num_dispatched", "avg_delay", "delay_info"]]
         for dispatcher in self.dispatchers:
-            info.append([dispatcher.coord.tolist(), dispatcher.num_dispatched,
-                         sum(dispatcher.delay_list) / len(dispatcher.delay_list) if len(
-                             dispatcher.delay_list) > 0 else 0,
-                         dispatcher.delay_list])
+            if Config.RESET_AFTER_INITIAL_DEPLOY:
+                info.append([dispatcher.coord.tolist(), dispatcher.num_dispatched - self.num_initial_standbys,
+                             sum(dispatcher.delay_list[self.num_initial_standbys:]) / len(dispatcher.delay_list[self.num_initial_standbys:])
+                             if len(dispatcher.delay_list) > self.num_initial_standbys else 0,
+                             dispatcher.delay_list])
+            else:
+                info.append([dispatcher.coord.tolist(), dispatcher.num_dispatched,
+                             sum(dispatcher.delay_list) / len(dispatcher.delay_list) if len(
+                                 dispatcher.delay_list) > 0 else 0,
+                             dispatcher.delay_list])
         return info
 
     def write_standard_results(self):
@@ -393,7 +404,7 @@ class PrimaryNode:
         logger.info("Writing results")
         utils.write_csv(self.dir_meta, self._get_dispatched_num(), 'dispatcher')
         utils.write_csv(self.dir_meta, self._get_metrics(), 'metrics')
-        utils.create_csv_from_json(self.dir_meta, os.path.join(self.dir_figure, f'{self.result_name}.jpg'))
+        utils.create_csv_from_json(self.init_num, self.dir_meta, os.path.join(self.dir_figure, f'{self.result_name}.jpg'))
         utils.write_configs(self.dir_meta, self.start_time)
         utils.combine_csvs(self.dir_meta, self.dir_experiment, "reli_" + self.result_name)
 

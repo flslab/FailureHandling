@@ -54,7 +54,7 @@ class WorkerContext:
         #                                  self.standby_id, timestamp, dur, dest)
         self.metrics.log_initial_metrics(self.gtl, self.is_standby, self.swarm_id, self.radio_range,
                                          self.standby_id, timestamp, dur, dest)
-        print(f"DEPLOY EVENT fid={self.fid} time={timestamp-self.metrics.start_time}")
+        print(f"DEPLOY EVENT fid={self.fid} time={time.time()}")
 
         return dur, dest, dist
         # if self.shm_name:

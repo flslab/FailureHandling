@@ -29,7 +29,36 @@ def write_csv(directory, rows, file_name):
         writer.writerows(rows)
 
 
-def create_csv_from_json(directory, fig_dir):
+def trim_timeline(timeline, init_num):
+    deployed = 0
+    failed = 0
+    illuminating = 0
+    standby = 0
+    mid_flight = 0
+    start_time = 0
+
+    for i, event in enumerate(timeline):
+        if event[1] == 0:
+            deployed += 1
+            mid_flight += 1
+        elif event[1] == 3 or event[1] == 5:
+            failed += 1
+            mid_flight -= 1
+        elif event[1] == 1 or event[1] == 6:
+            illuminating += 1
+            mid_flight -= 1
+        elif event[1] == 2:
+            standby += 1
+            mid_flight -= 1
+
+        if deployed >= init_num:
+            timeline = timeline[i + 1:]
+            start_time = event[0]
+            break
+    return timeline, [failed, illuminating, standby, mid_flight], start_time
+
+
+def create_csv_from_json(init_num, directory, fig_dir):
     if not os.path.exists(directory):
         return
 
@@ -81,10 +110,16 @@ def create_csv_from_json(directory, fig_dir):
         writer.writerows(node_rows)
 
     merged_timeline = merge_timelines(timelines)
+
+    num_metrics = [0, 0, 0, 0]
+    start_time = 0
+    if Config.RESET_AFTER_INITIAL_DEPLOY:
+        merged_timeline, num_metrics, start_time = trim_timeline(merged_timeline, init_num)
+
     with open(os.path.join(directory, 'timeline.json'), "w") as f:
         json.dump(merged_timeline, f)
 
-    chart_data = gen_charts(merged_timeline, fig_dir)
+    chart_data = gen_charts(merged_timeline, start_time, num_metrics, fig_dir)
     with open(os.path.join(directory, 'charts.json'), "w") as f:
         json.dump(chart_data, f)
 

@@ -59,6 +59,10 @@ def merge_timelines(timelines):
             heapq.heappush(heap, (next_elem, lst_idx, elem_idx + 1))
     return merged
 
+def trim_timeline(merged_timelines):
+    for event in merged_timelines:
+        event[1]
+
 
 def _avg(values):
     if len(values):
@@ -115,6 +119,7 @@ def gen_point_metrics(events):
 
     illuminating_metrics = dict()
     standby_metrics = dict()
+    pid_list = []
 
     for event in events:
         t = event[0]
@@ -124,6 +129,10 @@ def gen_point_metrics(events):
         if e == TimelineEvents.DISPATCH:
             pid = point_to_id(event[2])
             fid_to_point[fid] = pid
+
+            if pid not in pid_list:
+                pid_list.append(pid)
+                illuminating_metrics[0,3]= [pid, 0, 0, 0, [], []]
 
         elif e == TimelineEvents.FAIL and event[2] is False:
             pid = fid_to_point[fid]
@@ -209,12 +218,12 @@ def gen_point_metrics(events):
            [standby_metric_keys] + s_rows
 
 
-def gen_charts(events, fig_dir):
-    dispatched = {"t": [0], "y": [0]}
-    standby = {"t": [0], "y": [0]}
-    illuminating = {"t": [0], "y": [0]}
-    failed = {"t": [0], "y": [0]}
-    mid_flight = {"t": [0], "y": [0]}
+def gen_charts(events, start_time, num_metrics, fig_dir):
+    dispatched = {"t": [start_time], "y": [0]}
+    standby = {"t": [start_time], "y": [num_metrics[2]]}
+    illuminating = {"t": [start_time], "y": [num_metrics[1]]}
+    failed = {"t": [start_time], "y": [num_metrics[0]]}
+    mid_flight = {"t": [start_time], "y": [num_metrics[3]]}
 
     for event in events:
         t = event[0]
@@ -270,11 +279,11 @@ def gen_charts(events, fig_dir):
     mid_flight["t"].append(events[-1][0])
     mid_flight["y"].append(mid_flight["y"][-1])
 
-    plt.step(dispatched["t"], dispatched["y"], where='post', label="Dispatched FLSs")
-    plt.step(standby["t"], standby["y"], where='post', label="Standby FLSs")
-    plt.step(illuminating["t"], illuminating["y"], where='post', label="Illuminating FLSs")
-    plt.step(failed["t"], failed["y"], where='post', label="Failed FLSs")
-    plt.step(mid_flight["t"], mid_flight["y"], where='post', label="Mid-flight FLSs")
+    plt.step([t-1 for t in dispatched["t"]], dispatched["y"], where='post', label="Dispatched FLSs")
+    plt.step([t-1 for t in standby["t"]], standby["y"], where='post', label="Standby FLSs")
+    plt.step([t-1 for t in illuminating["t"]], illuminating["y"], where='post', label="Illuminating FLSs")
+    plt.step([t-1 for t in failed["t"]], failed["y"], where='post', label="Failed FLSs")
+    plt.step([t-1 for t in mid_flight["t"]], mid_flight["y"], where='post', label="Mid-flight FLSs")
     plt.gca().xaxis.set_major_locator(mpl.ticker.MaxNLocator(integer=True))
     plt.gca().yaxis.set_major_locator(mpl.ticker.MaxNLocator(integer=True))
     # Add a legend

@@ -48,7 +48,9 @@ class SecondaryNode:
             if not msg:
                 break
             else:
+                logger.debug(f"CREATE PROCESS fid={msg['fid']} time={time.time()}")
                 p = worker.WorkerProcess(start_time=self.start_time, dir_meta=self.dir_meta, **msg)
+                logger.debug(f"PROCESS_START fid={msg['fid']} time={time.time()}")
                 p.start()
                 self.processes[msg["fid"]] = p
 

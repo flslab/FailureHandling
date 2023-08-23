@@ -25,5 +25,6 @@ class Config:
     DISPATCH_RATE = "inf"  # valid values 'inf' or a non-zero number
     MULTICAST = False  # should be False for cloudlab and True for AWS
     INPUT = 'racecar_K5'  # place the file int the results directory
-    SANITY_TEST = True
+    RESET_AFTER_INITIAL_DEPLOY = True  # flag that if reset all metrics after intial FLSs are all deployed
+    SANITY_TEST = False
     SANITY_TEST_CONFIG = [('NUMBER_OF_FLS', 10), ('DIST_TO_POINT', 10), ('CHECK_TIME_RANGE', 60 * 0.5, 60 * 1), ('FAILURE_TIMEOUT', 20)]

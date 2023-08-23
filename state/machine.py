@@ -32,8 +32,7 @@ class StateMachine:
         self.move_time = 0
 
     def start(self):
-        logger.debug(f"STARTED {self.context} {self.is_mid_flight}" )
-
+        logger.debug(f"STARTED {self.context} {time.time()}")
         self.enter(StateTypes.SINGLE)
         dur, dest, dist = self.context.deploy()
 
@@ -93,7 +92,7 @@ class StateMachine:
         elif self.context.standby_id is None:
             # request an illuminating FLS from the hub, arg True is for illuminating FLS
             self.send_to_server(Message(MessageTypes.REPLICA_REQUEST_HUB, args=(True,)))
-            logger.debug(f"RECOVER BY HUB {self.context}")
+            logger.debug(f"RECOVER BY HUB {self.context} time={time.time()}")
         else:
             # notify group
             self.broadcast(Message(MessageTypes.REPLICA_REQUEST).to_swarm(self.context))

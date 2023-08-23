@@ -9,6 +9,7 @@ from .worker_socket import WorkerSocket
 from .context import WorkerContext
 from .history import History
 from .metrics import Metrics
+from utils import logger
 
 
 class WorkerProcess(multiprocessing.Process):
@@ -20,10 +21,10 @@ class WorkerProcess(multiprocessing.Process):
         self.context = WorkerContext(fid=fid, gtl=gtl, el=el, metrics=self.metrics,
                                      is_standby=is_standby, standby_id=standby_id, group_id=group_id,
                                      radio_range=radio_range)
-
         self.sock = WorkerSocket()
 
     def run(self):
+        logger.debug(f"STARTING_PROCESS fid={self.context.fid} time={time.time()}")
         event_queue = queue.Queue()
         state_machine = state.StateMachine(self.context, self.sock, self.metrics, event_queue)
 

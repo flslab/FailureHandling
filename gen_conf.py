@@ -29,9 +29,11 @@ def_general_conf = {
     "DISPATCH_RATE": "'inf'",
     "MULTICAST": "False",
     "INPUT": "'racecar_K20'",
-    "SANITY_TEST": "True",
-    "SANITY_TEST_CONFIG": "[('NUMBER_OF_FLS', 100), ('DIST_TO_POINT', 10), ('CHECK_TIME_RANGE', 60 * 5, "
-                          "60 * 10), ('FAILURE_TIMEOUT', 20)]"
+    "RESET_AFTER_INITIAL_DEPLOY": "False",  # flag that if reset all metrics after intial FLSs are all deployed
+    "SANITY_TEST": "0",  # 0 for not test, 1 for normal test with hub and no standby, 2 for standby test with no hub
+    "SANITY_TEST_CONFIG": "[('NUMBER_OF_FLS', 10), ('DIST_TO_POINT', 10), ('CHECK_TIME_RANGE', 60 * 0.5, 60 * 1)]",
+    "STANDBY_TEST_CONFIG": "[('RADIUS', 10), ('DEPLOY_DIST', 10), ('FAILURE_TIMEOUT_GAP', 10), ('CHECK_TIME_RANGE', 60 * 0.5, 60 * 1)]"
+
 }
 
 general_props = [
@@ -52,28 +54,28 @@ general_props = [
     },
     {
         "keys": ["DISPATCHERS"],
-        "values": ["1"]
-        # "values": ["1", "3"]
+        # "values": ["1"]
+        "values": ["1", "3"]
     },
     {
         "keys": ["FAILURE_TIMEOUT"],
-        # "values": ["30", "60"]
-        "values": ["30"]
+        "values": ["30", "60"]
+        # "values": ["30"]
         # "values": ["1", "3", "6", "30", "60", "120", "600"]
     },
     {
         "keys": ["MAX_SPEED", "ACCELERATION", "DECELERATION"],
         "values": [
-            # {"MAX_SPEED": "30", "ACCELERATION": "10", "DECELERATION": "10"},
-            {"MAX_SPEED": "3", "ACCELERATION": "1", "DECELERATION": "1"}
+            {"MAX_SPEED": "6.11", "ACCELERATION": "6.11", "DECELERATION": "6.11"},
+            {"MAX_SPEED": "66.67", "ACCELERATION": "66.67", "DECELERATION": "66.67"}
         ]
     },
-    {
-        "keys": ["SANITY_TEST", "DISPATCHERS"],
-        "values": [
-            {"SANITY_TEST": "True", "DISPATCHERS": "1"}]
-        # "values": ["1", "3", "6", "30", "60", "120", "600"]
-    },
+    # {
+    #     "keys": ["SANITY_TEST", "DISPATCHERS"],
+    #     "values": [
+    #         {"SANITY_TEST": "True", "DISPATCHERS": "1"}]
+    #     # "values": ["1", "3", "6", "30", "60", "120", "600"]
+    # },
     # {
     #     "keys": ["SHAPE"],
     #     "values": ["'racecar'", "'skateboard'"]

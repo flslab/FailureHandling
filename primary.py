@@ -17,12 +17,14 @@ from message import Message, MessageTypes
 import worker
 import utils
 from utils import logger
-from utils.file import read_cliques_xlsx
+from utils.file import read_cliques_xlsx, get_group_mapping
 from utils.socket import send_msg
 from utils.generate_circle_coord import generate_circle_coordinates
 from utils.sanity_metrics import *
-from utils.sanity_test_check import *
+from utils.report import *
 from random import choice
+
+from worker.metrics import point_to_id
 
 CONFIG = TestConfig if TestConfig.ENABLED else Config
 
@@ -409,15 +411,27 @@ class PrimaryNode:
                              dispatcher.delay_list])
         return info
 
-    def write_standard_results(self):
-        pass
+    def gen_group_map(self):
+        if Config.SANITY_TEST == 0:
+            group_map, group_id = get_group_mapping(os.path.join(self.dir_experiment, f'{Config.INPUT}.xlsx'))
+        else:
+            group_map = dict()
+            for group in self.groups:
+                for coord in group:
+                    group_map[point_to_id(coord)] = 0
+            group_id = [0]
+        return group_map, group_id
+
 
     def _write_results(self):
         logger.info("Writing results")
         utils.write_csv(self.dir_meta, self._get_dispatched_num(), 'dispatcher')
         utils.write_csv(self.dir_meta, self._get_metrics(), 'metrics')
+
+        group_map, group_id = self.gen_group_map()
+
         utils.create_csv_from_json(self.init_num, self.dir_meta,
-                                   os.path.join(self.dir_figure, f'{self.result_name}.jpg'))
+                                   os.path.join(self.dir_figure, f'{self.result_name}.jpg'), group_map)
         utils.write_configs(self.dir_meta, self.start_time)
         utils.combine_csvs(self.dir_meta, self.dir_experiment, "reli_" + self.result_name)
 
@@ -425,14 +439,14 @@ class PrimaryNode:
             sanity_result = [['', 'Stander Result', 'Experiment Result']]
 
             if Config.SANITY_TEST == 1:
-                experiment_result = read_metrics(self.dir_meta, [round(Config.SANITY_TEST_CONFIG[2][1]),
-                                                                 round(Config.SANITY_TEST_CONFIG[2][2], 5)])
+                experiment_result = read_sanity_metrics(self.dir_meta, [round(Config.SANITY_TEST_CONFIG[2][1]),
+                                                                        round(Config.SANITY_TEST_CONFIG[2][2], 5)])
 
                 stander_mttr = time_to_arrive(Config.MAX_SPEED, Config.ACCELERATION, Config.DECELERATION,
                                               Config.SANITY_TEST_CONFIG[1][1] * Config.DISPLAY_CELL_SIZE)
             else:
-                experiment_result = read_metrics(self.dir_meta, [round(Config.STANDBY_TEST_CONFIG[3][1]),
-                                                                 round(Config.STANDBY_TEST_CONFIG[3][2], 5)])
+                experiment_result = read_sanity_metrics(self.dir_meta, [round(Config.STANDBY_TEST_CONFIG[3][1]),
+                                                                        round(Config.STANDBY_TEST_CONFIG[3][2], 5)])
                 stander_mttr = time_to_arrive(Config.MAX_SPEED, Config.ACCELERATION, Config.DECELERATION,
                                               Config.STANDBY_TEST_CONFIG[0][1] * Config.DISPLAY_CELL_SIZE)
             cur_midflight = 0
@@ -483,6 +497,37 @@ class PrimaryNode:
             sanity_result.append(['MTTF', theo_MTTF, experiment_result[3]])
             sanity_result.append(['MTTR', stander_mttr, experiment_result[4]])
             utils.write_csv(self.dir_meta, sanity_result, 'sanity_check')
+
+        else:
+
+            report_key = [
+                "Total Dispatched",
+                "Total Failed",
+                "Mid-Flight",
+                "Illuminating",
+                "Avg Dist Traveled",
+                "Max Dist Traveled",
+                "Min Dist Traveled",
+                "Median Dist Traveled",
+                "Avg MTTR",
+                "Max MTTR",
+                "Min MTTR",
+                "Median MTTR",
+                "Deploy Rate",
+                "Number of Groups",
+            ]
+            time_range = [0, Config.DURATION + 10]
+            report_metrics = get_report_metrics(self.dir_meta, time_range, len(group_id))
+            report_metrics = [str(metric) for metric in report_metrics]
+            report_metrics.append(str(Config.DISPATCH_RATE))
+            report_metrics.append(str(len(group_id)))
+
+            report = []
+
+            for i in range(len(report_key)):
+                report.append([report_key[i], report_metrics[i]])
+
+            utils.write_csv(self.dir_meta, report, 'final_report')
 
     def stop_experiment(self):
         self._stop_dispatchers()

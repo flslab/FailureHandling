@@ -117,13 +117,14 @@ def point_to_id(point):
     return '_'.join([str(p) for p in point])
 
 
-def gen_point_metrics(events, start_time):
+def gen_point_metrics(events, start_time, group_map):
     fid_to_point = dict()
     illuminating_events = dict()
     standby_events = dict()
 
     metric_keys = [
         "point",
+        "group_id",
         "failed",
         "recovered by hub",
         "recovered by standby",
@@ -163,13 +164,13 @@ def gen_point_metrics(events, start_time):
 
             if pid not in pid_list:
                 pid_list.append(pid)
-                illuminating_metrics[0, 3] = [pid, 0, 0, 0, [], []]
+                illuminating_metrics[0, 3] = [pid, group_map[pid], 0, 0, 0, [], []]
 
         elif e == TimelineEvents.FAIL and event[2] is False:
             pid = fid_to_point[fid]
             illuminating_events[pid].append([t, e])
             if t > start_time:
-                illuminating_metrics[pid][1] += 1
+                illuminating_metrics[pid][2] += 1
 
         elif e == TimelineEvents.STANDBY_FAIL:
             # Check if the stand by FLS is in mid-flight
@@ -188,11 +189,11 @@ def gen_point_metrics(events, start_time):
             if pid in illuminating_events:
                 illuminating_events[pid].append([t, e])
                 if t > start_time:
-                    illuminating_metrics[pid][2] += 1
-                    illuminating_metrics[pid][4].append(t - illuminating_events[pid][-2][0])
+                    illuminating_metrics[pid][3] += 1
+                    illuminating_metrics[pid][5].append(t - illuminating_events[pid][-2][0])
             else:
                 illuminating_events[pid] = [[t, e]]
-                illuminating_metrics[pid] = [pid, 0, 0, 0, [], []]
+                illuminating_metrics[pid] = [pid, group_map[pid], 0, 0, 0, [], []]
 
         elif e == TimelineEvents.ILLUMINATE_STANDBY:
             pid = point_to_id(event[2])
@@ -202,12 +203,12 @@ def gen_point_metrics(events, start_time):
                 illuminating_events[pid].append([t, e])
 
                 if t > start_time:
-                    illuminating_metrics[pid][3] += 1
-                    illuminating_metrics[pid][5].append(t - illuminating_events[pid][-2][0])
+                    illuminating_metrics[pid][5] += 1
+                    illuminating_metrics[pid][6].append(t - illuminating_events[pid][-2][0])
             else:
                 # Situations when the previous FLS who was assigned with this point never arrived
                 illuminating_events[pid] = [[t, e]]
-                illuminating_metrics[pid] = [pid, 0, 0, 0, [], []]
+                illuminating_metrics[pid] = [pid, group_map[pid], 0, 0, 0, [], []]
 
         elif e == TimelineEvents.STANDBY:
             pid = point_to_id(event[2])
@@ -235,8 +236,8 @@ def gen_point_metrics(events, start_time):
     i_rows = list(illuminating_metrics.values())
     s_rows = list(standby_metrics.values())
     for row in i_rows:
-        hub_w_t = row[4]
-        standby_w_t = row[5]
+        hub_w_t = row[5]
+        standby_w_t = row[6]
         row.append(_min(hub_w_t))
         row.append(_avg(hub_w_t))
         row.append(_max(hub_w_t))

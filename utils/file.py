@@ -13,7 +13,7 @@ import re
 import utils
 from utils import logger
 
-from worker.metrics import merge_timelines, gen_charts, gen_point_metrics, trim_timeline
+from worker.metrics import merge_timelines, gen_charts, gen_point_metrics, trim_timeline, point_to_id
 
 
 def write_json(fid, results, directory, is_clique):
@@ -29,7 +29,7 @@ def write_csv(directory, rows, file_name):
         writer.writerows(rows)
 
 
-def create_csv_from_json(init_num, directory, fig_dir):
+def create_csv_from_json(init_num, directory, fig_dir, group_map):
     if not os.path.exists(directory):
         return
 
@@ -96,7 +96,7 @@ def create_csv_from_json(init_num, directory, fig_dir):
     with open(os.path.join(directory, 'charts.json'), "w") as f:
         json.dump(chart_data, f)
 
-    point_metrics, standby_metrics = gen_point_metrics(merged_timeline, start_time)
+    point_metrics, standby_metrics = gen_point_metrics(merged_timeline, start_time, group_map)
     write_csv(directory, point_metrics, 'illuminating')
     write_csv(directory, standby_metrics, 'standby')
 
@@ -247,6 +247,21 @@ def combine_xlsx(directory):
 def read_cliques_xlsx(path):
     df = pd.read_excel(path, sheet_name='cliques')
     return [np.array(eval(c)) for c in df["7 coordinates"]], [max(eval(d)) + 1 for d in df["6 dist between each pair"]]
+
+
+def get_group_mapping(path):
+    group_id = []
+
+    df = pd.read_excel(path, sheet_name='cliques')
+    group_map = dict()
+    for i, row in enumerate(df["7 coordinates"]):
+        for coord in eval(row):
+            pid = point_to_id(coord)
+            group_map[pid] = i
+            if i not in group_id:
+                group_id.append(i)
+
+    return group_map, group_id
 
 
 def delete_previous_json_files(path):

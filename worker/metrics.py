@@ -203,7 +203,7 @@ def gen_point_metrics(events, start_time):
 
                 if t > start_time:
                     illuminating_metrics[pid][3] += 1
-                    illuminating_metrics[pid][5].append(t - illuminating_events[pid][0][0])
+                    illuminating_metrics[pid][5].append(t - illuminating_events[pid][-2][0])
             else:
                 # Situations when the previous FLS who was assigned with this point never arrived
                 illuminating_events[pid] = [[t, e]]

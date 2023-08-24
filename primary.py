@@ -424,31 +424,63 @@ class PrimaryNode:
         if Config.SANITY_TEST > 0:
             sanity_result = [['', 'Stander Result', 'Experiment Result']]
 
-            experiment_result = read_metrics(self.dir_meta, [round(Config.SANITY_TEST_CONFIG[2][1]),
-                                                             round(Config.SANITY_TEST_CONFIG[2][2], 5)])
+            if Config.SANITY_TEST == 1:
+                experiment_result = read_metrics(self.dir_meta, [round(Config.SANITY_TEST_CONFIG[2][1]),
+                                                                 round(Config.SANITY_TEST_CONFIG[2][2], 5)])
 
-            stander_mttr = time_to_arrive(Config.MAX_SPEED, Config.ACCELERATION, Config.DECELERATION,
-                                          Config.SANITY_TEST_CONFIG[1][1] * Config.DISPLAY_CELL_SIZE)
+                stander_mttr = time_to_arrive(Config.MAX_SPEED, Config.ACCELERATION, Config.DECELERATION,
+                                              Config.SANITY_TEST_CONFIG[1][1] * Config.DISPLAY_CELL_SIZE)
+            else:
+                experiment_result = read_metrics(self.dir_meta, [round(Config.STANDBY_TEST_CONFIG[3][1]),
+                                                                 round(Config.STANDBY_TEST_CONFIG[3][2], 5)])
+                stander_mttr = time_to_arrive(Config.MAX_SPEED, Config.ACCELERATION, Config.DECELERATION,
+                                              Config.STANDBY_TEST_CONFIG[0][1] * Config.DISPLAY_CELL_SIZE)
             cur_midflight = 0
             num_illuminate = 0
             num_midflight = 0
-            for t in range(round(Config.SANITY_TEST_CONFIG[2][1]), round(Config.SANITY_TEST_CONFIG[2][2], 5)):
-                cur_midflight = num_mid_flight(Config.SANITY_TEST_CONFIG[0][1], experiment_result[4],
-                                               experiment_result[3])
-                num_midflight += cur_midflight
-                num_illuminate += num_illuminating(Config.SANITY_TEST_CONFIG[0][1], cur_midflight)
 
-            num_midflight /= len(
-                range(round(Config.SANITY_TEST_CONFIG[2][1]), round(Config.SANITY_TEST_CONFIG[2][2], 5)))
-            num_illuminate /= len(
-                range(round(Config.SANITY_TEST_CONFIG[2][1]), round(Config.SANITY_TEST_CONFIG[2][2], 5)))
-            num_failed = num_of_failed(Config.SANITY_TEST_CONFIG[2][2], experiment_result[3],
-                                       Config.SANITY_TEST_CONFIG[0][1])
+            if Config.SANITY_TEST == 1:
+                checkRange = range(round(Config.SANITY_TEST_CONFIG[2][1]), round(Config.SANITY_TEST_CONFIG[2][2], 5))
+            else:
+                checkRange = range(round(Config.STANDBY_TEST_CONFIG[3][1]), round(Config.STANDBY_TEST_CONFIG[3][2], 5))
+            for t in checkRange:
+
+                if Config.SANITY_TEST == 1:
+                    cur_midflight = num_mid_flight(Config.SANITY_TEST_CONFIG[0][1], experiment_result[4],
+                                                   experiment_result[3])
+                    num_midflight += cur_midflight
+                    num_illuminate += num_illuminating(Config.SANITY_TEST_CONFIG[0][1], cur_midflight)
+                else:
+                    cur_midflight = 1 if t % Config.STANDBY_TEST_CONFIG[2][1] >= experiment_result[4] else 0
+                    num_midflight += cur_midflight
+                    num_illuminate += num_illuminating(Config.K, cur_midflight)
+
+            if Config.SANITY_TEST == 1:
+                num_midflight /= len(
+                    range(round(Config.SANITY_TEST_CONFIG[2][1]), round(Config.SANITY_TEST_CONFIG[2][2], 5)))
+                num_illuminate /= len(
+                    range(round(Config.SANITY_TEST_CONFIG[2][1]), round(Config.SANITY_TEST_CONFIG[2][2], 5)))
+            else:
+                num_midflight /= len(
+                    range(round(Config.STANDBY_TEST_CONFIG[3][1]), round(Config.STANDBY_TEST_CONFIG[3][2], 5)))
+                num_illuminate /= len(
+                    range(round(Config.STANDBY_TEST_CONFIG[3][1]), round(Config.STANDBY_TEST_CONFIG[3][2], 5)))
+
+            if Config.SANITY_TEST == 1:
+                num_failed = num_of_failed(Config.SANITY_TEST_CONFIG[2][2], experiment_result[3],
+                                           Config.SANITY_TEST_CONFIG[0][1])
+            else:
+                num_failed = Config.DURATION/Config.STANDBY_TEST_CONFIG[2][1]
 
             sanity_result.append(['Total Failed', num_failed, experiment_result[0]])
             sanity_result.append(['Avg mid_flight', num_midflight, experiment_result[1]])
             sanity_result.append(['Avg_illuminate', num_illuminate, experiment_result[2]])
-            sanity_result.append(['MTTF', Config.FAILURE_TIMEOUT / 2, experiment_result[3]])
+
+            if Config.SANITY_TEST <= 1:
+                theo_MTTF = Config.FAILURE_TIMEOUT / 2
+            else:
+                theo_MTTF = Config.DURATION / 2
+            sanity_result.append(['MTTF', theo_MTTF, experiment_result[3]])
             sanity_result.append(['MTTR', stander_mttr, experiment_result[4]])
             utils.write_csv(self.dir_meta, sanity_result, 'sanity_check')
 

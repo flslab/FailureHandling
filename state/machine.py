@@ -15,7 +15,7 @@ from utils import write_json, logger
 
 class StateMachine:
 
-    def __init__(self, context, sock, metrics, event_queue):
+    def __init__(self, context, sock, metrics, event_queue, default_failure_timeout):
         self.state = None
         self.context = context
         self.metrics = metrics
@@ -30,6 +30,7 @@ class StateMachine:
         self.is_arrived = False
         self.unhandled_move = None
         self.move_time = 0
+        self.default_failure_timeout = default_failure_timeout
 
     def start(self):
         logger.debug(f"STARTED {self.context} {time.time()}")
@@ -108,7 +109,7 @@ class StateMachine:
             self.context.standby_id = msg.fid
             self.context.metrics.log_standby_id(time.time(), self.context.standby_id)
 
-            logger.debug(f"STANDBY CHANGED {self.context} standby={self.context.standby_id}")
+            logger.debug(f"STANDBY ASSIGNED {self.context} standby={self.context.standby_id}")
 
     def replace_failed_fls(self, msg):
         self.context.is_standby = False
@@ -147,12 +148,10 @@ class StateMachine:
             self.context.standby_id = None
             self.context.metrics.log_standby_id(time.time(), self.context.standby_id)
 
-            logger.debug(f"STANDBY CHANGED {self.context} standby={self.context.standby_id}")
+            logger.debug(f"STANDBY FAILED {self.context} standby={self.context.standby_id}")
 
-    def set_timer_to_fail(self):
-        if Config.SANITY_TEST:
-            failure_timeout = random.random() * Config.FAILURE_TIMEOUT
-        else:
+    def set_timer_to_fail(self, failure_timeout=None):
+        if failure_timeout is None:
             failure_timeout = random.random() * Config.FAILURE_TIMEOUT
 
         self.timer_failure = threading.Timer(failure_timeout, self.put_state_in_q, (MessageTypes.FAILURE_DETECTED,))
@@ -174,11 +173,11 @@ class StateMachine:
         self.state = state
 
         if self.state == StateTypes.SINGLE:
-            self.set_timer_to_fail()
+            self.set_timer_to_fail(self.default_failure_timeout)
 
     def change_move_state(self, event, args=()):
         self.is_mid_flight = False
-        logger.debug(f"MOVE ENQUEUE fid={self.context.fid} time={time.time()-self.metrics.start_time}")
+        logger.debug(f"MOVE ENQUEUE fid={self.context.fid} time={time.time() - self.metrics.start_time}")
         self.unhandled_move = self.put_state_in_q(event, args=args)
 
     def put_state_in_q(self, event, args=()):

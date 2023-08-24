@@ -6,6 +6,7 @@ from multiprocessing import Process
 from worker import WorkerProcess
 from utils import logger
 
+
 class Dispatcher(threading.Thread):
     def __init__(self, q, r, coord):
         super(Dispatcher, self).__init__()

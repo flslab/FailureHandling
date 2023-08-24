@@ -12,12 +12,12 @@ class Config:
     DISPLAY_CELL_SIZE = 0.05
     BUSY_WAITING = False
     DURATION = 60 * 1
-    K = 0  # if k = 0 no standbys are deployed
+    K = 7  # if k = 0 no standbys are deployed
     SHAPE = 'racecar'
     RESULTS_PATH = 'results'
     DEBUG = True
     FILE_NAME_KEYS = [('DISPATCHERS', 'D'), ('DISPATCH_RATE', 'R'), ('FAILURE_TIMEOUT', 'T'), ('MAX_SPEED', 'S'),
-                      ('SANITY_TEST', '')]
+                      ('SANITY_TEST', 'test')]
     DIR_KEYS = ['K']
     SERVER_TIMEOUT = 120
     PROCESS_JOIN_TIMEOUT = 120
@@ -25,6 +25,7 @@ class Config:
     DISPATCH_RATE = "inf"  # valid values 'inf' or a non-zero number
     MULTICAST = False  # should be False for cloudlab and True for AWS
     INPUT = 'racecar_K5'  # place the file int the results directory
-    RESET_AFTER_INITIAL_DEPLOY = True  # flag that if reset all metrics after intial FLSs are all deployed
-    SANITY_TEST = False
-    SANITY_TEST_CONFIG = [('NUMBER_OF_FLS', 10), ('DIST_TO_POINT', 10), ('CHECK_TIME_RANGE', 60 * 0.5, 60 * 1), ('FAILURE_TIMEOUT', 20)]
+    RESET_AFTER_INITIAL_DEPLOY = False  # flag that if reset all metrics after intial FLSs are all deployed
+    SANITY_TEST = 2 # 0 for not test, 1 for normal test with hub and no standby, 2 for standby test with no hub
+    SANITY_TEST_CONFIG = [('NUMBER_OF_FLS', 10), ('DIST_TO_POINT', 10), ('CHECK_TIME_RANGE', 60 * 0.5, 60 * 1)]
+    STANDBY_TEST_CONFIG = [('RADIUS', 10), ('DEPLOY_DIST', 10), ('FAILURE_TIMEOUT_GAP', 10)]

@@ -49,7 +49,12 @@ class SecondaryNode:
                 break
             else:
                 logger.debug(f"CREATE PROCESS fid={msg['fid']} time={time.time()}")
-                p = worker.WorkerProcess(start_time=self.start_time, dir_meta=self.dir_meta, **msg)
+                default_failure_timeout = None
+                if Config.SANITY_TEST == 2:
+                    default_failure_timeout = msg['fid'] * Config.STANDBY_TEST_CONFIG[2][1]
+                p = worker.WorkerProcess(start_time=self.start_time, dir_meta=self.dir_meta,
+                                         fail_timeout=default_failure_timeout,
+                                         **msg)
                 logger.debug(f"PROCESS_START fid={msg['fid']} time={time.time()}")
                 p.start()
                 self.processes[msg["fid"]] = p

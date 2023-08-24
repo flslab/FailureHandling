@@ -13,7 +13,7 @@ import re
 import utils
 from utils import logger
 
-from worker.metrics import merge_timelines, gen_charts, gen_point_metrics
+from worker.metrics import merge_timelines, gen_charts, gen_point_metrics, trim_timeline
 
 
 def write_json(fid, results, directory, is_clique):
@@ -27,35 +27,6 @@ def write_csv(directory, rows, file_name):
     with open(os.path.join(directory, f'{file_name}.csv'), 'w', newline='') as csvfile:
         writer = csv.writer(csvfile)
         writer.writerows(rows)
-
-
-def trim_timeline(timeline, init_num):
-    deployed = 0
-    failed = 0
-    illuminating = 0
-    standby = 0
-    mid_flight = 0
-    start_time = 0
-
-    for i, event in enumerate(timeline):
-        if event[1] == 0:
-            deployed += 1
-            mid_flight += 1
-        elif event[1] == 3 or event[1] == 5:
-            failed += 1
-            mid_flight -= 1
-        elif event[1] == 1 or event[1] == 6:
-            illuminating += 1
-            mid_flight -= 1
-        elif event[1] == 2:
-            standby += 1
-            mid_flight -= 1
-
-        if deployed >= init_num:
-            timeline = timeline[i + 1:]
-            start_time = event[0]
-            break
-    return timeline, [failed, illuminating, standby, mid_flight], start_time
 
 
 def create_csv_from_json(init_num, directory, fig_dir):
@@ -113,17 +84,19 @@ def create_csv_from_json(init_num, directory, fig_dir):
 
     num_metrics = [0, 0, 0, 0]
     start_time = 0
+
+    trimed_timeline = merged_timeline
     if Config.RESET_AFTER_INITIAL_DEPLOY:
-        merged_timeline, num_metrics, start_time = trim_timeline(merged_timeline, init_num)
+        trimed_timeline, num_metrics, start_time = trim_timeline(merged_timeline, init_num)
 
     with open(os.path.join(directory, 'timeline.json'), "w") as f:
-        json.dump(merged_timeline, f)
+        json.dump(trimed_timeline, f)
 
-    chart_data = gen_charts(merged_timeline, start_time, num_metrics, fig_dir)
+    chart_data = gen_charts(trimed_timeline, start_time, num_metrics, fig_dir)
     with open(os.path.join(directory, 'charts.json'), "w") as f:
         json.dump(chart_data, f)
 
-    point_metrics, standby_metrics = gen_point_metrics(merged_timeline)
+    point_metrics, standby_metrics = gen_point_metrics(merged_timeline, start_time)
     write_csv(directory, point_metrics, 'illuminating')
     write_csv(directory, standby_metrics, 'standby')
 

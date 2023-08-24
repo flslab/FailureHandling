@@ -22,6 +22,7 @@ from utils.socket import send_msg
 from utils.generate_circle_coord import generate_circle_coordinates
 from utils.sanity_metrics import *
 from utils.sanity_test_check import *
+from random import choice
 
 CONFIG = TestConfig if TestConfig.ENABLED else Config
 
@@ -155,7 +156,7 @@ class PrimaryNode:
         l = 60
         w = 60
         if Config.DISPATCHERS == 1:
-            if Config.SANITY_TEST:
+            if Config.SANITY_TEST > 0:
                 self.dispatchers_coords = np.array([self.center])
             else:
                 self.dispatchers_coords = np.array([[l / 2, w / 2, 0]])
@@ -195,18 +196,24 @@ class PrimaryNode:
         self._send_msg_to_all_nodes((self.start_time, self.dir_meta))
 
     def _read_groups(self):
-        if not Config.SANITY_TEST:
+        if Config.SANITY_TEST == 0:
             self.groups, self.radio_ranges = read_cliques_xlsx(
                 os.path.join(self.dir_experiment, f'{Config.INPUT}.xlsx'))
-        else:
-            logger.debug(f"Height Config={Config.SANITY_TEST_CONFIG[1][1]}, {type(Config.SANITY_TEST_CONFIG[1][1])}")
+        elif Config.SANITY_TEST == 1:
             height = min([2, math.sqrt(Config.SANITY_TEST_CONFIG[1][1])])
             radius = math.sqrt(Config.SANITY_TEST_CONFIG[1][1] ** 2 - height ** 2)
             self.center = [radius + 1, radius + 1, 0]
             self.groups = generate_circle_coordinates(self.center, radius, height, Config.SANITY_TEST_CONFIG[0][1])
             self.radio_ranges = [Config.MAX_RANGE] * len(self.groups)
 
-        if Config.DEBUG and not Config.SANITY_TEST:
+        elif Config.SANITY_TEST == 2:
+            height = Config.STANDBY_TEST_CONFIG[1][1]
+            radius = Config.STANDBY_TEST_CONFIG[0][1]
+            self.center = [radius + 1, radius + 1, 10]
+            self.groups = generate_circle_coordinates(self.center, radius, height, Config.K)
+            self.radio_ranges = [Config.MAX_RANGE] * len(self.groups)
+
+        if Config.DEBUG and Config.SANITY_TEST == 0:
             self.groups = self.groups[:2]
             self.radio_ranges = self.radio_ranges[:2]
 
@@ -238,9 +245,12 @@ class PrimaryNode:
     def _assign_dispatcher(self, properties):
         return self.dispatch_policy.assign(dispatchers=self.dispatchers, **properties)
 
-    def _deploy_fls(self, properties):
+    def _deploy_fls(self, properties, deploy_at_destination=False):
         nid = properties["fid"] % self.N
         dispatcher = self._assign_dispatcher(properties)
+        if deploy_at_destination:
+            properties["el"] = properties["gtl"]
+
         if properties["el"] is None:
             properties["el"] = dispatcher.coord
         dispatcher.q.put(lambda: self._send_msg_to_node(nid, properties))
@@ -279,7 +289,9 @@ class PrimaryNode:
                     "radio_range": self.group_radio_range[group_id],
                     "group_id": group_id,
                 }
-                self._deploy_fls(fls)
+
+                # If is doing stnadby sanity test, deploy the FLS directly to points on ring
+                self._deploy_fls(fls, Config.SANITY_TEST == 2)
                 self.num_initial_flss += 1
 
             # deploy standby
@@ -291,7 +303,7 @@ class PrimaryNode:
                     "radio_range": self.group_radio_range[group_id],
                     "is_standby": True, "group_id": group_id,
                 }
-                self._deploy_fls(fls)
+                self._deploy_fls(fls, Config.SANITY_TEST == 2)
                 self.num_initial_standbys += 1
 
         logger.info(f"Assigned {self.pid} FLSs to dispatchers")
@@ -329,7 +341,6 @@ class PrimaryNode:
                         self.num_replaced_flss += 1
 
                         logger.debug(f"fid={self.pid} normal failed_fid={msg.fid}")
-
                     else:
                         self.group_standby_id[group_id] = self.pid
 
@@ -387,7 +398,8 @@ class PrimaryNode:
         for dispatcher in self.dispatchers:
             if Config.RESET_AFTER_INITIAL_DEPLOY:
                 info.append([dispatcher.coord.tolist(), dispatcher.num_dispatched - self.num_initial_standbys,
-                             sum(dispatcher.delay_list[self.num_initial_standbys:]) / len(dispatcher.delay_list[self.num_initial_standbys:])
+                             sum(dispatcher.delay_list[self.num_initial_standbys:]) / len(
+                                 dispatcher.delay_list[self.num_initial_standbys:])
                              if len(dispatcher.delay_list) > self.num_initial_standbys else 0,
                              dispatcher.delay_list])
             else:
@@ -404,11 +416,12 @@ class PrimaryNode:
         logger.info("Writing results")
         utils.write_csv(self.dir_meta, self._get_dispatched_num(), 'dispatcher')
         utils.write_csv(self.dir_meta, self._get_metrics(), 'metrics')
-        utils.create_csv_from_json(self.init_num, self.dir_meta, os.path.join(self.dir_figure, f'{self.result_name}.jpg'))
+        utils.create_csv_from_json(self.init_num, self.dir_meta,
+                                   os.path.join(self.dir_figure, f'{self.result_name}.jpg'))
         utils.write_configs(self.dir_meta, self.start_time)
         utils.combine_csvs(self.dir_meta, self.dir_experiment, "reli_" + self.result_name)
 
-        if Config.SANITY_TEST:
+        if Config.SANITY_TEST > 0:
             sanity_result = [['', 'Stander Result', 'Experiment Result']]
 
             experiment_result = read_metrics(self.dir_meta, [round(Config.SANITY_TEST_CONFIG[2][1]),
@@ -420,7 +433,8 @@ class PrimaryNode:
             num_illuminate = 0
             num_midflight = 0
             for t in range(round(Config.SANITY_TEST_CONFIG[2][1]), round(Config.SANITY_TEST_CONFIG[2][2], 5)):
-                cur_midflight = num_mid_flight(Config.SANITY_TEST_CONFIG[0][1], experiment_result[4], experiment_result[3])
+                cur_midflight = num_mid_flight(Config.SANITY_TEST_CONFIG[0][1], experiment_result[4],
+                                               experiment_result[3])
                 num_midflight += cur_midflight
                 num_illuminate += num_illuminating(Config.SANITY_TEST_CONFIG[0][1], cur_midflight)
 
@@ -428,7 +442,8 @@ class PrimaryNode:
                 range(round(Config.SANITY_TEST_CONFIG[2][1]), round(Config.SANITY_TEST_CONFIG[2][2], 5)))
             num_illuminate /= len(
                 range(round(Config.SANITY_TEST_CONFIG[2][1]), round(Config.SANITY_TEST_CONFIG[2][2], 5)))
-            num_failed = num_of_failed(Config.SANITY_TEST_CONFIG[2][2], experiment_result[3], Config.SANITY_TEST_CONFIG[0][1])
+            num_failed = num_of_failed(Config.SANITY_TEST_CONFIG[2][2], experiment_result[3],
+                                       Config.SANITY_TEST_CONFIG[0][1])
 
             sanity_result.append(['Total Failed', num_failed, experiment_result[0]])
             sanity_result.append(['Avg mid_flight', num_midflight, experiment_result[1]])

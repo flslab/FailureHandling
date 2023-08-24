@@ -59,9 +59,40 @@ def merge_timelines(timelines):
             heapq.heappush(heap, (next_elem, lst_idx, elem_idx + 1))
     return merged
 
-def trim_timeline(merged_timelines):
-    for event in merged_timelines:
-        event[1]
+
+def trim_timeline(timeline, init_num):
+    deployed = 0
+    illuminating_failed = 0
+    standby_failed = 0
+    illuminating = 0
+    standby = 0
+    mid_flight = 0
+    start_time = 0
+    dispatch_event = []
+
+    for i, event in enumerate(timeline):
+        if event[1] == 0:
+            dispatch_event.append(event)
+            deployed += 1
+            mid_flight += 1
+        elif event[1] == 3:
+            illuminating_failed += 1
+            mid_flight -= 1
+        elif event[1] == 5:
+            standby_failed += 1
+            mid_flight -= 1
+        elif event[1] == 1 or event[1] == 6:
+            illuminating += 1
+            mid_flight -= 1
+        elif event[1] == 2:
+            standby += 1
+            mid_flight -= 1
+
+        if deployed >= init_num:
+            timeline = timeline[i + 1:]
+            start_time = event[0]
+            break
+    return timeline, [illuminating_failed, standby_failed, illuminating, standby, mid_flight], start_time
 
 
 def _avg(values):
@@ -86,7 +117,7 @@ def point_to_id(point):
     return '_'.join([str(p) for p in point])
 
 
-def gen_point_metrics(events):
+def gen_point_metrics(events, start_time):
     fid_to_point = dict()
     illuminating_events = dict()
     standby_events = dict()
@@ -132,12 +163,13 @@ def gen_point_metrics(events):
 
             if pid not in pid_list:
                 pid_list.append(pid)
-                illuminating_metrics[0,3]= [pid, 0, 0, 0, [], []]
+                illuminating_metrics[0, 3] = [pid, 0, 0, 0, [], []]
 
         elif e == TimelineEvents.FAIL and event[2] is False:
             pid = fid_to_point[fid]
             illuminating_events[pid].append([t, e])
-            illuminating_metrics[pid][1] += 1
+            if t > start_time:
+                illuminating_metrics[pid][1] += 1
 
         elif e == TimelineEvents.STANDBY_FAIL:
             # Check if the stand by FLS is in mid-flight
@@ -155,8 +187,9 @@ def gen_point_metrics(events):
             fid_to_point[fid] = pid
             if pid in illuminating_events:
                 illuminating_events[pid].append([t, e])
-                illuminating_metrics[pid][2] += 1
-                illuminating_metrics[pid][4].append(t - illuminating_events[pid][-2][0])
+                if t > start_time:
+                    illuminating_metrics[pid][2] += 1
+                    illuminating_metrics[pid][4].append(t - illuminating_events[pid][-2][0])
             else:
                 illuminating_events[pid] = [[t, e]]
                 illuminating_metrics[pid] = [pid, 0, 0, 0, [], []]
@@ -167,8 +200,10 @@ def gen_point_metrics(events):
 
             if pid in illuminating_events:
                 illuminating_events[pid].append([t, e])
-                illuminating_metrics[pid][3] += 1
-                illuminating_metrics[pid][5].append(t - illuminating_events[pid][0][0])
+
+                if t > start_time:
+                    illuminating_metrics[pid][3] += 1
+                    illuminating_metrics[pid][5].append(t - illuminating_events[pid][0][0])
             else:
                 # Situations when the previous FLS who was assigned with this point never arrived
                 illuminating_events[pid] = [[t, e]]
@@ -179,8 +214,9 @@ def gen_point_metrics(events):
             fid_to_point[fid] = pid
             if pid in standby_events:
                 standby_events[pid].append([t, e])
-                standby_metrics[pid][3] += 1
-                standby_metrics[pid][4].append(t - standby_events[pid][-2][0])
+                if t > start_time:
+                    standby_metrics[pid][3] += 1
+                    standby_metrics[pid][4].append(t - standby_events[pid][-2][0])
             else:
                 standby_events[pid] = [[t, e]]
                 standby_metrics[pid] = [pid, 0, 0, 0, []]
@@ -188,13 +224,13 @@ def gen_point_metrics(events):
         elif e == TimelineEvents.REPLACE:
             pid = fid_to_point[fid]
             if pid in standby_events:
-                standby_events[pid].append([t, e])
+                if t > start_time:
+                    standby_events[pid].append([t, e])
             else:
                 standby_events[pid] = [[t, e]]
                 standby_metrics[pid] = [pid, 0, 0, 0, []]
 
             standby_metrics[pid][2] += 1
-
 
     i_rows = list(illuminating_metrics.values())
     s_rows = list(standby_metrics.values())
@@ -279,11 +315,11 @@ def gen_charts(events, start_time, num_metrics, fig_dir):
     mid_flight["t"].append(events[-1][0])
     mid_flight["y"].append(mid_flight["y"][-1])
 
-    plt.step([t-1 for t in dispatched["t"]], dispatched["y"], where='post', label="Dispatched FLSs")
-    plt.step([t-1 for t in standby["t"]], standby["y"], where='post', label="Standby FLSs")
-    plt.step([t-1 for t in illuminating["t"]], illuminating["y"], where='post', label="Illuminating FLSs")
-    plt.step([t-1 for t in failed["t"]], failed["y"], where='post', label="Failed FLSs")
-    plt.step([t-1 for t in mid_flight["t"]], mid_flight["y"], where='post', label="Mid-flight FLSs")
+    plt.step([t - 1 for t in dispatched["t"]], dispatched["y"], where='post', label="Dispatched FLSs")
+    plt.step([t - 1 for t in standby["t"]], standby["y"], where='post', label="Standby FLSs")
+    plt.step([t - 1 for t in illuminating["t"]], illuminating["y"], where='post', label="Illuminating FLSs")
+    plt.step([t - 1 for t in failed["t"]], failed["y"], where='post', label="Failed FLSs")
+    plt.step([t - 1 for t in mid_flight["t"]], mid_flight["y"], where='post', label="Mid-flight FLSs")
     plt.gca().xaxis.set_major_locator(mpl.ticker.MaxNLocator(integer=True))
     plt.gca().yaxis.set_major_locator(mpl.ticker.MaxNLocator(integer=True))
     # Add a legend

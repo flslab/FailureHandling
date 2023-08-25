@@ -527,7 +527,7 @@ class PrimaryNode:
             for i in range(len(report_key)):
                 report.append([report_key[i], report_metrics[i]])
 
-            utils.write_csv(self.dir_meta, report, 'final_report')
+            utils.write_csv(self.dir_meta, report, self.result_name + '_final_report')
 
     def stop_experiment(self):
         self._stop_dispatchers()

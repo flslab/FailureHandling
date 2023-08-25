@@ -22,7 +22,7 @@ class Config:
     SERVER_TIMEOUT = 120
     PROCESS_JOIN_TIMEOUT = 120
     DISPATCHERS = 1  # valid values 1 3 5
-    DISPATCH_RATE = "inf"  # valid values 'inf' or a non-zero number
+    DISPATCH_RATE = 5  # valid values 'inf' or a non-zero number
     MULTICAST = False  # should be False for cloudlab and True for AWS
     INPUT = 'racecar_K5'  # place the file int the results directory
     RESET_AFTER_INITIAL_DEPLOY = False  # flag that if reset all metrics after intial FLSs are all deployed

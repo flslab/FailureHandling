@@ -15,13 +15,12 @@ def_general_conf = {
     "MAX_SPEED": "3",
     "DISPLAY_CELL_SIZE": "0.05",
     "BUSY_WAITING": "False",
-    "DURATION": "60 * 10",
+    "DURATION": "60 * 30",
     "K": "20",
     "SHAPE": "'chess'",
     "RESULTS_PATH": "'/proj/nova-PG0/shuqin/results'",
     "DEBUG": "False",
-    "FILE_NAME_KEYS": "[('DISPATCHERS', 'D'), ('DISPATCH_RATE', 'R'), ('FAILURE_TIMEOUT', 'T'), ('MAX_SPEED', 'S'), "
-                      "('SANITY_TEST', 'test')]",
+    "FILE_NAME_KEYS": "[('DISPATCHERS', 'D'), ('DISPATCH_RATE', 'R'), ('FAILURE_TIMEOUT', 'T'), ('MAX_SPEED', 'S')]",
     "DIR_KEYS": "['K']",
     "SERVER_TIMEOUT": "120",
     "PROCESS_JOIN_TIMEOUT": "120",
@@ -40,7 +39,7 @@ general_props = [
     {
         "keys": ["DISPATCH_RATE"],
         # "values": ["1", "'inf'"]
-        "values": ["'inf'"]
+        "values": ["'inf'", "100"]
     },
     {
         "keys": ["K", "INPUT"],

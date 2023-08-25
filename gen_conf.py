@@ -53,7 +53,7 @@ general_props = [
     },
     {
         "keys": ["DISPATCHERS"],
-        "values": ["1"]
+        "values": ["1"],
         # "values": ["1", "3"]
     },
     {

@@ -422,6 +422,101 @@ class PrimaryNode:
             group_id = [0]
         return group_map, group_id
 
+    def write_sanity_results(self):
+        sanity_result = [['', 'Stander Result', 'Experiment Result']]
+
+        if Config.SANITY_TEST == 1:
+            experiment_result = read_sanity_metrics(self.dir_meta, [round(Config.SANITY_TEST_CONFIG[2][1]),
+                                                                    round(Config.SANITY_TEST_CONFIG[2][2], 5)])
+
+            stander_mttr = time_to_arrive(Config.MAX_SPEED, Config.ACCELERATION, Config.DECELERATION,
+                                          Config.SANITY_TEST_CONFIG[1][1] * Config.DISPLAY_CELL_SIZE)
+        else:
+            experiment_result = read_sanity_metrics(self.dir_meta, [round(Config.STANDBY_TEST_CONFIG[3][1]),
+                                                                    round(Config.STANDBY_TEST_CONFIG[3][2], 5)])
+            stander_mttr = time_to_arrive(Config.MAX_SPEED, Config.ACCELERATION, Config.DECELERATION,
+                                          Config.STANDBY_TEST_CONFIG[0][1] * Config.DISPLAY_CELL_SIZE)
+        cur_midflight = 0
+        num_illuminate = 0
+        num_midflight = 0
+
+        if Config.SANITY_TEST == 1:
+            checkRange = range(round(Config.SANITY_TEST_CONFIG[2][1]), round(Config.SANITY_TEST_CONFIG[2][2], 5))
+        else:
+            checkRange = range(round(Config.STANDBY_TEST_CONFIG[3][1]), round(Config.STANDBY_TEST_CONFIG[3][2], 5))
+        for t in checkRange:
+
+            if Config.SANITY_TEST == 1:
+                cur_midflight = num_mid_flight(Config.SANITY_TEST_CONFIG[0][1], experiment_result[4],
+                                               experiment_result[3])
+                num_midflight += cur_midflight
+                num_illuminate += num_illuminating(Config.SANITY_TEST_CONFIG[0][1], cur_midflight)
+            else:
+                cur_midflight = 1 if t % Config.STANDBY_TEST_CONFIG[2][1] >= experiment_result[4] else 0
+                num_midflight += cur_midflight
+                num_illuminate += num_illuminating(Config.K, cur_midflight)
+
+        if Config.SANITY_TEST == 1:
+            num_midflight /= len(
+                range(round(Config.SANITY_TEST_CONFIG[2][1]), round(Config.SANITY_TEST_CONFIG[2][2], 5)))
+            num_illuminate /= len(
+                range(round(Config.SANITY_TEST_CONFIG[2][1]), round(Config.SANITY_TEST_CONFIG[2][2], 5)))
+        else:
+            num_midflight /= len(
+                range(round(Config.STANDBY_TEST_CONFIG[3][1]), round(Config.STANDBY_TEST_CONFIG[3][2], 5)))
+            num_illuminate /= len(
+                range(round(Config.STANDBY_TEST_CONFIG[3][1]), round(Config.STANDBY_TEST_CONFIG[3][2], 5)))
+
+        if Config.SANITY_TEST == 1:
+            num_failed = num_of_failed(Config.SANITY_TEST_CONFIG[2][2], experiment_result[3],
+                                       Config.SANITY_TEST_CONFIG[0][1])
+        else:
+            num_failed = Config.DURATION / Config.STANDBY_TEST_CONFIG[2][1]
+
+        sanity_result.append(['Total Failed', num_failed, experiment_result[0]])
+        sanity_result.append(['Avg mid_flight', num_midflight, experiment_result[1]])
+        sanity_result.append(['Avg_illuminate', num_illuminate, experiment_result[2]])
+
+        if Config.SANITY_TEST <= 1:
+            theo_MTTF = Config.FAILURE_TIMEOUT / 2
+        else:
+            theo_MTTF = Config.DURATION / 2
+        sanity_result.append(['MTTF', theo_MTTF, experiment_result[3]])
+        sanity_result.append(['MTTR', stander_mttr, experiment_result[4]])
+        utils.write_csv(self.dir_meta, sanity_result, 'sanity_check')
+
+
+    def write_final_report(self,group_id):
+
+        report_key = [
+            "Total Dispatched",
+            "Total Failed",
+            "Mid-Flight",
+            "Illuminating",
+            "Avg Dist Traveled",
+            "Min Dist Traveled",
+            "Max Dist Traveled",
+            "Median Dist Traveled",
+            "Avg MTTR",
+            "Min MTTR",
+            "Max MTTR",
+            "Median MTTR",
+            "Deploy Rate",
+            "Number of Groups",
+        ]
+        time_range = [0, Config.DURATION + 10]
+        report_metrics = get_report_metrics(self.dir_meta, time_range, len(group_id))
+        report_metrics = [str(metric) for metric in report_metrics]
+        report_metrics.append(str(Config.DISPATCH_RATE))
+        report_metrics.append(str(len(group_id)))
+
+        report = []
+
+        for i in range(len(report_key)):
+            report.append([report_key[i], report_metrics[i]])
+
+        utils.write_csv(self.dir_meta, report, self.result_name + '_final_report')
+
 
     def _write_results(self):
         logger.info("Writing results")
@@ -430,104 +525,15 @@ class PrimaryNode:
 
         group_map, group_id = self.gen_group_map()
 
-        utils.create_csv_from_json(self.init_num, self.dir_meta,
+        utils.create_csv_from_json(Config, self.init_num, self.dir_meta,
                                    os.path.join(self.dir_figure, f'{self.result_name}.jpg'), group_map)
         utils.write_configs(self.dir_meta, self.start_time)
         utils.combine_csvs(self.dir_meta, self.dir_experiment, "reli_" + self.result_name)
 
         if Config.SANITY_TEST > 0:
-            sanity_result = [['', 'Stander Result', 'Experiment Result']]
-
-            if Config.SANITY_TEST == 1:
-                experiment_result = read_sanity_metrics(self.dir_meta, [round(Config.SANITY_TEST_CONFIG[2][1]),
-                                                                        round(Config.SANITY_TEST_CONFIG[2][2], 5)])
-
-                stander_mttr = time_to_arrive(Config.MAX_SPEED, Config.ACCELERATION, Config.DECELERATION,
-                                              Config.SANITY_TEST_CONFIG[1][1] * Config.DISPLAY_CELL_SIZE)
-            else:
-                experiment_result = read_sanity_metrics(self.dir_meta, [round(Config.STANDBY_TEST_CONFIG[3][1]),
-                                                                        round(Config.STANDBY_TEST_CONFIG[3][2], 5)])
-                stander_mttr = time_to_arrive(Config.MAX_SPEED, Config.ACCELERATION, Config.DECELERATION,
-                                              Config.STANDBY_TEST_CONFIG[0][1] * Config.DISPLAY_CELL_SIZE)
-            cur_midflight = 0
-            num_illuminate = 0
-            num_midflight = 0
-
-            if Config.SANITY_TEST == 1:
-                checkRange = range(round(Config.SANITY_TEST_CONFIG[2][1]), round(Config.SANITY_TEST_CONFIG[2][2], 5))
-            else:
-                checkRange = range(round(Config.STANDBY_TEST_CONFIG[3][1]), round(Config.STANDBY_TEST_CONFIG[3][2], 5))
-            for t in checkRange:
-
-                if Config.SANITY_TEST == 1:
-                    cur_midflight = num_mid_flight(Config.SANITY_TEST_CONFIG[0][1], experiment_result[4],
-                                                   experiment_result[3])
-                    num_midflight += cur_midflight
-                    num_illuminate += num_illuminating(Config.SANITY_TEST_CONFIG[0][1], cur_midflight)
-                else:
-                    cur_midflight = 1 if t % Config.STANDBY_TEST_CONFIG[2][1] >= experiment_result[4] else 0
-                    num_midflight += cur_midflight
-                    num_illuminate += num_illuminating(Config.K, cur_midflight)
-
-            if Config.SANITY_TEST == 1:
-                num_midflight /= len(
-                    range(round(Config.SANITY_TEST_CONFIG[2][1]), round(Config.SANITY_TEST_CONFIG[2][2], 5)))
-                num_illuminate /= len(
-                    range(round(Config.SANITY_TEST_CONFIG[2][1]), round(Config.SANITY_TEST_CONFIG[2][2], 5)))
-            else:
-                num_midflight /= len(
-                    range(round(Config.STANDBY_TEST_CONFIG[3][1]), round(Config.STANDBY_TEST_CONFIG[3][2], 5)))
-                num_illuminate /= len(
-                    range(round(Config.STANDBY_TEST_CONFIG[3][1]), round(Config.STANDBY_TEST_CONFIG[3][2], 5)))
-
-            if Config.SANITY_TEST == 1:
-                num_failed = num_of_failed(Config.SANITY_TEST_CONFIG[2][2], experiment_result[3],
-                                           Config.SANITY_TEST_CONFIG[0][1])
-            else:
-                num_failed = Config.DURATION/Config.STANDBY_TEST_CONFIG[2][1]
-
-            sanity_result.append(['Total Failed', num_failed, experiment_result[0]])
-            sanity_result.append(['Avg mid_flight', num_midflight, experiment_result[1]])
-            sanity_result.append(['Avg_illuminate', num_illuminate, experiment_result[2]])
-
-            if Config.SANITY_TEST <= 1:
-                theo_MTTF = Config.FAILURE_TIMEOUT / 2
-            else:
-                theo_MTTF = Config.DURATION / 2
-            sanity_result.append(['MTTF', theo_MTTF, experiment_result[3]])
-            sanity_result.append(['MTTR', stander_mttr, experiment_result[4]])
-            utils.write_csv(self.dir_meta, sanity_result, 'sanity_check')
-
+            self.write_sanity_results()
         else:
-
-            report_key = [
-                "Total Dispatched",
-                "Total Failed",
-                "Mid-Flight",
-                "Illuminating",
-                "Avg Dist Traveled",
-                "Max Dist Traveled",
-                "Min Dist Traveled",
-                "Median Dist Traveled",
-                "Avg MTTR",
-                "Max MTTR",
-                "Min MTTR",
-                "Median MTTR",
-                "Deploy Rate",
-                "Number of Groups",
-            ]
-            time_range = [0, Config.DURATION + 10]
-            report_metrics = get_report_metrics(self.dir_meta, time_range, len(group_id))
-            report_metrics = [str(metric) for metric in report_metrics]
-            report_metrics.append(str(Config.DISPATCH_RATE))
-            report_metrics.append(str(len(group_id)))
-
-            report = []
-
-            for i in range(len(report_key)):
-                report.append([report_key[i], report_metrics[i]])
-
-            utils.write_csv(self.dir_meta, report, self.result_name + '_final_report')
+            self.write_final_report(group_id)
 
     def stop_experiment(self):
         self._stop_dispatchers()
@@ -573,4 +579,64 @@ if __name__ == '__main__':
 
     primary_node.start_termination_timer()
     primary_node.start_experiment()
-    # primary_node.stop_experiment()
+    primary_node.stop_experiment()
+
+    # for c in range(0,24):
+    #     # CONFIG = eval(f"config{c}").Config
+    #     # Config = CONFIG
+    #
+    #     if len(CONFIG.FILE_NAME_KEYS):
+    #         result_config = join_config_properties(CONFIG, CONFIG.FILE_NAME_KEYS)
+    #     else:
+    #         result_config = name
+    #     result_name = f"{Config.SHAPE}_{result_config}"
+    #     print(result_name)
+    #
+    #     if len(CONFIG.DIR_KEYS):
+    #         group_config = join_config_properties(CONFIG, CONFIG.DIR_KEYS)
+    #     else:
+    #         group_config = ""
+    #
+    #     dir_experiment = os.path.join(Config.RESULTS_PATH, Config.SHAPE, group_config)
+    #     dir_meta = os.path.join(dir_experiment, result_name)
+    #     dir_figure = os.path.join(dir_experiment, 'figures')
+
+        # utils.create_csv_from_timeline(dir_meta)
+        #
+        # utils.combine_csvs(dir_meta, dir_experiment, "reli_" + result_name)
+        #
+        # report_key = [
+        #     "Total Dispatched",
+        #     "Total Failed",
+        #     "Mid-Flight",
+        #     "Illuminating",
+        #     "Avg Dist Traveled",
+        #     "Min Dist Traveled",
+        #     "Max Dist Traveled",
+        #     "Median Dist Traveled",
+        #     "Avg MTTR",
+        #     "Min MTTR",
+        #     "Max MTTR",
+        #     "Median MTTR",
+        #     "Deploy Rate",
+        #     "Number of Groups",
+        # ]
+        # time_range = [0, Config.DURATION + 10]
+        # report_metrics = get_report_metrics_no_group(dir_meta, time_range)
+        # report_metrics = [str(metric) for metric in report_metrics]
+        # report_metrics.append(str(Config.DISPATCH_RATE))
+        #
+        # if CONFIG.K == 3:
+        #     group_num = 152
+        # elif CONFIG.K == 10:
+        #     group_num = 46
+        # else:
+        #     group_num = 22
+        # report_metrics.append(str(group_num))
+        #
+        # report = []
+        #
+        # for i in range(len(report_key)):
+        #     report.append([report_key[i], report_metrics[i]])
+        #
+        # utils.write_csv(dir_meta, report, result_name + '_final_report')

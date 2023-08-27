@@ -149,9 +149,9 @@ def get_dist_metrics(csv_path):
     dists.sort()
 
     mid = len(dists) // 2
-    midian = (dists[mid] + dists[~mid]) / 2
+    median = (dists[mid] + dists[~mid]) / 2
 
-    return [sum(dists) / len(dists), dists[0], dists[-1], midian]
+    return [sum(dists) / len(dists), dists[0], dists[-1], median]
 
 
 def get_mttr_by_group(csv_path, group_num):
@@ -173,11 +173,81 @@ def get_mttr_by_group(csv_path, group_num):
                 continue
 
     if not mttr:
-        return [0,0,0,0]
+        return [0, 0, 0, 0]
 
     mttr_all = (list(chain.from_iterable(mttr)))
     mttr_all.sort()
     mid = len(mttr_all) // 2
-    midian = (mttr_all[mid] + mttr_all[~mid]) / 2
+    median = (mttr_all[mid] + mttr_all[~mid]) / 2
 
-    return [sum(mttr_all) / len(mttr_all), mttr_all[0], mttr_all[-1], midian]
+    return [sum(mttr_all) / len(mttr_all), mttr_all[0], mttr_all[-1], median]
+
+
+def get_mttr(csv_path):
+    mttr = []
+    with open(csv_path, 'r') as file:
+        reader = csv.DictReader(file)
+        for row in reader:
+            try:
+                if row['hub wait times'] != "[]":
+                    mttr.extend(eval(row['hub wait times']))
+
+                if row['standby wait times'] != "[]":
+                    mttr.extend(eval(row['standby wait times']))
+
+            except ValueError:
+                # Skip rows where the value is not a number
+                continue
+
+    if not mttr:
+        return [0, 0, 0, 0]
+
+    mttr_all = (list(chain.from_iterable(mttr)))
+    mttr_all.sort()
+    mid = len(mttr_all) // 2
+    median = (mttr_all[mid] + mttr_all[~mid]) / 2
+
+    return [sum(mttr_all) / len(mttr_all), mttr_all[0], mttr_all[-1], median]
+
+
+def get_report_metrics_no_group(dir_meta, time_range):
+    json_file_path = os.path.join(dir_meta, 'charts.json')
+    csv_path_flss = os.path.join(dir_meta, 'flss.csv')
+    csv_path_points = os.path.join(dir_meta, 'illuminating.csv')
+
+    try:
+        # Read the JSON file
+        with open(json_file_path, 'r') as json_file:
+            data = json.load(json_file)
+
+        metrics = []
+
+        for metric_name in ['dispatched', 'failed', 'mid_flight', 'illuminating']:
+            if data[metric_name]['t'][-1] < time_range[1]:
+                metrics.append(data[metric_name]['y'][-1])
+            else:
+                for i in range(len(data[metric_name]['t']) - 1, -1, -1):
+                    if data[metric_name]['t'][i] <= time_range[1]:
+                        metrics.append(data[metric_name]['y'][i])
+                        break
+
+        # for metric_name in ['mid_flight', 'illuminating']:
+        #     avg_value = 0
+        #     counter = 0
+        #     for i in range(len(data[metric_name]['t'])):
+        #         if time_range[0] <= data[metric_name]['t'][i] <= time_range[1]:
+        #             avg_value += data[metric_name]['y'][i]
+        #             counter += 1
+        #     try:
+        #         metrics.append(avg_value / counter)
+        #     except Exception as e:
+        #         print(f"An error occurred: {e}")
+        #         metrics.append(0)
+
+        metrics.extend(get_dist_metrics(csv_path_flss))
+        metrics.extend(get_mttr_by_group(csv_path_points, 1))
+
+    except Exception as e:
+        print(f"An error occurred: {e}")
+
+    return metrics

@@ -168,7 +168,19 @@ def gen_point_metrics(events, start_time, group_map):
 
         elif e == TimelineEvents.FAIL and event[2] is False:
             pid = fid_to_point[fid]
-            illuminating_events[pid].append([t, e])
+            try:
+                illuminating_events[pid].append([t, e])
+            except Exception as e:
+                if pid in standby_events:
+                    if t > start_time:
+                        standby_events[pid].append([t, e])
+                else:
+                    standby_events[pid] = [[t, e]]
+                    standby_metrics[pid] = [pid, 0, 0, 0, []]
+                standby_metrics[pid][2] += 1
+                print(e)
+                continue
+
             if t > start_time:
                 illuminating_metrics[pid][2] += 1
 
@@ -203,12 +215,166 @@ def gen_point_metrics(events, start_time, group_map):
                 illuminating_events[pid].append([t, e])
 
                 if t > start_time:
-                    illuminating_metrics[pid][5] += 1
+                    illuminating_metrics[pid][4] += 1
                     illuminating_metrics[pid][6].append(t - illuminating_events[pid][-2][0])
             else:
                 # Situations when the previous FLS who was assigned with this point never arrived
                 illuminating_events[pid] = [[t, e]]
                 illuminating_metrics[pid] = [pid, group_map[pid], 0, 0, 0, [], []]
+
+        elif e == TimelineEvents.STANDBY:
+            pid = point_to_id(event[2])
+            fid_to_point[fid] = pid
+            if pid in standby_events:
+                standby_events[pid].append([t, e])
+                if t > start_time:
+                    standby_metrics[pid][3] += 1
+                    standby_metrics[pid][4].append(t - standby_events[pid][-2][0])
+            else:
+                standby_events[pid] = [[t, e]]
+                standby_metrics[pid] = [pid, 0, 0, 0, []]
+
+        elif e == TimelineEvents.REPLACE:
+            pid = fid_to_point[fid]
+            if pid in standby_events:
+                if t > start_time:
+                    standby_events[pid].append([t, e])
+            else:
+                standby_events[pid] = [[t, e]]
+                standby_metrics[pid] = [pid, 0, 0, 0, []]
+
+            standby_metrics[pid][2] += 1
+
+    i_rows = list(illuminating_metrics.values())
+    s_rows = list(standby_metrics.values())
+    for row in i_rows:
+        hub_w_t = row[5]
+        standby_w_t = row[6]
+        row.append(_min(hub_w_t))
+        row.append(_avg(hub_w_t))
+        row.append(_max(hub_w_t))
+        row.append(_min(standby_w_t))
+        row.append(_avg(standby_w_t))
+        row.append(_max(standby_w_t))
+
+    for row in s_rows:
+        hub_w_t = row[4]
+        row.append(_min(hub_w_t))
+        row.append(_avg(hub_w_t))
+        row.append(_max(hub_w_t))
+
+    return [metric_keys] + i_rows, \
+           [standby_metric_keys] + s_rows
+
+
+def gen_point_metrics_no_group(events, start_time):
+    fid_to_point = dict()
+    illuminating_events = dict()
+    standby_events = dict()
+
+    metric_keys = [
+        "point",
+        "group_id",
+        "failed",
+        "recovered by hub",
+        "recovered by standby",
+        "hub wait times",
+        "standby wait times",
+        "hub min wait time",
+        "hub avg wait time",
+        "hub max wait time",
+        "standby min wait time",
+        "standby avg wait time",
+        "standby max wait time",
+    ]
+
+    standby_metric_keys = [
+        "point",
+        "failed",
+        "replace",
+        "recovered by hub",
+        "hub wait times",
+        "hub min wait time",
+        "hub avg wait time",
+        "hub max wait time",
+    ]
+
+    illuminating_metrics = dict()
+    standby_metrics = dict()
+    pid_list = []
+    a=0
+
+    for event in events:
+        t = event[0]
+        e = event[1]
+        fid = event[-1]
+
+        if fid == 51843:
+            a=1
+
+        if e == TimelineEvents.DISPATCH:
+            pid = point_to_id(event[2])
+            fid_to_point[fid] = pid
+
+            if pid not in pid_list:
+                pid_list.append(pid)
+                illuminating_metrics[0, 3] = [pid, 0, 0, 0, 0, [], []]
+
+        elif e == TimelineEvents.FAIL and event[2] is False:
+            pid = fid_to_point[fid]
+            try:
+                illuminating_events[pid].append([t, e])
+            except Exception as e:
+                if pid in standby_events:
+                    if t > start_time:
+                        standby_events[pid].append([t, e])
+                else:
+                    standby_events[pid] = [[t, e]]
+                    standby_metrics[pid] = [pid, 0, 0, 0, []]
+                standby_metrics[pid][2] += 1
+                print(e)
+                continue
+
+            if t > start_time:
+                illuminating_metrics[pid][2] += 1
+
+        elif e == TimelineEvents.STANDBY_FAIL:
+            # Check if the stand by FLS is in mid-flight
+            pid = fid_to_point[fid]
+            if pid in standby_events:
+                standby_events[pid].append([t, e])
+            else:
+                standby_events[pid] = [[t, e]]
+                standby_metrics[pid] = [pid, 0, 0, 0, []]
+
+            standby_metrics[pid][1] += 1
+
+        elif e == TimelineEvents.ILLUMINATE:
+            pid = point_to_id(event[2])
+            fid_to_point[fid] = pid
+            if pid in illuminating_events:
+                illuminating_events[pid].append([t, e])
+                if t > start_time:
+                    illuminating_metrics[pid][3] += 1
+                    illuminating_metrics[pid][5].append(t - illuminating_events[pid][-2][0])
+            else:
+                illuminating_events[pid] = [[t, e]]
+                illuminating_metrics[pid] = [pid,0, 0, 0, 0, [], []]
+
+        elif e == TimelineEvents.ILLUMINATE_STANDBY:
+            pid = point_to_id(event[2])
+            fid_to_point[fid] = pid
+
+            if pid in illuminating_events:
+                illuminating_events[pid].append([t, e])
+
+                if t > start_time:
+                    illuminating_metrics[pid][4] += 1
+                    illuminating_metrics[pid][6].append(t - illuminating_events[pid][-2][0])
+            else:
+                # Situations when the previous FLS who was assigned with this point never arrived
+                illuminating_events[pid] = [[t, e]]
+                illuminating_metrics[pid] = [pid, 0, 0, 0, 0, [], []]
 
         elif e == TimelineEvents.STANDBY:
             pid = point_to_id(event[2])

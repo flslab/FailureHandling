@@ -13,7 +13,8 @@ import re
 import utils
 from utils import logger
 
-from worker.metrics import merge_timelines, gen_charts, gen_point_metrics, trim_timeline, point_to_id
+from worker.metrics import merge_timelines, gen_charts, gen_point_metrics, trim_timeline, point_to_id, \
+    gen_point_metrics_no_group
 
 
 def write_json(fid, results, directory, is_clique):
@@ -29,7 +30,7 @@ def write_csv(directory, rows, file_name):
         writer.writerows(rows)
 
 
-def create_csv_from_json(init_num, directory, fig_dir, group_map):
+def create_csv_from_json(config, init_num, directory, fig_dir, group_map):
     if not os.path.exists(directory):
         return
 
@@ -86,7 +87,7 @@ def create_csv_from_json(init_num, directory, fig_dir, group_map):
     start_time = 0
 
     trimed_timeline = merged_timeline
-    if Config.RESET_AFTER_INITIAL_DEPLOY:
+    if config.RESET_AFTER_INITIAL_DEPLOY:
         trimed_timeline, num_metrics, start_time = trim_timeline(merged_timeline, init_num)
 
     with open(os.path.join(directory, 'timeline.json'), "w") as f:
@@ -99,45 +100,6 @@ def create_csv_from_json(init_num, directory, fig_dir, group_map):
     point_metrics, standby_metrics = gen_point_metrics(merged_timeline, start_time, group_map)
     write_csv(directory, point_metrics, 'illuminating')
     write_csv(directory, standby_metrics, 'standby')
-
-    with open(os.path.join(directory, 'flss.csv'), 'w', newline='') as csvfile:
-        writer = csv.writer(csvfile)
-        writer.writerows(node_rows)
-    #
-    # pair_weights = list(filter(lambda x: x != -1, weights))
-    # pair_min_dists = list(filter(lambda x: x != 0, min_dists))
-    # pair_avg_dists = list(filter(lambda x: x != 0, avg_dists))
-    # pair_max_dists = list(filter(lambda x: x != 0, max_dists))
-
-    # if len(pair_weights) == 0:
-    #     pair_weights = [-1]
-    # if len(pair_min_dists) == 0:
-    #     pair_min_dists = [-1]
-    # if len(pair_avg_dists) == 0:
-    #     pair_avg_dists = [-1]
-    # if len(pair_max_dists) == 0:
-    #     pair_max_dists = [-1]
-
-    # metrics_rows = [["metric", "value"],
-    #                 ["duration", duration],
-    #                 ["min min_dists", min(pair_min_dists)],
-    #                 ["avg min_dists", sum(pair_min_dists) / len(pair_min_dists)],
-    #                 ["max min_dists", max(pair_min_dists)],
-    #                 ["min avg_dists", min(pair_avg_dists)],
-    #                 ["avg avg_dists", sum(pair_avg_dists) / len(pair_avg_dists)],
-    #                 ["max avg_dists", max(pair_avg_dists)],
-    #                 ["min max_dists", min(pair_max_dists)],
-    #                 ["avg max_dists", sum(pair_max_dists) / len(pair_max_dists)],
-    #                 ["max max_dists", max(pair_max_dists)],
-    #                 ["min weights", min(pair_weights)],
-    #                 ["avg weights", sum(pair_weights) / len(pair_weights)],
-    #                 ["max weights", max(pair_weights)],
-    #                 ["number of cliques", len(pair_weights)],
-    #                 ["number of single nodes", len(list(filter(lambda x: x == -1, weights)))]
-    #                 ]
-    # with open(os.path.join(directory, 'metrics.csv'), 'w', newline='') as csvfile:
-    #     writer = csv.writer(csvfile)
-    #     writer.writerows(metrics_rows)
 
 
 def write_hds_time(hds, directory, nid):
@@ -275,6 +237,90 @@ def delete_previous_json_files(path):
         print("All files under the folder have been deleted.")
     except Exception as e:
         print(f"Error occurred: {e}")
+
+
+def create_csv_from_json_no_group(config, init_num, directory, fig_dir):
+    if not os.path.exists(directory):
+        return
+
+    headers_set = set()
+    rows = []
+    node_rows = []
+
+    json_dir = os.path.join(directory, 'json')
+    filenames = os.listdir(json_dir)
+    filenames.sort()
+
+    for filename in filenames:
+        if filename.endswith('.json'):
+            with open(os.path.join(json_dir, filename)) as f:
+                try:
+                    data = json.load(f)
+                    headers_set = headers_set.union(set(list(data.keys())))
+                except json.decoder.JSONDecodeError:
+                    print(filename)
+
+    headers = list(headers_set)
+    headers.sort()
+    rows.append(['fid'] + headers)
+    node_rows.append(['fid'] + headers)
+
+    weights = []
+    min_dists = []
+    avg_dists = []
+    max_dists = []
+    timelines = []
+    for filename in filenames:
+        if filename.endswith('.json'):
+            with open(os.path.join(json_dir, filename)) as f:
+                try:
+                    data = json.load(f)
+                    fid = filename.split('.')[0]
+                    row = [fid] + [data[h] if h in data else 0 for h in headers]
+                    node_rows.append(row)
+                    timelines.append(data['timeline'])
+                except json.decoder.JSONDecodeError:
+                    print(filename)
+
+    # with open(os.path.join(directory, 'cliques.csv'), 'w', newline='') as csvfile:
+    #     writer = csv.writer(csvfile)
+    #     writer.writerows(rows)
+
+    with open(os.path.join(directory, 'flss.csv'), 'w', newline='') as csvfile:
+        writer = csv.writer(csvfile)
+        writer.writerows(node_rows)
+
+    merged_timeline = merge_timelines(timelines)
+
+    num_metrics = [0, 0, 0, 0]
+    start_time = -1
+
+    trimed_timeline = merged_timeline
+    if config.RESET_AFTER_INITIAL_DEPLOY:
+        trimed_timeline, num_metrics, start_time = trim_timeline(merged_timeline, init_num)
+
+    with open(os.path.join(directory, 'timeline.json'), "w") as f:
+        json.dump(trimed_timeline, f)
+
+    chart_data = gen_charts(trimed_timeline, start_time, num_metrics, fig_dir)
+    with open(os.path.join(directory, 'charts.json'), "w") as f:
+        json.dump(chart_data, f)
+
+    point_metrics, standby_metrics = gen_point_metrics_no_group(merged_timeline, start_time)
+    write_csv(directory, point_metrics, 'illuminating')
+    write_csv(directory, standby_metrics, 'standby')
+
+
+def create_csv_from_timeline(directory):
+    if not os.path.exists(directory):
+        return
+
+    with open(os.path.join(directory, 'timeline.json'), "r") as file:
+        timeline = json.load(file)
+
+    point_metrics, standby_metrics = gen_point_metrics_no_group(timeline, 0)
+    write_csv(directory, point_metrics, 'illuminating')
+    write_csv(directory, standby_metrics, 'standby')
 
 
 if __name__ == "__main__":

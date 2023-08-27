@@ -164,7 +164,10 @@ def gen_point_metrics(events, start_time, group_map):
 
             if pid not in pid_list:
                 pid_list.append(pid)
-                illuminating_metrics[0, 3] = [pid, group_map[pid], 0, 0, 0, [], []]
+                try:
+                    illuminating_metrics[0, 3] = [pid, group_map[pid], 0, 0, 0, [], []]
+                except Exception as e:
+                    illuminating_metrics[0, 3] = [pid, 0, 0, 0, 0, [], []]
 
         elif e == TimelineEvents.FAIL and event[2] is False:
             pid = fid_to_point[fid]
@@ -205,7 +208,10 @@ def gen_point_metrics(events, start_time, group_map):
                     illuminating_metrics[pid][5].append(t - illuminating_events[pid][-2][0])
             else:
                 illuminating_events[pid] = [[t, e]]
-                illuminating_metrics[pid] = [pid, group_map[pid], 0, 0, 0, [], []]
+                try:
+                    illuminating_metrics[0, 3] = [pid, group_map[pid], 0, 0, 0, [], []]
+                except Exception as e:
+                    illuminating_metrics[0, 3] = [pid, 0, 0, 0, 0, [], []]
 
         elif e == TimelineEvents.ILLUMINATE_STANDBY:
             pid = point_to_id(event[2])
@@ -220,7 +226,10 @@ def gen_point_metrics(events, start_time, group_map):
             else:
                 # Situations when the previous FLS who was assigned with this point never arrived
                 illuminating_events[pid] = [[t, e]]
-                illuminating_metrics[pid] = [pid, group_map[pid], 0, 0, 0, [], []]
+                try:
+                    illuminating_metrics[0, 3] = [pid, group_map[pid], 0, 0, 0, [], []]
+                except Exception as e:
+                    illuminating_metrics[0, 3] = [pid, 0, 0, 0, 0, [], []]
 
         elif e == TimelineEvents.STANDBY:
             pid = point_to_id(event[2])

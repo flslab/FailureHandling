@@ -601,42 +601,42 @@ if __name__ == '__main__':
     #     dir_meta = os.path.join(dir_experiment, result_name)
     #     dir_figure = os.path.join(dir_experiment, 'figures')
 
-        # utils.create_csv_from_timeline(dir_meta)
-        #
-        # utils.combine_csvs(dir_meta, dir_experiment, "reli_" + result_name)
-        #
-        # report_key = [
-        #     "Total Dispatched",
-        #     "Total Failed",
-        #     "Mid-Flight",
-        #     "Illuminating",
-        #     "Avg Dist Traveled",
-        #     "Min Dist Traveled",
-        #     "Max Dist Traveled",
-        #     "Median Dist Traveled",
-        #     "Avg MTTR",
-        #     "Min MTTR",
-        #     "Max MTTR",
-        #     "Median MTTR",
-        #     "Deploy Rate",
-        #     "Number of Groups",
-        # ]
-        # time_range = [0, Config.DURATION + 10]
-        # report_metrics = get_report_metrics_no_group(dir_meta, time_range)
-        # report_metrics = [str(metric) for metric in report_metrics]
-        # report_metrics.append(str(Config.DISPATCH_RATE))
-        #
-        # if CONFIG.K == 3:
-        #     group_num = 152
-        # elif CONFIG.K == 10:
-        #     group_num = 46
-        # else:
-        #     group_num = 22
-        # report_metrics.append(str(group_num))
-        #
-        # report = []
-        #
-        # for i in range(len(report_key)):
-        #     report.append([report_key[i], report_metrics[i]])
-        #
-        # utils.write_csv(dir_meta, report, result_name + '_final_report')
+    # utils.create_csv_from_timeline(dir_meta)
+    #
+    # utils.combine_csvs(dir_meta, dir_experiment, "reli_" + result_name)
+    #
+    # report_key = [
+    #     "Total Dispatched",
+    #     "Total Failed",
+    #     "Mid-Flight",
+    #     "Illuminating",
+    #     "Avg Dist Traveled",
+    #     "Min Dist Traveled",
+    #     "Max Dist Traveled",
+    #     "Median Dist Traveled",
+    #     "Avg MTTR",
+    #     "Min MTTR",
+    #     "Max MTTR",
+    #     "Median MTTR",
+    #     "Deploy Rate",
+    #     "Number of Groups",
+    # ]
+    # time_range = [0, Config.DURATION + 10]
+    # report_metrics = get_report_metrics_no_group(dir_meta, time_range)
+    # report_metrics = [str(metric) for metric in report_metrics]
+    # report_metrics.append(str(Config.DISPATCH_RATE))
+    #
+    # if CONFIG.K == 3:
+    #     group_num = 152
+    # elif CONFIG.K == 10:
+    #     group_num = 46
+    # else:
+    #     group_num = 22
+    # report_metrics.append(str(group_num))
+    #
+    # report = []
+    #
+    # for i in range(len(report_key)):
+    #     report.append([report_key[i], report_metrics[i]])
+    #
+    # utils.write_csv(dir_meta, report, result_name + '_final_report')

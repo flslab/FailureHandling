@@ -525,8 +525,10 @@ class PrimaryNode:
 
         group_map, group_id = self.gen_group_map()
 
-        utils.create_csv_from_json(Config, self.init_num, self.dir_meta,
-                                   os.path.join(self.dir_figure, f'{self.result_name}.jpg'), group_map)
+        # utils.create_csv_from_json(Config, self.init_num, self.dir_meta,
+        #                            os.path.join(self.dir_figure, f'{self.result_name}.jpg'), group_map)
+        utils.create_csv_from_json_no_group(Config, self.init_num, self.dir_meta,
+                                   os.path.join(self.dir_figure, f'{self.result_name}.jpg'))
         utils.write_configs(self.dir_meta, self.start_time)
         utils.combine_csvs(self.dir_meta, self.dir_experiment, "reli_" + self.result_name)
 
@@ -581,9 +583,13 @@ if __name__ == '__main__':
     primary_node.start_experiment()
     primary_node.stop_experiment()
 
-    # for c in range(0,24):
-    #     # CONFIG = eval(f"config{c}").Config
-    #     # Config = CONFIG
+    # for c in range(0,16):
+    #     from experiments import config0, config1, config2, config3, config4, config5, config6, config7, config8, \
+    #         config9, config10, config11, config12, config13, config14, config15, config16, config17, config18, config19, \
+    #         config20, config21, config22, config23
+    #
+    #     CONFIG = eval(f"config{c}").Config
+    #     Config = CONFIG
     #
     #     if len(CONFIG.FILE_NAME_KEYS):
     #         result_config = join_config_properties(CONFIG, CONFIG.FILE_NAME_KEYS)
@@ -600,43 +606,43 @@ if __name__ == '__main__':
     #     dir_experiment = os.path.join(Config.RESULTS_PATH, Config.SHAPE, group_config)
     #     dir_meta = os.path.join(dir_experiment, result_name)
     #     dir_figure = os.path.join(dir_experiment, 'figures')
-
-    # utils.create_csv_from_timeline(dir_meta)
     #
-    # utils.combine_csvs(dir_meta, dir_experiment, "reli_" + result_name)
+    #     utils.create_csv_from_timeline(dir_meta)
     #
-    # report_key = [
-    #     "Total Dispatched",
-    #     "Total Failed",
-    #     "Mid-Flight",
-    #     "Illuminating",
-    #     "Avg Dist Traveled",
-    #     "Min Dist Traveled",
-    #     "Max Dist Traveled",
-    #     "Median Dist Traveled",
-    #     "Avg MTTR",
-    #     "Min MTTR",
-    #     "Max MTTR",
-    #     "Median MTTR",
-    #     "Deploy Rate",
-    #     "Number of Groups",
-    # ]
-    # time_range = [0, Config.DURATION + 10]
-    # report_metrics = get_report_metrics_no_group(dir_meta, time_range)
-    # report_metrics = [str(metric) for metric in report_metrics]
-    # report_metrics.append(str(Config.DISPATCH_RATE))
+    #     utils.combine_csvs(dir_meta, dir_experiment, "reli_" + result_name)
     #
-    # if CONFIG.K == 3:
-    #     group_num = 152
-    # elif CONFIG.K == 10:
-    #     group_num = 46
-    # else:
-    #     group_num = 22
-    # report_metrics.append(str(group_num))
+    #     report_key = [
+    #         "Total Dispatched",
+    #         "Total Failed",
+    #         "Mid-Flight",
+    #         "Illuminating",
+    #         "Avg Dist Traveled",
+    #         "Min Dist Traveled",
+    #         "Max Dist Traveled",
+    #         "Median Dist Traveled",
+    #         "Avg MTTR",
+    #         "Min MTTR",
+    #         "Max MTTR",
+    #         "Median MTTR",
+    #         "Deploy Rate",
+    #         "Number of Groups",
+    #     ]
+    #     time_range = [0, Config.DURATION + 10]
+    #     report_metrics = get_report_metrics_no_group(dir_meta, time_range)
+    #     report_metrics = [str(metric) for metric in report_metrics]
+    #     report_metrics.append(str(Config.DISPATCH_RATE))
     #
-    # report = []
+    #     if CONFIG.K == 3:
+    #         group_num = 152
+    #     elif CONFIG.K == 10:
+    #         group_num = 46
+    #     else:
+    #         group_num = 22
+    #     report_metrics.append(str(group_num))
     #
-    # for i in range(len(report_key)):
-    #     report.append([report_key[i], report_metrics[i]])
+    #     report = []
     #
-    # utils.write_csv(dir_meta, report, result_name + '_final_report')
+    #     for i in range(len(report_key)):
+    #         report.append([report_key[i], report_metrics[i]])
+    #
+    #     utils.write_csv(dir_meta, report, result_name + '_final_report')

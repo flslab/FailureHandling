@@ -152,6 +152,7 @@ def gen_point_metrics(events, start_time, group_map):
     illuminating_metrics = dict()
     standby_metrics = dict()
     pid_list = []
+    a=1
 
     for event in events:
         t = event[0]

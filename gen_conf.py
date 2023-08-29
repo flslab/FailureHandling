@@ -15,11 +15,11 @@ def_general_conf = {
     "MAX_SPEED": "3",
     "DISPLAY_CELL_SIZE": "0.05",
     "BUSY_WAITING": "False",
-    "DURATION": "60 * 30",
+    "DURATION": "60 * 10",
     "K": "20",
     "SHAPE": "'chess'",
-    # "RESULTS_PATH": "'/proj/nova-PG0/shuqin/results'",
-    "RESULTS_PATH": "'/Users/shuqinzhu/Desktop/Experiments_Results.nosync/aug27_24+16'",
+    "RESULTS_PATH": "'/proj/nova-PG0/shuqin/results'",
+    # "RESULTS_PATH": "'/Users/shuqinzhu/Desktop/experiments_aug29.nosync'",
     "DEBUG": "False",
     "FILE_NAME_KEYS": "[('DISPATCHERS', 'D'), ('DISPATCH_RATE', 'R'), ('FAILURE_TIMEOUT', 'T'), ('MAX_SPEED', 'S')]",
     "DIR_KEYS": "['K']",
@@ -40,7 +40,7 @@ general_props = [
     {
         "keys": ["DISPATCH_RATE"],
         # "values": ["1", "'inf'"]
-        "values": ["50", "10"]
+        "values": ["100"]
     },
     {
         "keys": ["K", "INPUT"],
@@ -54,8 +54,8 @@ general_props = [
     },
     {
         "keys": ["DISPATCHERS"],
-        # "values": ["1"],
-        "values": ["1", "3"]
+        "values": ["1"],
+        # "values": ["1", "3"]
     },
     {
         "keys": ["FAILURE_TIMEOUT"],

@@ -211,7 +211,7 @@ class PrimaryNode:
         elif Config.SANITY_TEST == 2:
             height = Config.STANDBY_TEST_CONFIG[1][1]
             radius = Config.STANDBY_TEST_CONFIG[0][1]
-            self.center = [radius + 1, radius + 1, 10]
+            self.center = [radius + 1, radius + 1, 0]
             self.groups = generate_circle_coordinates(self.center, radius, height, Config.K)
             self.radio_ranges = [Config.MAX_RANGE] * len(self.groups)
 
@@ -485,39 +485,6 @@ class PrimaryNode:
         sanity_result.append(['MTTR', stander_mttr, experiment_result[4]])
         utils.write_csv(self.dir_meta, sanity_result, 'sanity_check')
 
-
-    def write_final_report(self,group_id):
-
-        report_key = [
-            "Total Dispatched",
-            "Total Failed",
-            "Mid-Flight",
-            "Illuminating",
-            "Avg Dist Traveled",
-            "Min Dist Traveled",
-            "Max Dist Traveled",
-            "Median Dist Traveled",
-            "Avg MTTR",
-            "Min MTTR",
-            "Max MTTR",
-            "Median MTTR",
-            "Deploy Rate",
-            "Number of Groups",
-        ]
-        time_range = [0, Config.DURATION + 10]
-        report_metrics = get_report_metrics(self.dir_meta, time_range, len(group_id))
-        report_metrics = [str(metric) for metric in report_metrics]
-        report_metrics.append(str(Config.DISPATCH_RATE))
-        report_metrics.append(str(len(group_id)))
-
-        report = []
-
-        for i in range(len(report_key)):
-            report.append([report_key[i], report_metrics[i]])
-
-        utils.write_csv(self.dir_meta, report, self.result_name + '_final_report')
-
-
     def _write_results(self):
         logger.info("Writing results")
         utils.write_csv(self.dir_meta, self._get_dispatched_num(), 'dispatcher')
@@ -528,14 +495,17 @@ class PrimaryNode:
         # utils.create_csv_from_json(Config, self.init_num, self.dir_meta,
         #                            os.path.join(self.dir_figure, f'{self.result_name}.jpg'), group_map)
         utils.create_csv_from_json_no_group(Config, self.init_num, self.dir_meta,
-                                   os.path.join(self.dir_figure, f'{self.result_name}.jpg'))
+                                            os.path.join(self.dir_figure, f'{self.result_name}.jpg'))
         utils.write_configs(self.dir_meta, self.start_time)
         utils.combine_csvs(self.dir_meta, self.dir_experiment, "reli_" + self.result_name)
 
+
         if Config.SANITY_TEST > 0:
             self.write_sanity_results()
-        else:
-            self.write_final_report(group_id)
+        group_name = join_config_properties(CONFIG, CONFIG.DIR_KEYS)
+
+        time_range = [0, Config.DURATION + 10]
+        write_final_report(self.dir_meta, self.dir_meta, group_name, len(group_id), time_range)
 
     def stop_experiment(self):
         self._stop_dispatchers()
@@ -570,6 +540,50 @@ class PrimaryNode:
         self.stop_thread = threading.Timer(Config.DURATION, self.stop_experiment)
 
 
+def rewrite_reports():
+    for c in range(0, 32):
+        eval('exec(f"from experiments import config{c}")')
+
+        CONFIG = eval(f"config{c}").Config
+        Config = CONFIG
+
+        if len(CONFIG.FILE_NAME_KEYS):
+            result_config = join_config_properties(CONFIG, CONFIG.FILE_NAME_KEYS)
+        else:
+            result_config = name
+        result_name = f"{Config.SHAPE}_{result_config}"
+        print(result_name)
+
+        if len(CONFIG.DIR_KEYS):
+            group_config = join_config_properties(CONFIG, CONFIG.DIR_KEYS)
+        else:
+            group_config = ""
+
+        dir_experiment = os.path.join(Config.RESULTS_PATH, Config.SHAPE, group_config)
+        dir_meta = os.path.join(dir_experiment, result_name)
+
+        utils.write_configs(dir_meta, 0)
+        utils.create_csv_from_timeline(dir_meta)
+
+        utils.combine_csvs(dir_meta, dir_experiment, "reli_" + result_name)
+
+        if CONFIG.K == 3:
+            group_num = 152
+        elif CONFIG.K == 10:
+            group_num = 46
+        elif CONFIG.K == 22:
+            group_num = 22
+        else:
+            group_num = 1
+
+        folder_name = f"{CONFIG.DIR_KEYS[0]}{CONFIG.K}"
+
+        target_file_path = '~/Desktop/report/' + folder_name
+
+        time_range = [0, Config.DURATION + 10]
+        write_final_report(dir_meta, target_file_path, result_name, group_num, time_range)
+
+
 if __name__ == '__main__':
     N = 1
     name = str(int(time.time()))
@@ -577,72 +591,10 @@ if __name__ == '__main__':
         N = int(sys.argv[1])
         name = sys.argv[2]
 
-    primary_node = PrimaryNode(N, name)
+    # primary_node = PrimaryNode(N, name)
+    #
+    # primary_node.start_termination_timer()
+    # primary_node.start_experiment()
+    # # primary_node.stop_experiment()
+    rewrite_reports()
 
-    primary_node.start_termination_timer()
-    primary_node.start_experiment()
-    primary_node.stop_experiment()
-
-    # for c in range(0,16):
-    #     from experiments import config0, config1, config2, config3, config4, config5, config6, config7, config8, \
-    #         config9, config10, config11, config12, config13, config14, config15, config16, config17, config18, config19, \
-    #         config20, config21, config22, config23
-    #
-    #     CONFIG = eval(f"config{c}").Config
-    #     Config = CONFIG
-    #
-    #     if len(CONFIG.FILE_NAME_KEYS):
-    #         result_config = join_config_properties(CONFIG, CONFIG.FILE_NAME_KEYS)
-    #     else:
-    #         result_config = name
-    #     result_name = f"{Config.SHAPE}_{result_config}"
-    #     print(result_name)
-    #
-    #     if len(CONFIG.DIR_KEYS):
-    #         group_config = join_config_properties(CONFIG, CONFIG.DIR_KEYS)
-    #     else:
-    #         group_config = ""
-    #
-    #     dir_experiment = os.path.join(Config.RESULTS_PATH, Config.SHAPE, group_config)
-    #     dir_meta = os.path.join(dir_experiment, result_name)
-    #     dir_figure = os.path.join(dir_experiment, 'figures')
-    #
-    #     utils.create_csv_from_timeline(dir_meta)
-    #
-    #     utils.combine_csvs(dir_meta, dir_experiment, "reli_" + result_name)
-    #
-    #     report_key = [
-    #         "Total Dispatched",
-    #         "Total Failed",
-    #         "Mid-Flight",
-    #         "Illuminating",
-    #         "Avg Dist Traveled",
-    #         "Min Dist Traveled",
-    #         "Max Dist Traveled",
-    #         "Median Dist Traveled",
-    #         "Avg MTTR",
-    #         "Min MTTR",
-    #         "Max MTTR",
-    #         "Median MTTR",
-    #         "Deploy Rate",
-    #         "Number of Groups",
-    #     ]
-    #     time_range = [0, Config.DURATION + 10]
-    #     report_metrics = get_report_metrics_no_group(dir_meta, time_range)
-    #     report_metrics = [str(metric) for metric in report_metrics]
-    #     report_metrics.append(str(Config.DISPATCH_RATE))
-    #
-    #     if CONFIG.K == 3:
-    #         group_num = 152
-    #     elif CONFIG.K == 10:
-    #         group_num = 46
-    #     else:
-    #         group_num = 22
-    #     report_metrics.append(str(group_num))
-    #
-    #     report = []
-    #
-    #     for i in range(len(report_key)):
-    #         report.append([report_key[i], report_metrics[i]])
-    #
-    #     utils.write_csv(dir_meta, report, result_name + '_final_report')

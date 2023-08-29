@@ -1,3 +1,4 @@
+import math
 import os
 import json
 import csv
@@ -307,18 +308,6 @@ def create_csv_from_json_no_group(config, init_num, directory, fig_dir):
         json.dump(chart_data, f)
 
     point_metrics, standby_metrics = gen_point_metrics_no_group(merged_timeline, start_time)
-    write_csv(directory, point_metrics, 'illuminating')
-    write_csv(directory, standby_metrics, 'standby')
-
-
-def create_csv_from_timeline(directory):
-    if not os.path.exists(directory):
-        return
-
-    with open(os.path.join(directory, 'timeline.json'), "r") as file:
-        timeline = json.load(file)
-
-    point_metrics, standby_metrics = gen_point_metrics_no_group(timeline, 0)
     write_csv(directory, point_metrics, 'illuminating')
     write_csv(directory, standby_metrics, 'standby')
 

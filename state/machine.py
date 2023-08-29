@@ -53,7 +53,7 @@ class StateMachine:
             self.update_movement()
             logger.debug(f"PREEMPT MOVEMENT fid={self.context.fid}, mid_flight={self.is_mid_flight}")
 
-        # print(f"MOVE AT {time.time()- self.metrics.start_time} fid={self.context.fid}")
+        print(f"MOVE dist={dist} fid={self.context.fid}")
         self.move_thread = threading.Timer(dur, self.change_move_state,
                                            (MessageTypes.MOVE, (dest, arrival_event, dist)))
         self.is_arrived = False
@@ -159,8 +159,11 @@ class StateMachine:
 
     def handle_move(self, msg):
         # el, destination, dist
+        prev_pos = self.context.el
         self.context.el = msg.args[0]
         self.context.dist_traveled += msg.args[2]
+        print(f"fid={self.context.fid} msg.args={msg.args}")
+        logger.debug(f"DISTANCE TRAVELED {msg.args[2]} fid={self.context.fid} prev_pos={prev_pos} cur_pos={msg.args[0]}")
         self.context.metrics.log_arrival(time.time(), msg.args[1], self.context.gtl, msg.args[2])
         self.move_thread = None
         self.is_arrived = True
@@ -232,3 +235,4 @@ class StateMachine:
     def update_movement(self):
         self.context.el = self.context.vm.get_location(time.time())
         self.context.dist_traveled += np.linalg.norm(self.context.vm.x0 - self.context.el)
+        logger.debug(f"DISTANCE TRAVELED {np.linalg.norm(self.context.vm.x0 - self.context.el)} fid={self.context.fid}")

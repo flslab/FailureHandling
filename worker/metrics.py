@@ -152,7 +152,6 @@ def gen_point_metrics(events, start_time, group_map):
     illuminating_metrics = dict()
     standby_metrics = dict()
     pid_list = []
-    a=1
 
     for event in events:
         t = event[0]
@@ -171,6 +170,7 @@ def gen_point_metrics(events, start_time, group_map):
                     illuminating_metrics[0, 3] = [pid, 0, 0, 0, 0, [], []]
 
         elif e == TimelineEvents.FAIL and event[2] is False:
+        # elif e == TimelineEvents.FAIL:
             pid = fid_to_point[fid]
             try:
                 illuminating_events[pid].append([t, e])
@@ -312,15 +312,11 @@ def gen_point_metrics_no_group(events, start_time):
     illuminating_metrics = dict()
     standby_metrics = dict()
     pid_list = []
-    a = 0
 
     for event in events:
         t = event[0]
         e = event[1]
         fid = event[-1]
-
-        if fid == 51843:
-            a = 1
 
         if e == TimelineEvents.DISPATCH:
             pid = point_to_id(event[2])
@@ -328,9 +324,11 @@ def gen_point_metrics_no_group(events, start_time):
 
             if pid not in pid_list:
                 pid_list.append(pid)
-                illuminating_metrics[0, 3] = [pid, 0, 0, 0, 0, [], []]
+                illuminating_events[pid] = [[t, e]]
+                illuminating_metrics[pid] = [pid, 0, 0, 0, 0, [], []]
 
-        elif e == TimelineEvents.FAIL and event[2] is False:
+        # elif e == TimelineEvents.FAIL and event[2] is False:
+        elif e == TimelineEvents.FAIL:
             pid = fid_to_point[fid]
             try:
                 illuminating_events[pid].append([t, e])

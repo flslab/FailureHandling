@@ -319,7 +319,6 @@ def write_final_report(csv_file_path, target_file_path, name, group_num, time_ra
 
     for i in dist_standby_hub_to_centroid.index:
         fls_timeline = eval(dist_standby_hub_to_centroid['timeline'][i])
-        # need to compare dispatcher file and check which dispatcher they comes from
 
         for event in fls_timeline:
             if event[1] == 2:
@@ -333,6 +332,9 @@ def write_final_report(csv_file_path, target_file_path, name, group_num, time_ra
         ~dist_standby_hub_to_fail_before_centroid['timeline'].str.contains(' 4, ')]
 
     dist_standby_centroid_to_fail_before_recovered = df[df['timeline'].str.contains(' 2, ')]
+
+    dist_standby_centroid_to_fail_before_recovered = dist_standby_centroid_to_fail_before_recovered[
+        dist_standby_centroid_to_fail_before_recovered['timeline'].str.contains(' 4, ')]
     dist_standby_centroid_to_fail_before_recovered = dist_standby_centroid_to_fail_before_recovered[
         dist_standby_centroid_to_fail_before_recovered['timeline'].str.contains(' 5, ')]
     dist_standby_centroid_to_fail_before_recovered = dist_standby_centroid_to_fail_before_recovered[

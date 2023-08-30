@@ -67,10 +67,14 @@ class WorkerContext:
         dest = self.el + erred_v
         # self.history.log(MetricTypes.LOCATION, self.el)
         self.metrics.log_total_dist(np.linalg.norm(vector))
-        self.vm = velocity.VelocityModel(self.el, dest)
-        self.vm.solve()
-        dur = self.vm.total_time
-        timestamp = self.vm.start_t
+        vm = velocity.VelocityModel(self.el, dest)
+
+        if self.vm is None:
+            self.vm = vm
+
+        vm.solve()
+        dur = vm.total_time
+        timestamp = vm.start_t
 
         if Config.BUSY_WAITING:
             fin_time = time.time() + dur

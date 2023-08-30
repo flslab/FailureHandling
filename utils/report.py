@@ -406,7 +406,7 @@ def write_final_report(csv_file_path, target_file_path, name, group_num, time_ra
 
     df = pd.read_csv(os.path.join(csv_file_path, 'metrics.csv'))
     filtered_row = df[df['Metric'] == 'Queued FLSs']
-    report.append(filtered_row['Value'].iloc[0])
+    report.append(['Queued FLSs', filtered_row['Value'].iloc[0]])
 
     with open(os.path.join(csv_file_path, 'timeline.json'), 'r') as json_file:
         events = json.load(json_file)

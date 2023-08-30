@@ -40,7 +40,7 @@ general_props = [
     {
         "keys": ["DISPATCH_RATE"],
         # "values": ["1", "'inf'"]
-        "values": ["100"]
+        "values": ["100", "'inf'"]
     },
     {
         "keys": ["K", "INPUT"],
@@ -54,8 +54,8 @@ general_props = [
     },
     {
         "keys": ["DISPATCHERS"],
-        "values": ["1"],
-        # "values": ["1", "3"]
+        # "values": ["1"],
+        "values": ["1", "3"]
     },
     {
         "keys": ["FAILURE_TIMEOUT"],

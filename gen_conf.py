@@ -16,7 +16,7 @@ def_general_conf = {
     "DISPLAY_CELL_SIZE": "0.05",
     "BUSY_WAITING": "False",
     "DURATION": "60 * 10",
-    "K": "20",
+    "K": "3",
     "SHAPE": "'chess'",
     "RESULTS_PATH": "'/proj/nova-PG0/shuqin/results'",
     # "RESULTS_PATH": "'/Users/shuqinzhu/Desktop/experiments_aug29.nosync'",

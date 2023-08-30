@@ -541,7 +541,7 @@ class PrimaryNode:
 
 
 def rewrite_reports():
-    for c in range(0, 32):
+    for c in range(0, 48):
         eval('exec(f"from experiments import config{c}")')
 
         CONFIG = eval(f"config{c}").Config

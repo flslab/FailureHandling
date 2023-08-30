@@ -592,7 +592,6 @@ if __name__ == '__main__':
         name = sys.argv[2]
 
     primary_node = PrimaryNode(N, name)
-
     primary_node.start_termination_timer()
     primary_node.start_experiment()
     # primary_node.stop_experiment()

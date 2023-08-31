@@ -408,6 +408,8 @@ def gen_point_metrics_no_group(events, start_time):
             standby_metrics[pid][2] += 1
 
     i_rows = list(illuminating_metrics.values())
+    i_rows = [row for row in i_rows if (row[2] != 0 and row[5] != [] and row[6] != [])]
+
     s_rows = list(standby_metrics.values())
     for row in i_rows:
         hub_w_t = row[5]

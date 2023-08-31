@@ -390,25 +390,39 @@ class PrimaryNode:
             ["Initial illuminating FLSs", self.num_initial_flss],
             ["Initial standby FLSs", self.num_initial_standbys],
             ["Handled failures", self.num_handled_failures],
-            ["Dispatched replica illuminating FLSs", self.num_replaced_flss],
-            ["Dispatched replica standby FLSs", self.num_replaced_standbys],
+            ["Handled replica illuminating FLSs", self.num_replaced_flss],
+            ["Handled replica standby FLSs", self.num_replaced_standbys],
             ["Queued FLSs", sum([d.q.qsize() for d in self.dispatchers])],
         ]
 
     def _get_dispatched_num(self):
-        info = [["dispatcher_coord", "num_dispatched", "avg_delay", "delay_info"]]
+        info = [["dispatcher_coord", "num_dispatched", "Avg_delay", "Min_delay", "Max_delay", "delay_info"]]
+
+        total_delay_list = []
+
         for dispatcher in self.dispatchers:
             if Config.RESET_AFTER_INITIAL_DEPLOY:
                 info.append([dispatcher.coord.tolist(), dispatcher.num_dispatched - self.num_initial_standbys,
                              sum(dispatcher.delay_list[self.num_initial_standbys:]) / len(
                                  dispatcher.delay_list[self.num_initial_standbys:])
                              if len(dispatcher.delay_list) > self.num_initial_standbys else 0,
+                             min(dispatcher.delay_list[self.num_initial_standbys:]),
+                             max(dispatcher.delay_list[self.num_initial_standbys:]),
                              dispatcher.delay_list])
             else:
                 info.append([dispatcher.coord.tolist(), dispatcher.num_dispatched,
                              sum(dispatcher.delay_list) / len(dispatcher.delay_list) if len(
                                  dispatcher.delay_list) > 0 else 0,
+                             min(dispatcher.delay_list), max(dispatcher.delay_list),
                              dispatcher.delay_list])
+            total_delay_list.extend(dispatcher.delay_list)
+
+        info.append(['','','','','',''])
+        info.append([
+             'Overall Avg Delay', str(sum(total_delay_list)/len(total_delay_list)),
+             'Overall Max Delay', str(max(total_delay_list)),
+             'Overall Min Delay', str(min(total_delay_list))
+        ])
         return info
 
     def gen_group_map(self):
@@ -436,7 +450,7 @@ class PrimaryNode:
                                                                     round(Config.STANDBY_TEST_CONFIG[3][2], 5)])
             stander_mttr = time_to_arrive(Config.MAX_SPEED, Config.ACCELERATION, Config.DECELERATION,
                                           Config.STANDBY_TEST_CONFIG[0][1] * Config.DISPLAY_CELL_SIZE)
-        cur_midflight = 0
+
         num_illuminate = 0
         num_midflight = 0
 
@@ -502,10 +516,9 @@ class PrimaryNode:
 
         if Config.SANITY_TEST > 0:
             self.write_sanity_results()
-        group_name = join_config_properties(CONFIG, CONFIG.DIR_KEYS)
 
         time_range = [0, Config.DURATION + 10]
-        write_final_report(self.dir_meta, self.dir_meta, group_name, len(group_id), time_range)
+        write_final_report(self.dir_meta, self.dir_meta, self.result_name, len(group_id), time_range)
 
     def stop_experiment(self):
         self._stop_dispatchers()
@@ -594,6 +607,6 @@ if __name__ == '__main__':
     primary_node = PrimaryNode(N, name)
     primary_node.start_termination_timer()
     primary_node.start_experiment()
-    # primary_node.stop_experiment()
+
     # rewrite_reports()
 

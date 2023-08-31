@@ -8,6 +8,7 @@ import math
 from config import Config
 from worker.metrics import gen_point_metrics_no_group
 from utils.file import write_csv
+from utils.log import logger
 
 
 def get_report_metrics(dir_meta, time_range, group_num):
@@ -229,7 +230,7 @@ def get_report_metrics_no_group(dir_meta, time_range):
 
         metrics = []
 
-        for metric_name in ['dispatched', 'failed', 'mid_flight', 'illuminating']:
+        for metric_name in ['dispatched', 'failed', 'mid_flight', 'illuminating', 'standby']:
             if data[metric_name]['t'][-1] < time_range[1]:
                 metrics.append(data[metric_name]['y'][-1])
             else:
@@ -269,6 +270,7 @@ def write_final_report(csv_file_path, target_file_path, name, group_num, time_ra
         "Total Failed",
         "Mid-Flight",
         "Illuminating",
+        "Stationary Standby",
         "Avg Dist Traveled",
         "Min Dist Traveled",
         "Max Dist Traveled",
@@ -295,7 +297,10 @@ def write_final_report(csv_file_path, target_file_path, name, group_num, time_ra
 
     # 3. Split the dataframe based on the condition
     dist1 = df[df['timeline'].str.contains(' 1, ')]
+
+    # exclude standby FLSs that failed on its way to recover a failed Illuminating FLS
     dist2 = df[~df['timeline'].str.contains(' 1, ')]
+    dist2 = dist2[~dist2['timeline'].str.contains(' 4, ')]
 
     dist3 = df[df['timeline'].str.contains(' 2, ')]
     dist3 = dist3[dist3['timeline'].str.contains(' 6, ')]
@@ -347,7 +352,7 @@ def write_final_report(csv_file_path, target_file_path, name, group_num, time_ra
                 standby_coord = event[2]
                 dispatcher_coord = check_dispatcher(dispatcher_coords, standby_coord)
                 dist_centroid_to_fail.append(dist_standby_centroid_to_fail_before_recovered['26_dist_traveled'][i] -
-                            distance_between(dispatcher_coord, standby_coord))
+                                             distance_between(dispatcher_coord, standby_coord))
                 break
 
     # Extract '26_dist_traveled' column values
@@ -404,11 +409,11 @@ def write_final_report(csv_file_path, target_file_path, name, group_num, time_ra
     df = pd.read_csv(os.path.join(csv_file_path, 'standby.csv'))
     standby_recover_by_hub = df['recovered by hub']
 
-    report.append(['Standby Recovered_By_HUB', sum(standby_recover_by_hub)])
+    report.append(['Stdby_Recovered_By_Hub', sum(standby_recover_by_hub)])
 
     df = pd.read_csv(os.path.join(csv_file_path, 'metrics.csv'))
     filtered_row = df[df['Metric'] == 'Queued FLSs']
-    report.append(['Queued FLSs', filtered_row['Value'].iloc[0]])
+    report.append(['Num_FLSs_Queued', filtered_row['Value'].iloc[0]])
 
     with open(os.path.join(csv_file_path, 'timeline.json'), 'r') as json_file:
         events = json.load(json_file)
@@ -422,6 +427,15 @@ def write_final_report(csv_file_path, target_file_path, name, group_num, time_ra
 
     report.append(['Failed Illuminating FLS', failed_illum])
     report.append(['Failed Standby FLS', failed_standby])
+
+    filtered_row = df[df['Metric'] == 'Handled failures']
+    report.append(['Hub_Deployed_FLS', filtered_row['Value'].iloc[0]])
+    # filtered_row = df[df['Metric'] == 'Handled replica illuminating FLSs']
+    filtered_row = df[df['Metric'] == 'Dispatched replica illuminating FLSs']
+    report.append(['Hub_Deployed_FLS_To_Illuminate', filtered_row['Value'].iloc[0]])
+    filtered_row = df[df['Metric'] == 'Dispatched replica standby FLSs']
+    # filtered_row = df[df['Metric'] == 'Handled replica standby FLSs']
+    report.append(['Hub_Deployed_FLS_For_Standby', filtered_row['Value'].iloc[0]])
 
     df = pd.DataFrame(data=None, columns=['', 'Value'])
     for row in report:
@@ -447,10 +461,16 @@ def write_final_report(csv_file_path, target_file_path, name, group_num, time_ra
 
         df = pd.read_csv(os.path.join(csv_file_path, 'config.csv'))
         df.to_excel(writer, sheet_name='Config')
+
         df = pd.read_csv(os.path.join(csv_file_path, 'dispatcher.csv'))
+        # all_fls_num = sum(df['num_dispatched'][:-2])
+
+        all_fls_num = sum(df['num_dispatched'])
         df.to_excel(writer, sheet_name='Dispatcher')
 
         writer.close()
+
+        check_correctness(os.path.join(target_file_path, name + '_final_report.xlsx'), all_fls_num)
     except Exception as e:
         print(e)
 
@@ -458,7 +478,7 @@ def write_final_report(csv_file_path, target_file_path, name, group_num, time_ra
 def get_dispatcher_coords(center=None):
     l = 60
     w = 60
-    dispatcher_coords = [0,0,0]
+    dispatcher_coords = [0, 0, 0]
 
     if Config.SANITY_TEST == 1:
         height = min([2, math.sqrt(Config.SANITY_TEST_CONFIG[1][1])])
@@ -497,3 +517,58 @@ def check_dispatcher(dispatcher_coords, coord):
     # Return the coordinate from dispatcher_coords that corresponds to the smallest distance
     return dispatcher_coords[min_index]
 
+
+def check_correctness(file_path, all_fls_num):
+    # Read the Excel file into a DataFrame
+    df = pd.read_excel(file_path, engine='openpyxl')
+
+    mid_flight = get_value_in_row(df, "Mid-Flight")
+    illuminating = get_value_in_row(df, "Illuminating")
+    stationary_standby = get_value_in_row(df, "Stationary Standby")
+    total_dispatched = get_value_in_row(df, "Total Dispatched")
+    total_failed = get_value_in_row(df, "Total Failed")
+    in_que_fls = get_value_in_row(df, "Num_FLSs_Queued")
+    # in_que_fls = get_value_in_row(df, "Queued FLSs")
+    failed_illum = get_value_in_row(df, "Failed Illuminating FLS")
+    failed_standby = get_value_in_row(df, "Failed Standby FLS")
+    hub_deployed = get_value_in_row(df, "Hub_Deployed_FLS")
+    hub_deployed_illum = get_value_in_row(df, "Hub_Deployed_FLS_To_Illuminate")
+    hub_deployed_standby = get_value_in_row(df, "Hub_Deployed_FLS_For_Standby")
+
+    if_error = False
+
+    if mid_flight + illuminating + stationary_standby != total_dispatched - total_failed:
+        logger.info("Equation not satisfied:  Mid Flight + Illuminating + Stationary Standby = Total Dispatched - Total Failed")
+        if_error = True
+
+    if in_que_fls != (all_fls_num - total_dispatched):
+        logger.info("Equation not satisfied:  Num_FLSs_Queued = SUM(FLSs put into dispatching Queue by all dispatcher) - Total Dispatched")
+        if_error = True
+
+    if total_failed != (failed_illum + failed_standby):
+        logger.info("Equation not satisfied:  Total Failed = Failed Illuminating FLS + Failed Standby FLS")
+        if_error = True
+
+    if hub_deployed != (hub_deployed_illum + hub_deployed_standby):
+        logger.info("Equation not satisfied:  Hub_Deployed_FLS = Hub_Deployed_FLS_To_Illuminate + Hub_Deployed_FLS_for_Standby")
+        if_error = True
+
+    if hub_deployed != (all_fls_num - (mid_flight + illuminating + stationary_standby)):
+        logger.info("Equation not satisfied:  Hub_Deployed_FLS = SUM(FLSs put into dispatching Queue by all dispatcher) - "
+                    "(Mid Flight + Illuminating + Stationary Standby)")
+        if_error = True
+
+    if not if_error:
+        logger.info(f"FINAL REPORT CORRECT")
+    else:
+        logger.info(f"FINAL REPORT WRONG")
+
+
+
+
+def get_value_in_row(df, row_title):
+    # Filter rows where 'Metrics' column has the value 'Queued FLSs'
+    filtered_row = df[df['Unnamed: 1'] == row_title]
+
+    # Get the value from the 'Value' column for the filtered row
+    return filtered_row['Value'].iloc[0]

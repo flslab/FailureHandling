@@ -537,23 +537,23 @@ def check_correctness(file_path, all_fls_num):
 
     if_error = False
 
-    if mid_flight + illuminating + stationary_standby != total_dispatched - total_failed:
+    if abs((mid_flight + illuminating + stationary_standby) - (total_dispatched - total_failed)) > 0.1:
         logger.info("Equation not satisfied:  Mid Flight + Illuminating + Stationary Standby = Total Dispatched - Total Failed")
         if_error = True
 
-    if in_que_fls != (all_fls_num - total_dispatched):
+    if abs(in_que_fls - (all_fls_num - total_dispatched)) > 0.1:
         logger.info("Equation not satisfied:  Num_FLSs_Queued = SUM(FLSs put into dispatching Queue by all dispatcher) - Total Dispatched")
         if_error = True
 
-    if total_failed != (failed_illum + failed_standby):
+    if abs(total_failed - (failed_illum + failed_standby)) > 0.1:
         logger.info("Equation not satisfied:  Total Failed = Failed Illuminating FLS + Failed Standby FLS")
         if_error = True
 
-    if hub_deployed != (hub_deployed_illum + hub_deployed_standby):
+    if abs(hub_deployed - (hub_deployed_illum + hub_deployed_standby)) > 0.1:
         logger.info("Equation not satisfied:  Hub_Deployed_FLS = Hub_Deployed_FLS_To_Illuminate + Hub_Deployed_FLS_for_Standby")
         if_error = True
 
-    if hub_deployed != (all_fls_num - (mid_flight + illuminating + stationary_standby)):
+    if abs(hub_deployed - (all_fls_num - (mid_flight + illuminating + stationary_standby))) > 0.1:
         logger.info("Equation not satisfied:  Hub_Deployed_FLS = SUM(FLSs put into dispatching Queue by all dispatcher) - "
                     "(Mid Flight + Illuminating + Stationary Standby)")
         if_error = True

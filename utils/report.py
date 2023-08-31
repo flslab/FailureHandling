@@ -430,11 +430,11 @@ def write_final_report(csv_file_path, target_file_path, name, group_num, time_ra
 
     filtered_row = df[df['Metric'] == 'Handled failures']
     report.append(['Hub_Deployed_FLS', filtered_row['Value'].iloc[0]])
-    # filtered_row = df[df['Metric'] == 'Handled replica illuminating FLSs']
-    filtered_row = df[df['Metric'] == 'Dispatched replica illuminating FLSs']
+    filtered_row = df[df['Metric'] == 'Handled replica illuminating FLSs']
+    # filtered_row = df[df['Metric'] == 'Dispatched replica illuminating FLSs']
     report.append(['Hub_Deployed_FLS_To_Illuminate', filtered_row['Value'].iloc[0]])
-    filtered_row = df[df['Metric'] == 'Dispatched replica standby FLSs']
-    # filtered_row = df[df['Metric'] == 'Handled replica standby FLSs']
+    filtered_row = df[df['Metric'] == 'Handled replica standby FLSs']
+    # filtered_row = df[df['Metric'] == 'Dispatched replica standby FLSs']
     report.append(['Hub_Deployed_FLS_For_Standby', filtered_row['Value'].iloc[0]])
 
     df = pd.DataFrame(data=None, columns=['', 'Value'])

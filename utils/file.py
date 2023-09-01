@@ -314,7 +314,7 @@ def create_csv_from_json_no_group(config, init_num, directory, fig_dir):
     with open(os.path.join(directory, 'timeline.json'), "w") as f:
         json.dump(trimed_timeline, f)
 
-    chart_data = gen_charts(trimed_timeline, start_time, num_metrics, fig_dir)
+    chart_data = gen_charts(merged_timeline, start_time, num_metrics, fig_dir)
     with open(os.path.join(directory, 'charts.json'), "w") as f:
         json.dump(chart_data, f)
 

@@ -238,7 +238,10 @@ def get_report_metrics_no_group(dir_meta, time_range):
             else:
                 for i in range(len(data[metric_name]['t'])):
                     if data[metric_name]['t'][i] >= time_range[0]:
-                        metrics.append(data[metric_name]['y'][i-1 if i >= 1 else i])
+                        if i <= 1:
+                            metrics.append(0)
+                        else:
+                            metrics.append(data[metric_name]['y'][i-1])
                         break
 
             if data[metric_name]['t'][0] > time_range[1]:

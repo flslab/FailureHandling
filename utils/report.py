@@ -588,25 +588,25 @@ def check_correctness(file_path, all_fls_num):
         logger.info("Equation not satisfied: Mid Flight + Illuminating + Stationary Standby = Total Dispatched - Total Failed")
         if_error = True
 
-    if abs(in_que_fls - (all_fls_num - total_dispatched)) > 0.1:
+    if abs(in_que_fls - (all_fls_num - total_dispatched)) > 0.00001:
         logger.info(f"Equation not satisfied: Num_FLSs_Queued: {in_que_fls} = SUM(FLSs put into dispatching Queue by all dispatcher): {all_fls_num} - Total Dispatched: {total_dispatched}")
         if_error = True
 
-    if abs(failure_after_reset - (failed_illum + failed_standby)) > 0.1:
+    if abs(failure_after_reset - (failed_illum + failed_standby)) > 0.00001:
         logger.info("Equation not satisfied: Failed After Reset = Failed Illuminating FLS + Failed Standby FLS")
         if_error = True
 
-    if abs(hub_deployed - (hub_deployed_illum + hub_deployed_standby)) > 0.1:
+    if abs(hub_deployed - (hub_deployed_illum + hub_deployed_standby)) > 0.00001:
         logger.info(f"Equation not satisfied: Hub_Deployed_FLS: {hub_deployed} = Hub_Deployed_FLS_To_Illuminate: {hub_deployed_illum} + Hub_Deployed_FLS_for_Standby: {hub_deployed_standby}")
         if_error = True
 
-    if abs(hub_deployed - (all_fls_num - (mid_flight + illuminating + stationary_standby) - in_que_fls)) > 0.1:
+    if abs(hub_deployed - (all_fls_num - (mid_flight + illuminating + stationary_standby) - in_que_fls)) > 0.00001:
         logger.info(f"Equation not satisfied: Hub_Deployed_FLS: {hub_deployed} = SUM(FLSs put into dispatching Queue by all dispatcher): {all_fls_num} - "
                     f"(Mid Flight + Illuminating + Stationary Standby): {mid_flight + illuminating + stationary_standby} - Num_FLSs_Queued: {in_que_fls}")
         if_error = True
 
     if (Max_dist_stationary_standby_recover_illuminate > 0 and Max_dist_standby_hub_to_centroid > 0
-            and not (Max_dist_arrived_illuminate <= (Max_dist_stationary_standby_recover_illuminate + Max_dist_standby_hub_to_centroid))):
+            and (not (Max_dist_arrived_illuminate <= (Max_dist_stationary_standby_recover_illuminate + Max_dist_standby_hub_to_centroid)))):
         logger.info("CONSTRAINT VIOLATED: Max_dist_arrived_illuminate <= Max_dist_stationary_standby_recover_illuminate + Max_dist_standby_hub_to_centroid")
         if_error = True
 

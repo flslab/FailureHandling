@@ -39,7 +39,7 @@ def_general_conf = {
 general_props = [
     {
         "keys": ["DISPATCH_RATE"],
-        "values": ["100",],
+        "values": ["100"],
         # "values": ["10", "50", "100", "'inf'"]
         # "values": ["10", "50"]
     },
@@ -61,7 +61,7 @@ general_props = [
     {
         "keys": ["FAILURE_TIMEOUT"],
         # "values": ["30", "60"]
-        "values": ["3"]
+        "values": ["0.1"]
         # "values": ["1", "3", "6", "30", "60", "120", "600"]
     },
     {

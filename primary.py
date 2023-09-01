@@ -160,7 +160,7 @@ class PrimaryNode:
         w = 60
 
         if Config.SANITY_TEST == 3 and Config.DISPATCHERS == 3:
-            self.dispatchers_coords = np.array([[31, 31, 0], [61, 61, 0], [1, 1, 0]])
+            self.dispatchers_coords = np.array([[1, 1, 0], [6, 6, 0], [11, 11, 0]])
 
         elif Config.DISPATCHERS == 1:
             if Config.SANITY_TEST > 0:

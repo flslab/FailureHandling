@@ -266,7 +266,7 @@ def get_report_metrics_no_group(dir_meta, time_range):
                         break
 
         metrics.extend(get_dist_metrics(csv_path_flss, time_range[0]))
-        metrics.extend(get_mttr_by_group(csv_path_points))
+        metrics.extend(get_mttr_by_group(csv_path_points, 1))
 
     except Exception as e:
         print(f"An error occurred: {e}")

@@ -311,6 +311,7 @@ def write_final_report(csv_file_path, target_file_path, name, group_num, time_ra
     report_metrics = [metric for metric in report_metrics]
     report_metrics.append(Config.DISPATCH_RATE)
     report_metrics.append(group_num)
+    logger.info(f"Report Metrics: {report_metrics}")
     report = []
 
     for i in range(len(report_key)):

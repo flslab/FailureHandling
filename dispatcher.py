@@ -34,8 +34,9 @@ class Dispatcher(threading.Thread):
                 except BrokenPipeError:
                     continue
 
-            que_delay = time.time() - enque_time
-            self.delay_list.append(que_delay)
+            if enque_time > 0:
+                que_delay = time.time() - enque_time
+                self.delay_list.append(que_delay)
 
             if self.delay:
                 time.sleep(self.delay)

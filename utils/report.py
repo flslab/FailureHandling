@@ -4,6 +4,7 @@ import pandas as pd
 import os
 import csv
 import math
+import ast
 
 from config import Config
 from worker.metrics import gen_point_metrics_no_group
@@ -45,7 +46,7 @@ def get_report_metrics(dir_meta, time_range, group_num):
         #         print(f"An error occurred: {e}")
         #         metrics.append(0)
 
-        metrics.extend(get_dist_metrics(csv_path_flss))
+        metrics.extend(get_dist_metrics(csv_path_flss, time_range[0]))
         metrics.extend(get_mttr_by_group(csv_path_points, group_num))
 
     except Exception as e:
@@ -140,13 +141,13 @@ def calculate_mean(csv_path, column_heading):
     return sum(values) / len(values)
 
 
-def get_dist_metrics(csv_path):
+def get_dist_metrics(csv_path, start_time):
     dists = []
     with open(csv_path, 'r') as file:
         reader = csv.DictReader(file)
         for row in reader:
             try:
-                if eval(row['26_dist_traveled']) >= 0:
+                if eval(row['26_dist_traveled']) >= 0 and eval(row['timeline'])[0][0] >= start_time:
                     dists.append(eval(row['26_dist_traveled']))
             except ValueError:
                 # Skip rows where the value is not a number
@@ -230,15 +231,34 @@ def get_report_metrics_no_group(dir_meta, time_range):
 
         metrics = []
 
-        for metric_name in ['dispatched', 'failed', 'mid_flight', 'illuminating', 'standby']:
-            if data[metric_name]['t'][-1] < time_range[1]:
+        for metric_name in ['dispatched', 'failed']:
+
+            if data[metric_name]['t'][-1] < time_range[0]:
                 metrics.append(data[metric_name]['y'][-1])
+            else:
+                for i in range(len(data[metric_name]['t'])):
+                    if data[metric_name]['t'][i] >= time_range[0]:
+                        metrics.append(data[metric_name]['y'][i-1 if i >= 1 else i])
+                        break
+
+            if data[metric_name]['t'][0] > time_range[1]:
+                metrics.append(data[metric_name]['y'][0] - metrics[-1])
+            else:
+                for i in range(len(data[metric_name]['t']) - 1, -1, -1):
+                    if data[metric_name]['t'][i] <= time_range[1]:
+                        metrics.append(data[metric_name]['y'][i] - metrics[-1])
+                        break
+
+        for metric_name in ['mid_flight', 'illuminating', 'standby']:
+            if data[metric_name]['t'][0] > time_range[1]:
+                metrics.append(data[metric_name]['y'][0])
             else:
                 for i in range(len(data[metric_name]['t']) - 1, -1, -1):
                     if data[metric_name]['t'][i] <= time_range[1]:
                         metrics.append(data[metric_name]['y'][i])
                         break
-        metrics.extend(get_dist_metrics(csv_path_flss))
+
+        metrics.extend(get_dist_metrics(csv_path_flss, time_range[0]))
         metrics.extend(get_mttr_by_group(csv_path_points, 1))
 
     except Exception as e:
@@ -266,8 +286,10 @@ def write_final_report(csv_file_path, target_file_path, name, group_num, time_ra
     #     return
 
     report_key = [
-        "Total Dispatched",
-        "Total Failed",
+        "Dispatched Before Reset",
+        "Dispatched After Reset",
+        "Failure Before Reset",
+        "Failure After Reset",
         "Mid-Flight",
         "Illuminating",
         "Stationary Standby",
@@ -294,6 +316,7 @@ def write_final_report(csv_file_path, target_file_path, name, group_num, time_ra
         report.append([report_key[i], report_metrics[i]])
 
     df = pd.read_csv(os.path.join(csv_file_path, 'flss.csv'))
+    df = df[df['timeline'].apply(lambda x: ast.literal_eval(x)[0][0]) >= time_range[0]]
 
     # 3. Split the dataframe based on the condition
     dist1 = df[df['timeline'].str.contains(' 1, ')]
@@ -420,6 +443,8 @@ def write_final_report(csv_file_path, target_file_path, name, group_num, time_ra
         failed_standby = 0
         failed_illum = 0
         for event in events:
+            if event[0] < time_range[0]:
+                continue
             if event[1] == 3:
                 failed_illum += 1
             elif event[1] == 5:
@@ -485,7 +510,7 @@ def get_dispatcher_coords(center=None):
         radius = math.sqrt(Config.SANITY_TEST_CONFIG[1][1] ** 2 - height ** 2)
         center = [radius + 1, radius + 1, 0]
 
-    elif Config.SANITY_TEST == 2:
+    elif Config.SANITY_TEST >= 2:
         radius = Config.STANDBY_TEST_CONFIG[0][1]
         center = [radius + 1, radius + 1, 0]
 
@@ -525,8 +550,11 @@ def check_correctness(file_path, all_fls_num):
     mid_flight = get_value_in_row(df, "Mid-Flight")
     illuminating = get_value_in_row(df, "Illuminating")
     stationary_standby = get_value_in_row(df, "Stationary Standby")
-    total_dispatched = get_value_in_row(df, "Total Dispatched")
-    total_failed = get_value_in_row(df, "Total Failed")
+    dispatched_before_reset = get_value_in_row(df, "Dispatched Before Reset")
+    dispatched_after_reset = get_value_in_row(df, "Dispatched After Reset")
+    failure_before_reset = get_value_in_row(df, "Failure Before Reset")
+    failure_after_reset = get_value_in_row(df, "Failure After Reset")
+    group_num = get_value_in_row(df, "Number of Groups")
     in_que_fls = get_value_in_row(df, "Num_FLSs_Queued")
     # in_que_fls = get_value_in_row(df, "Queued FLSs")
     failed_illum = get_value_in_row(df, "Failed Illuminating FLS")
@@ -534,28 +562,83 @@ def check_correctness(file_path, all_fls_num):
     hub_deployed = get_value_in_row(df, "Hub_Deployed_FLS")
     hub_deployed_illum = get_value_in_row(df, "Hub_Deployed_FLS_To_Illuminate")
     hub_deployed_standby = get_value_in_row(df, "Hub_Deployed_FLS_For_Standby")
+    Max_dist_arrived_illuminate = get_value_in_row(df, "Max_dist_arrived_illuminate")
+    Max_dist_standby_hub_to_centroid = get_value_in_row(df, "Max_dist_standby_hub_to_centroid")
+    Max_dist_stationary_standby_recover_illuminate = get_value_in_row(df, "Max_dist_stationary_standby_recover_illuminate")
+    Min_dist_failed_midflight_illuminate = get_value_in_row(df, "Min_dist_failed_midflight_illuminate")
+    Max_dist_failed_midflight_illuminate = get_value_in_row(df, "Max_dist_failed_midflight_illuminate")
+    Max_dist_midflight_standby_recover_illuminate = get_value_in_row(df, "Max_dist_midflight_standby_recover_illuminate")
+    Min_dist_standby_hub_to_centroid = get_value_in_row(df, "Min_dist_standby_hub_to_centroid")
+    Min_dist_midflight_standby_recover_illuminate = get_value_in_row(df, "Min_dist_midflight_standby_recover_illuminate")
+    Min_dist_standby_hub_to_fail_before_centroid = get_value_in_row(df, "Min_dist_standby_hub_to_fail_before_centroid")
+    Max_dist_standby_hub_to_fail_before_centroid = get_value_in_row(df, "Max_dist_standby_hub_to_fail_before_centroid")
+    Min_dist_standby_centroid_to_fail_before_recovered = get_value_in_row(df, "Min_dist_standby_centroid_to_fail_before_recovered")
+    Max_dist_standby_centroid_to_fail_before_recovered = get_value_in_row(df, "Max_dist_standby_centroid_to_fail_before_recovered")
 
     if_error = False
 
-    if abs((mid_flight + illuminating + stationary_standby) - (total_dispatched - total_failed)) > 0.1:
-        logger.info("Equation not satisfied:  Mid Flight + Illuminating + Stationary Standby = Total Dispatched - Total Failed")
+    total_dispatched = dispatched_before_reset + dispatched_after_reset
+
+    if abs((mid_flight + illuminating + stationary_standby) - (total_dispatched - failure_before_reset - failure_after_reset)) > 0.1:
+        logger.info("Equation not satisfied: Mid Flight + Illuminating + Stationary Standby = Total Dispatched - Total Failed")
         if_error = True
 
     if abs(in_que_fls - (all_fls_num - total_dispatched)) > 0.1:
-        logger.info(f"Equation not satisfied:  Num_FLSs_Queued: {in_que_fls} = SUM(FLSs put into dispatching Queue by all dispatcher): {all_fls_num} - Total Dispatched: {total_dispatched}")
+        logger.info(f"Equation not satisfied: Num_FLSs_Queued: {in_que_fls} = SUM(FLSs put into dispatching Queue by all dispatcher): {all_fls_num} - Total Dispatched: {total_dispatched}")
         if_error = True
 
-    if abs(total_failed - (failed_illum + failed_standby)) > 0.1:
-        logger.info("Equation not satisfied:  Total Failed = Failed Illuminating FLS + Failed Standby FLS")
+    if abs(failure_after_reset - (failed_illum + failed_standby)) > 0.1:
+        logger.info("Equation not satisfied: Failed After Reset = Failed Illuminating FLS + Failed Standby FLS")
         if_error = True
 
     if abs(hub_deployed - (hub_deployed_illum + hub_deployed_standby)) > 0.1:
-        logger.info(f"Equation not satisfied:  Hub_Deployed_FLS: {hub_deployed} = Hub_Deployed_FLS_To_Illuminate: {hub_deployed_illum} + Hub_Deployed_FLS_for_Standby: {hub_deployed_standby}")
+        logger.info(f"Equation not satisfied: Hub_Deployed_FLS: {hub_deployed} = Hub_Deployed_FLS_To_Illuminate: {hub_deployed_illum} + Hub_Deployed_FLS_for_Standby: {hub_deployed_standby}")
         if_error = True
 
     if abs(hub_deployed - (all_fls_num - (mid_flight + illuminating + stationary_standby) - in_que_fls)) > 0.1:
-        logger.info(f"Equation not satisfied:  Hub_Deployed_FLS: {hub_deployed} = SUM(FLSs put into dispatching Queue by all dispatcher): {all_fls_num} - "
+        logger.info(f"Equation not satisfied: Hub_Deployed_FLS: {hub_deployed} = SUM(FLSs put into dispatching Queue by all dispatcher): {all_fls_num} - "
                     f"(Mid Flight + Illuminating + Stationary Standby): {mid_flight + illuminating + stationary_standby} - Num_FLSs_Queued: {in_que_fls}")
+        if_error = True
+
+    if not (Max_dist_arrived_illuminate <= (Max_dist_stationary_standby_recover_illuminate + Max_dist_standby_hub_to_centroid)):
+        logger.info("CONSTRAINT VIOLATED: Max_dist_arrived_illuminate <= Max_dist_stationary_standby_recover_illuminate + Max_dist_standby_hub_to_centroid")
+        if_error = True
+
+    if not (Min_dist_failed_midflight_illuminate >= 0):
+        logger.info("CONSTRAINT VIOLATED: Min_dist_failed_midflight_illuminate >= 0")
+        if_error = True
+
+    if Config.SANITY_TEST != 3 and not (Max_dist_failed_midflight_illuminate <= Max_dist_arrived_illuminate):
+        logger.info("CONSTRAINT VIOLATED: Max_dist_failed_midflight_illuminate <= Max_dist_arrived_illuminate")
+        if_error = True
+
+    if not (Min_dist_midflight_standby_recover_illuminate >= 0):
+        logger.info("CONSTRAINT VIOLATED: Min_dist_midflight_standby_recover_illuminate >= 0")
+        if_error = True
+
+    if not (Max_dist_midflight_standby_recover_illuminate <= (Max_dist_stationary_standby_recover_illuminate + Max_dist_standby_hub_to_centroid)):
+        logger.info("CONSTRAINT VIOLATED: Max_dist_midflight_standby_recover_illuminate <= Max_dist_stationary_standby_recover_illuminate + Max_dist_standby_hub_to_centroid")
+        if_error = True
+
+    if not (Min_dist_standby_hub_to_centroid >= 0):
+        logger.info("CONSTRAINT VIOLATED: Min_dist_standby_hub_to_centroid >= 0")
+        if_error = True
+
+    if not (Min_dist_standby_hub_to_fail_before_centroid >= 0):
+        logger.info("CONSTRAINT VIOLATED: Min_dist_standby_hub_to_fail_before_centroid >= 0")
+        if_error = True
+
+    if not (Max_dist_standby_hub_to_fail_before_centroid <= Max_dist_standby_hub_to_centroid):
+        logger.info("CONSTRAINT VIOLATED: Max_dist_standby_hub_to_fail_before_centroid <= Max_dist_standby_hub_to_centroid")
+        if_error = True
+
+    if not (Max_dist_standby_centroid_to_fail_before_recovered <= Max_dist_stationary_standby_recover_illuminate):
+        logger.info("CONSTRAINT VIOLATED: Max_dist_standby_centroid_to_fail_before_recovered <= Max_dist_stationary_standby_recover_illuminate")
+        if_error = True
+
+    if not (Min_dist_standby_centroid_to_fail_before_recovered >= 0):
+        logger.info(
+            "CONSTRAINT VIOLATED: Min_dist_standby_centroid_to_fail_before_recovered >= 0")
         if_error = True
 
     if not if_error:
@@ -564,11 +647,31 @@ def check_correctness(file_path, all_fls_num):
         logger.info(f"FINAL REPORT WRONG")
 
 
-
-
 def get_value_in_row(df, row_title):
     # Filter rows where 'Metrics' column has the value 'Queued FLSs'
     filtered_row = df[df['Unnamed: 1'] == row_title]
 
     # Get the value from the 'Value' column for the filtered row
     return filtered_row['Value'].iloc[0]
+
+
+def get_time_range(json_file_path, intial_num, set_end_time=None):
+    time_range = []
+
+    with open(json_file_path, 'r') as json_file:
+        data = json.load(json_file)
+
+    metric_name = 'dispatched'
+
+    for i in range(len(data[metric_name]['t'])):
+        if data[metric_name]['y'][i] >= intial_num:
+            time_range.append(data[metric_name]['t'][i])
+            break
+    if len(time_range) <= 0:
+        time_range.append(0)
+
+    if set_end_time is not None:
+        time_range.append(set_end_time)
+    else:
+        time_range.append(Config.DURATION + 10)
+    return time_range

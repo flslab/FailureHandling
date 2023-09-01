@@ -15,7 +15,7 @@ def_general_conf = {
     "MAX_SPEED": "3",
     "DISPLAY_CELL_SIZE": "0.05",
     "BUSY_WAITING": "False",
-    "DURATION": "30",
+    "DURATION": "1",
     "K": "3",
     "SHAPE": "'chess'",
     "RESULTS_PATH": "'/proj/nova-PG0/shuqin/results'",
@@ -29,7 +29,7 @@ def_general_conf = {
     "DISPATCH_RATE": "'inf'",
     "MULTICAST": "False",
     "INPUT": "'racecar_K20'",
-    "RESET_AFTER_INITIAL_DEPLOY": "False",  # flag that if reset all metrics after intial FLSs are all deployed
+    "RESET_AFTER_INITIAL_DEPLOY": "True",  # flag that if reset all metrics after intial FLSs are all deployed
     "SANITY_TEST": "0",  # 0 for not test, 1 for normal test with hub and no standby, 2 for standby test with no hub
     "SANITY_TEST_CONFIG": "[('NUMBER_OF_FLS', 10), ('DIST_TO_POINT', 10), ('CHECK_TIME_RANGE', 60 * 0.5, 60 * 1)]",
     "STANDBY_TEST_CONFIG": "[('RADIUS', 10), ('DEPLOY_DIST', 10), ('FAILURE_TIMEOUT_GAP', 10), ('CHECK_TIME_RANGE', 60 * 0.5, 60 * 1)]"
@@ -39,29 +39,29 @@ def_general_conf = {
 general_props = [
     {
         "keys": ["DISPATCH_RATE"],
-        "values": ["10", "'inf'"],
-        # "values": ["10", "50", "100", "'inf'"]
+        # "values": ["10", "'inf'"],
+        "values": ["10", "50", "100", "'inf'"]
         # "values": ["10", "50"]
     },
     {
         "keys": ["K", "INPUT"],
         "values": [
-            # {"K": "0", "INPUT": "'chess_K3'"},
+            {"K": "0", "INPUT": "'chess_K3'"},
             {"K": "3", "INPUT": "'chess_K3'"},
-            # {"K": "5", "INPUT": "'chess_K5'"},
-            # {"K": "10", "INPUT": "'chess_K10'"},
+            {"K": "5", "INPUT": "'chess_K5'"},
+            {"K": "10", "INPUT": "'chess_K10'"},
             {"K": "20", "INPUT": "'chess_K20'"},
         ]
     },
     {
         "keys": ["DISPATCHERS"],
-        "values": ["1"],
+        # "values": ["1"],
         # "values": ["1", "3"]
     },
     {
         "keys": ["FAILURE_TIMEOUT"],
         # "values": ["30", "60"]
-        "values": ["3", '5']
+        "values": ["1", "3", "5"]
         # "values": ["1", "3", "6", "30", "60", "120", "600"]
     },
     {

@@ -234,6 +234,6 @@ class StateMachine:
     def update_movement(self):
         prev_pos = self.context.el
         self.context.el = self.context.vm.get_location(time.time())
-        print(f"fid={self.context.fid} {np.linalg.norm(prev_pos - self.context.el)}")
+        # print(f"fid={self.context.fid} {np.linalg.norm(prev_pos - self.context.el)}")
         self.context.dist_traveled += np.linalg.norm(self.context.vm.x0 - self.context.el)
         logger.debug(f"DISTANCE TRAVELED {np.linalg.norm(self.context.vm.x0 - self.context.el)} fid={self.context.fid}")

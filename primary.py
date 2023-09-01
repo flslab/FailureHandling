@@ -17,7 +17,7 @@ from message import Message, MessageTypes
 import worker
 import utils
 from utils import logger
-from utils.file import read_cliques_xlsx, get_group_mapping
+from utils.file import read_cliques_xlsx, get_group_mapping, read_point_info_from_cliques_xlsx
 from utils.socket import send_msg
 from utils.generate_circle_coord import generate_circle_coordinates
 from utils.sanity_metrics import *
@@ -208,7 +208,7 @@ class PrimaryNode:
             self.groups = generate_circle_coordinates(self.center, radius, height, Config.SANITY_TEST_CONFIG[0][1])
             self.radio_ranges = [Config.MAX_RANGE] * len(self.groups)
 
-        elif Config.SANITY_TEST == 2:
+        elif Config.SANITY_TEST >= 2:
             height = Config.STANDBY_TEST_CONFIG[1][1]
             radius = Config.STANDBY_TEST_CONFIG[0][1]
             self.center = [radius + 1, radius + 1, 0]
@@ -247,7 +247,7 @@ class PrimaryNode:
     def _assign_dispatcher(self, properties):
         return self.dispatch_policy.assign(dispatchers=self.dispatchers, **properties)
 
-    def _deploy_fls(self, properties, deploy_at_destination=False):
+    def _deploy_fls(self, properties, deploy_at_destination=False, initial_fls=False):
         nid = properties["fid"] % self.N
         dispatcher = self._assign_dispatcher(properties)
         if deploy_at_destination:
@@ -256,7 +256,11 @@ class PrimaryNode:
         if properties["el"] is None:
             properties["el"] = dispatcher.coord
         dispatcher.q.put(lambda: self._send_msg_to_node(nid, properties))
-        dispatcher.time_q.put(time.time())
+        if initial_fls:
+            dispatcher.time_q.put(-1)
+        else:
+            dispatcher.time_q.put(time.time())
+
         dispatcher.num_dispatched += 1
 
     def _dispatch_initial_formation(self):
@@ -513,11 +517,32 @@ class PrimaryNode:
         utils.write_configs(self.dir_meta, self.start_time)
         utils.combine_csvs(self.dir_meta, self.dir_experiment, "reli_" + self.result_name)
 
-
         if Config.SANITY_TEST > 0:
             self.write_sanity_results()
 
-        time_range = [0, Config.DURATION + 10]
+        if Config.RESET_AFTER_INITIAL_DEPLOY:
+            if Config.SANITY_TEST == 1:
+                total_point_num = Config.SANITY_TEST_CONFIG[0][1]
+                group_num = 0
+
+            elif Config.SANITY_TEST == 2:
+                total_point_num = 0
+                group_num = 0
+
+            elif Config.SANITY_TEST == 3:
+                total_point_num = Config.K
+                group_num = 1
+
+            else:
+                total_point_num, group_num = read_point_info_from_cliques_xlsx(
+                    os.path.join(self.dir_experiment, f'{Config.INPUT}.xlsx'))
+
+            initial_fls_num = total_point_num + group_num
+
+            time_range = get_time_range(os.path.join(self.dir_meta, 'charts.json'), initial_fls_num)
+        else:
+            time_range = [0, Config.DURATION + 10]
+
         write_final_report(self.dir_meta, self.dir_meta, self.result_name, len(group_id), time_range)
 
     def stop_experiment(self):
@@ -580,20 +605,31 @@ def rewrite_reports():
 
         utils.combine_csvs(dir_meta, dir_experiment, "reli_" + result_name)
 
-        if CONFIG.K == 3:
-            group_num = 152
-        elif CONFIG.K == 10:
-            group_num = 46
-        elif CONFIG.K == 22:
-            group_num = 22
-        else:
-            group_num = 1
-
         folder_name = f"{CONFIG.DIR_KEYS[0]}{CONFIG.K}"
 
         target_file_path = '~/Desktop/report/' + folder_name
 
-        time_range = [0, Config.DURATION + 10]
+        if Config.RESET_AFTER_INITIAL_DEPLOY:
+            if Config.SANITY_TEST == 1:
+                total_point_num = Config.SANITY_TEST_CONFIG[0][1]
+                group_num = 0
+
+            elif Config.SANITY_TEST == 2:
+                total_point_num = 0
+                group_num = 0
+
+            elif Config.SANITY_TEST == 3:
+                total_point_num = Config.K
+                group_num = 1
+
+            else:
+                total_point_num, group_num = read_point_info_from_cliques_xlsx(
+                    os.path.join(dir_experiment, f'{CONFIG.INPUT}.xlsx'))
+
+            time_range = get_time_range(os.path.join(dir_meta, 'charts.json'), total_point_num + group_num)
+        else:
+            time_range = [0, Config.DURATION + 10]
+
         write_final_report(dir_meta, target_file_path, result_name, group_num, time_range)
 
 

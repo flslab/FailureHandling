@@ -212,6 +212,17 @@ def read_cliques_xlsx(path):
     return [np.array(eval(c)) for c in df["7 coordinates"]], [max(eval(d)) + 1 for d in df["6 dist between each pair"]]
 
 
+def read_point_info_from_cliques_xlsx(path):
+    df = pd.read_excel(path, sheet_name='metrics')
+    filtered_row = df[df['metric'] == 'number of cliques']
+    group_num = filtered_row['Value'].iloc[0]
+    filtered_row = df[df['metric'] == 'number of single nodes']
+    total_point_num = group_num * Config.K + filtered_row['Value'].iloc[0]
+
+    # Get the value from the 'Value' column for the filtered row
+    return total_point_num, group_num
+
+
 def get_group_mapping(path):
     group_id = []
 

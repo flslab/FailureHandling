@@ -55,7 +55,7 @@ class VelocityModel:
 
     def get_location(self, t):
         dt = t - self.start_t
-        print(f"Time before faile: {dt}")
+        # print(f"Time before faile: {dt}")
         if dt < 0:
             return self.x0
         elif dt < self.a_time:

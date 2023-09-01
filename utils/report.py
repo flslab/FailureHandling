@@ -47,7 +47,7 @@ def get_report_metrics(dir_meta, time_range, group_num):
         #         metrics.append(0)
 
         metrics.extend(get_dist_metrics(csv_path_flss, time_range[0]))
-        metrics.extend(get_mttr_by_group(csv_path_points, group_num))
+        metrics.extend(get_mttr_by_group(csv_path_points, 1))
 
     except Exception as e:
         print(f"An error occurred: {e}")
@@ -170,6 +170,7 @@ def get_mttr_by_group(csv_path, group_num):
         logger.info(f"START READ MTTR: {csv_path}")
         for row in reader:
             try:
+                logger.info(f"group_id: {row['group_id']} type:{type(row['group_id'])}")
                 group_id = int(row['group_id'])
                 logger.info(f"hub:{row['hub wait times']} stdby: {row['hub wait times']}")
 
@@ -183,7 +184,7 @@ def get_mttr_by_group(csv_path, group_num):
                 # Skip rows where the value is not a number
                 continue
 
-    if not mttr:
+    if not mttr or mttr == []:
         return [0, 0, 0, 0]
 
     mttr_all = (list(chain.from_iterable(mttr)))
@@ -265,7 +266,7 @@ def get_report_metrics_no_group(dir_meta, time_range):
                         break
 
         metrics.extend(get_dist_metrics(csv_path_flss, time_range[0]))
-        metrics.extend(get_mttr_by_group(csv_path_points, 1))
+        metrics.extend(get_mttr_by_group(csv_path_points))
 
     except Exception as e:
         print(f"An error occurred: {e}")

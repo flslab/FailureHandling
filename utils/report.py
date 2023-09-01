@@ -167,7 +167,7 @@ def get_mttr_by_group(csv_path, group_num):
     mttr = [[] for i in range(group_num)]
     with open(csv_path, 'r') as file:
         reader = csv.DictReader(file)
-        logger.info(f"START READ MTTR: {csv_path}")
+        logger.info(f"START READ MTTR: {csv_path} reader:{reader}")
         for row in reader:
             try:
                 logger.info(f"group_id: {row['group_id']} type:{type(row['group_id'])}")

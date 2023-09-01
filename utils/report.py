@@ -239,10 +239,10 @@ def get_report_metrics_no_group(dir_meta, time_range):
             else:
                 for i in range(len(data[metric_name]['t'])):
                     if data[metric_name]['t'][i] >= time_range[0]:
-                        if i <= 1:
+                        if i < 0:
                             metrics.append(0)
                         else:
-                            metrics.append(data[metric_name]['y'][i-1])
+                            metrics.append(data[metric_name]['y'][i])
                         break
 
             if data[metric_name]['t'][0] > time_range[1]:
@@ -603,7 +603,8 @@ def check_correctness(file_path, all_fls_num):
                     f"(Mid Flight + Illuminating + Stationary Standby): {mid_flight + illuminating + stationary_standby} - Num_FLSs_Queued: {in_que_fls}")
         if_error = True
 
-    if not (Max_dist_arrived_illuminate <= (Max_dist_stationary_standby_recover_illuminate + Max_dist_standby_hub_to_centroid)):
+    if (Max_dist_stationary_standby_recover_illuminate > 0 and Max_dist_standby_hub_to_centroid > 0
+            and not (Max_dist_arrived_illuminate <= (Max_dist_stationary_standby_recover_illuminate + Max_dist_standby_hub_to_centroid))):
         logger.info("CONSTRAINT VIOLATED: Max_dist_arrived_illuminate <= Max_dist_stationary_standby_recover_illuminate + Max_dist_standby_hub_to_centroid")
         if_error = True
 

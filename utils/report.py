@@ -578,7 +578,7 @@ def check_correctness(file_path, all_fls_num):
 
     total_dispatched = dispatched_before_reset + dispatched_after_reset
 
-    if abs((mid_flight + illuminating + stationary_standby) - (total_dispatched - failure_before_reset - failure_after_reset)) > 0.1:
+    if abs((mid_flight + illuminating + stationary_standby) - (total_dispatched - (failure_before_reset + failure_after_reset))) > 0.1:
         logger.info("Equation not satisfied: Mid Flight + Illuminating + Stationary Standby = Total Dispatched - Total Failed")
         if_error = True
 

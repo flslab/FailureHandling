@@ -98,7 +98,8 @@ class PrimaryNode:
         self.group_standby_coord = {}
         self.group_radio_range = {}
         self.pid = 0
-        self.dispatch_policy = ShortestDistancePolicy()
+        # self.dispatch_policy = ShortestDistancePolicy()
+        self.dispatch_policy = PoDPolicy()
         self.num_handled_failures = 0
         self.num_initial_illum_flss = 0
         self.num_initial_standbys = 0
@@ -157,7 +158,11 @@ class PrimaryNode:
     def _define_dispatcher_coords(self):
         l = 60
         w = 60
-        if Config.DISPATCHERS == 1:
+
+        if Config.SANITY_TEST == 3 and Config.DISPATCHERS == 3:
+            self.dispatchers_coords = np.array([[31, 31, 0], [61, 61, 0], [1, 1, 0]])
+
+        elif Config.DISPATCHERS == 1:
             if Config.SANITY_TEST > 0:
                 self.dispatchers_coords = np.array([self.center])
             else:

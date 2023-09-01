@@ -241,6 +241,8 @@ def get_report_metrics_no_group(dir_meta, time_range):
                     if data[metric_name]['t'][i] >= time_range[0]:
                         if i < 0:
                             metrics.append(0)
+                        elif data[metric_name]['t'][i] > time_range[0]:
+                            metrics.append(data[metric_name]['y'][i - 1])
                         else:
                             metrics.append(data[metric_name]['y'][i])
                         break

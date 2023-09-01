@@ -422,12 +422,16 @@ class PrimaryNode:
             #                      max(dispatcher.delay_list[self.num_initial_standbys:]),
             #                      dispatcher.delay_list])
             # else:
-            info.append([dispatcher.coord.tolist(), dispatcher.num_dispatched,
-                         sum(dispatcher.delay_list) / len(dispatcher.delay_list) if len(
-                             dispatcher.delay_list) > 0 else 0,
-                         min(dispatcher.delay_list), max(dispatcher.delay_list),
-                         dispatcher.delay_list])
-            total_delay_list.extend(dispatcher.delay_list)
+
+            if len(dispatcher.delay_list) > 0:
+                info.append([dispatcher.coord.tolist(), dispatcher.num_dispatched,
+                             sum(dispatcher.delay_list) / len(dispatcher.delay_list) if len(
+                                 dispatcher.delay_list) > 0 else 0,
+                             min(dispatcher.delay_list), max(dispatcher.delay_list),
+                             dispatcher.delay_list])
+                total_delay_list.extend(dispatcher.delay_list)
+            else:
+                info.append([dispatcher.coord.tolist(), dispatcher.num_dispatched, 0, 0, 0])
 
         info.append(['','','','','',''])
         info.append([

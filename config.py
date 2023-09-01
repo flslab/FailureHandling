@@ -11,7 +11,7 @@ class Config:
     MAX_SPEED = 3
     DISPLAY_CELL_SIZE = 0.05
     BUSY_WAITING = False
-    DURATION = 60
+    DURATION = 10
     K = 3 # if k = 0 no standbys are deployed
     SHAPE = 'racecar'
     RESULTS_PATH = 'results'

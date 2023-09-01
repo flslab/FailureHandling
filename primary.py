@@ -17,7 +17,7 @@ from message import Message, MessageTypes
 import worker
 import utils
 from utils import logger
-from utils.file import read_cliques_xlsx, get_group_mapping, read_point_info_from_cliques_xlsx
+from utils.file import read_cliques_xlsx, get_group_mapping, read_point_info_from_cliques_xlsx, get_time_range
 from utils.socket import send_msg
 from utils.generate_circle_coord import generate_circle_coordinates
 from utils.sanity_metrics import *
@@ -512,13 +512,6 @@ class PrimaryNode:
 
         # utils.create_csv_from_json(Config, self.init_num, self.dir_meta,
         #                            os.path.join(self.dir_figure, f'{self.result_name}.jpg'), group_map)
-        utils.create_csv_from_json_no_group(Config, self.init_num, self.dir_meta,
-                                            os.path.join(self.dir_figure, f'{self.result_name}.jpg'))
-        utils.write_configs(self.dir_meta, self.start_time)
-        utils.combine_csvs(self.dir_meta, self.dir_experiment, "reli_" + self.result_name)
-
-        if Config.SANITY_TEST > 0:
-            self.write_sanity_results()
 
         if Config.RESET_AFTER_INITIAL_DEPLOY:
             if Config.SANITY_TEST == 1:
@@ -538,10 +531,16 @@ class PrimaryNode:
                     os.path.join(self.dir_experiment, f'{Config.INPUT}.xlsx'))
 
             initial_fls_num = total_point_num + group_num
-
-            time_range = get_time_range(os.path.join(self.dir_meta, 'charts.json'), initial_fls_num)
         else:
-            time_range = [0, Config.DURATION + 10]
+            initial_fls_num = 0
+
+        time_range = utils.create_csv_from_json_no_group(Config, self.init_num, self.dir_meta, initial_fls_num,
+                                            os.path.join(self.dir_figure, f'{self.result_name}.jpg'))
+        utils.write_configs(self.dir_meta, self.start_time)
+        utils.combine_csvs(self.dir_meta, self.dir_experiment, "reli_" + self.result_name)
+
+        if Config.SANITY_TEST > 0:
+            self.write_sanity_results()
 
         write_final_report(self.dir_meta, self.dir_meta, self.result_name, len(group_id), time_range)
 

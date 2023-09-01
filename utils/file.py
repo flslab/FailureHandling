@@ -251,7 +251,29 @@ def delete_previous_json_files(path):
         print(f"Error occurred: {e}")
 
 
-def create_csv_from_json_no_group(config, init_num, directory, fig_dir):
+def get_time_range(json_file_path, intial_num, set_end_time=None):
+    time_range = []
+
+    with open(json_file_path, 'r') as json_file:
+        data = json.load(json_file)
+
+    metric_name = 'dispatched'
+
+    for i in range(len(data[metric_name]['t'])):
+        if data[metric_name]['y'][i] >= intial_num:
+            time_range.append(data[metric_name]['t'][i])
+            break
+    if len(time_range) <= 0:
+        time_range.append(0)
+
+    if set_end_time is not None:
+        time_range.append(set_end_time)
+    else:
+        time_range.append(Config.DURATION + 10)
+    return time_range
+
+
+def create_csv_from_json_no_group(config, init_num, directory, initial_fls_num, fig_dir):
     if not os.path.exists(directory):
         return
 
@@ -305,7 +327,6 @@ def create_csv_from_json_no_group(config, init_num, directory, fig_dir):
     merged_timeline = merge_timelines(timelines)
 
     num_metrics = [0, 0, 0, 0]
-    start_time = -1
 
     trimed_timeline = merged_timeline
     if config.RESET_AFTER_INITIAL_DEPLOY:
@@ -317,10 +338,16 @@ def create_csv_from_json_no_group(config, init_num, directory, fig_dir):
     chart_data = gen_charts(merged_timeline, start_time, num_metrics, fig_dir)
     with open(os.path.join(directory, 'charts.json'), "w") as f:
         json.dump(chart_data, f)
+    if initial_fls_num > 0:
+        time_range = get_time_range(os.path.join(directory, 'charts.json'), initial_fls_num)
+    else:
+        time_range = [0, Config.DURATION + 10]
 
-    point_metrics, standby_metrics = gen_point_metrics_no_group(merged_timeline, start_time)
+    point_metrics, standby_metrics = gen_point_metrics_no_group(merged_timeline, time_range[0])
     write_csv(directory, point_metrics, 'illuminating')
     write_csv(directory, standby_metrics, 'standby')
+
+    return time_range
 
 
 if __name__ == "__main__":

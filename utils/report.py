@@ -661,24 +661,3 @@ def get_value_in_row(df, row_title):
     # Get the value from the 'Value' column for the filtered row
     return filtered_row['Value'].iloc[0]
 
-
-def get_time_range(json_file_path, intial_num, set_end_time=None):
-    time_range = []
-
-    with open(json_file_path, 'r') as json_file:
-        data = json.load(json_file)
-
-    metric_name = 'dispatched'
-
-    for i in range(len(data[metric_name]['t'])):
-        if data[metric_name]['y'][i] >= intial_num:
-            time_range.append(data[metric_name]['t'][i])
-            break
-    if len(time_range) <= 0:
-        time_range.append(0)
-
-    if set_end_time is not None:
-        time_range.append(set_end_time)
-    else:
-        time_range.append(Config.DURATION + 10)
-    return time_range

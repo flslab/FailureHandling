@@ -561,10 +561,11 @@ def gen_charts(events, fig_dir):
                 standby["t"].append(t)
                 standby["y"].append(standby["y"][-1] - 1)
         elif e == TimelineEvents.REPLACE:
-            mid_flight["t"].append(t)
-            mid_flight["y"].append(mid_flight["y"][-1] + 1)
-            standby["t"].append(t)
-            standby["y"].append(standby["y"][-1] - 1)
+            if not event[2]:  # enter this situation when FLS has arrived (standby or illuminating)
+                mid_flight["t"].append(t)
+                mid_flight["y"].append(mid_flight["y"][-1] + 1)
+                standby["t"].append(t)
+                standby["y"].append(standby["y"][-1] - 1)
 
     dispatched["t"].append(events[-1][0])
     dispatched["y"].append(dispatched["y"][-1])

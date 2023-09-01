@@ -60,16 +60,16 @@ general_props = [
     },
     {
         "keys": ["FAILURE_TIMEOUT"],
-        # "values": ["30", "60"]
-        "values": ["1", "3", "5"]
+        "values": ["30", "60"]
+        # "values": ["1", "3", "5"]
         # "values": ["1", "3", "6", "30", "60", "120", "600"]
     },
     {
         "keys": ["MAX_SPEED", "ACCELERATION", "DECELERATION"],
         "values": [
-            # {"MAX_SPEED": "6.11", "ACCELERATION": "6.11", "DECELERATION": "6.11"},
-            # {"MAX_SPEED": "66.67", "ACCELERATION": "66.67", "DECELERATION": "66.67"}
-            {"MAX_SPEED": "600", "ACCELERATION": "600", "DECELERATION": "600"}
+            {"MAX_SPEED": "6.11", "ACCELERATION": "6.11", "DECELERATION": "6.11"},
+            {"MAX_SPEED": "66.67", "ACCELERATION": "66.67", "DECELERATION": "66.67"}
+            # {"MAX_SPEED": "600", "ACCELERATION": "600", "DECELERATION": "600"}
         ]
     },
     # {

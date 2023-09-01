@@ -305,14 +305,9 @@ def write_final_report(csv_file_path, target_file_path, name, group_num, time_ra
         "Number of Groups",
     ]
     report_metrics = get_report_metrics_no_group(csv_file_path, time_range)
-    logger.info(f"report_metric:{report_metrics} 1")
     report_metrics = [metric for metric in report_metrics]
-    logger.info(f"report_metric:{report_metrics} 2")
     report_metrics.append(Config.DISPATCH_RATE)
-    logger.info(f"report_metric:{report_metrics} 3")
     report_metrics.append(group_num)
-    logger.info(f"report_metric:{report_metrics} 4")
-
     report = []
 
     for i in range(len(report_key)):

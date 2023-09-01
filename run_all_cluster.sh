@@ -7,7 +7,7 @@ for i in {0..59}
 do
 #   for j in {0..1}
 #   do
-     sleep 10
+     sleep 2
 #     echo "$i" "$j"
      bash start_cluster.sh "$i"
 #   done

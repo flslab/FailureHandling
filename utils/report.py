@@ -542,6 +542,7 @@ def check_dispatcher(dispatcher_coords, coord):
 
 
 def check_correctness(file_path, all_fls_num):
+    logger.info(f"CHECKING REPORT: {file_path}")
     # Read the Excel file into a DataFrame
     df = pd.read_excel(file_path, engine='openpyxl')
 

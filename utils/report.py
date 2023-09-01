@@ -445,7 +445,7 @@ def write_final_report(csv_file_path, target_file_path, name, group_num, time_ra
         failed_standby = 0
         failed_illum = 0
         for event in events:
-            if event[0] < time_range[0]:
+            if event[0] <= time_range[0]:
                 continue
             if event[1] == 3:
                 failed_illum += 1

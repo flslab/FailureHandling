@@ -644,7 +644,7 @@ def rewrite_reports():
 
             time_range = get_time_range(os.path.join(dir_meta, 'charts.json'), total_point_num + group_num)
         else:
-            time_range = [0, Config.DURATION + 10]
+            time_range = [0, Config.DURATION + 0.1]
 
         write_final_report(dir_meta, target_file_path, result_name, group_num, time_range)
 

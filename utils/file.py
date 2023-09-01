@@ -275,7 +275,7 @@ def get_time_range(json_file_path, intial_num, set_end_time=None):
     if set_end_time is not None:
         time_range.append(set_end_time)
     else:
-        time_range.append(Config.DURATION + 10)
+        time_range.append(Config.DURATION + 0.1)
     return time_range
 
 
@@ -348,7 +348,7 @@ def create_csv_from_json_no_group(config, init_num, directory, initial_fls_num, 
     if initial_fls_num > 0:
         time_range = get_time_range(os.path.join(directory, 'charts.json'), initial_fls_num)
     else:
-        time_range = [0, Config.DURATION + 10]
+        time_range = [0, Config.DURATION + 0.1]
 
     point_metrics, standby_metrics = gen_point_metrics_no_group(merged_timeline, time_range[0])
     write_csv(directory, point_metrics, 'illuminating')

@@ -167,12 +167,9 @@ def get_mttr_by_group(csv_path, group_num):
     mttr = [[] for i in range(group_num)]
     with open(csv_path, 'r') as file:
         reader = csv.DictReader(file)
-        logger.info(f"START READ MTTR: {csv_path} reader:{reader}")
         for row in reader:
             try:
-                logger.info(f"group_id: {row['group_id']} type:{type(row['group_id'])}")
                 group_id = int(row['group_id'])
-                logger.info(f"hub:{row['hub wait times']} stdby: {row['hub wait times']}")
 
                 if row['hub wait times'] != "[]":
                     mttr[group_id].extend(eval(row['hub wait times']))
@@ -315,7 +312,6 @@ def write_final_report(csv_file_path, target_file_path, name, group_num, time_ra
     report_metrics = [metric for metric in report_metrics]
     report_metrics.append(Config.DISPATCH_RATE)
     report_metrics.append(group_num)
-    logger.info(f"Report Metrics: {report_metrics}")
     report = []
 
     for i in range(len(report_key)):

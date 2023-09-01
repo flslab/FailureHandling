@@ -431,12 +431,14 @@ def gen_point_metrics_no_group(events, start_time):
            [standby_metric_keys] + s_rows
 
 
-def gen_charts(events, start_time, num_metrics, fig_dir):
+def gen_charts_trimed(events, start_time, num_metrics, fig_dir):
+    # num_metrics: [illuminating_failed, standby_failed, illuminating, standby, mid_flight]
+
     dispatched = {"t": [start_time], "y": [0]}
-    standby = {"t": [start_time], "y": [num_metrics[2]]}
-    illuminating = {"t": [start_time], "y": [num_metrics[1]]}
-    failed = {"t": [start_time], "y": [num_metrics[0]]}
-    mid_flight = {"t": [start_time], "y": [num_metrics[3]]}
+    standby = {"t": [start_time], "y": [num_metrics[3]]}
+    illuminating = {"t": [start_time], "y": [num_metrics[2]]}
+    failed = {"t": [start_time], "y": [num_metrics[0] + num_metrics[1]]}
+    mid_flight = {"t": [start_time], "y": [num_metrics[4]]}
 
     for event in events:
         t = event[0]
@@ -499,6 +501,89 @@ def gen_charts(events, start_time, num_metrics, fig_dir):
     plt.step([t - 1 for t in mid_flight["t"]], mid_flight["y"], where='post', label="Mid-flight FLSs")
     plt.gca().xaxis.set_major_locator(mpl.ticker.MaxNLocator(integer=True))
     plt.gca().yaxis.set_major_locator(mpl.ticker.MaxNLocator(integer=True))
+    # Add a legend
+    plt.legend()
+    if Config.DEBUG:
+        plt.show()
+    else:
+        plt.savefig(fig_dir)
+
+    return {
+        "dispatched": dispatched,
+        "standby": standby,
+        "illuminating": illuminating,
+        "failed": failed,
+        "mid_flight": mid_flight,
+    }
+
+
+def gen_charts(events, fig_dir):
+    dispatched = {"t": [0], "y": [0]}
+    standby = {"t": [0], "y": [0]}
+    illuminating = {"t": [0], "y": [0]}
+    failed = {"t": [0], "y": [0]}
+    mid_flight = {"t": [0], "y": [0]}
+
+    for event in events:
+        t = event[0]
+        e = event[1]
+        if e == TimelineEvents.DISPATCH:
+            dispatched["t"].append(t)
+            dispatched["y"].append(dispatched["y"][-1] + 1)
+            mid_flight["t"].append(t)
+            mid_flight["y"].append(mid_flight["y"][-1] + 1)
+        elif e == TimelineEvents.ILLUMINATE or e == TimelineEvents.ILLUMINATE_STANDBY:
+            illuminating["t"].append(t)
+            illuminating["y"].append(illuminating["y"][-1] + 1)
+            mid_flight["t"].append(t)
+            mid_flight["y"].append(mid_flight["y"][-1] - 1)
+        elif e == TimelineEvents.STANDBY:
+            standby["t"].append(t)
+            standby["y"].append(standby["y"][-1] + 1)
+            mid_flight["t"].append(t)
+            mid_flight["y"].append(mid_flight["y"][-1] - 1)
+        elif e == TimelineEvents.FAIL:
+            failed["t"].append(t)
+            failed["y"].append(failed["y"][-1] + 1)
+            if event[2]:  # is mid-flight
+                mid_flight["t"].append(t)
+                mid_flight["y"].append(mid_flight["y"][-1] - 1)
+            else:
+                illuminating["t"].append(t)
+                illuminating["y"].append(illuminating["y"][-1] - 1)
+        elif e == TimelineEvents.STANDBY_FAIL:
+            failed["t"].append(t)
+            failed["y"].append(failed["y"][-1] + 1)
+            if event[2]:  # is mid-flight
+                mid_flight["t"].append(t)
+                mid_flight["y"].append(mid_flight["y"][-1] - 1)
+            else:
+                standby["t"].append(t)
+                standby["y"].append(standby["y"][-1] - 1)
+        elif e == TimelineEvents.REPLACE:
+            mid_flight["t"].append(t)
+            mid_flight["y"].append(mid_flight["y"][-1] + 1)
+            standby["t"].append(t)
+            standby["y"].append(standby["y"][-1] - 1)
+
+    dispatched["t"].append(events[-1][0])
+    dispatched["y"].append(dispatched["y"][-1])
+    standby["t"].append(events[-1][0])
+    standby["y"].append(standby["y"][-1])
+    illuminating["t"].append(events[-1][0])
+    illuminating["y"].append(illuminating["y"][-1])
+    failed["t"].append(events[-1][0])
+    failed["y"].append(failed["y"][-1])
+    mid_flight["t"].append(events[-1][0])
+    mid_flight["y"].append(mid_flight["y"][-1])
+
+    # print(dispatched["t"], dispatched["y"])
+    plt.step(dispatched["t"], dispatched["y"], where='post', label="Dispatched FLSs")
+    plt.step(standby["t"], standby["y"], where='post', label="Standby FLSs")
+    plt.step(illuminating["t"], illuminating["y"], where='post', label="Illuminating FLSs")
+    plt.step(failed["t"], failed["y"], where='post', label="Failed FLSs")
+    plt.step(mid_flight["t"], mid_flight["y"], where='post', label="Mid-flight FLSs")
+
     # Add a legend
     plt.legend()
     if Config.DEBUG:

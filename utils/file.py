@@ -14,8 +14,8 @@ import re
 import utils
 from utils import logger
 
-from worker.metrics import merge_timelines, gen_charts, gen_point_metrics, trim_timeline, point_to_id, \
-    gen_point_metrics_no_group
+from worker.metrics import merge_timelines, gen_charts_trimed, gen_point_metrics, trim_timeline, point_to_id, \
+    gen_point_metrics_no_group, gen_charts
 
 
 def write_json(fid, results, directory, is_clique):
@@ -94,7 +94,7 @@ def create_csv_from_json(config, init_num, directory, fig_dir, group_map):
     with open(os.path.join(directory, 'timeline.json'), "w") as f:
         json.dump(trimed_timeline, f)
 
-    chart_data = gen_charts(trimed_timeline, start_time, num_metrics, fig_dir)
+    chart_data = gen_charts_trimed(trimed_timeline, start_time, num_metrics, fig_dir)
     with open(os.path.join(directory, 'charts.json'), "w") as f:
         json.dump(chart_data, f)
 
@@ -326,18 +326,19 @@ def create_csv_from_json_no_group(config, init_num, directory, initial_fls_num, 
 
     merged_timeline = merge_timelines(timelines)
 
-    num_metrics = [0, 0, 0, 0]
+    # trimed_timeline = merged_timeline
 
-    trimed_timeline = merged_timeline
-    if config.RESET_AFTER_INITIAL_DEPLOY:
-        trimed_timeline, num_metrics, start_time = trim_timeline(merged_timeline, init_num)
+    # if config.RESET_AFTER_INITIAL_DEPLOY:
+    #     # num_metrics: [illuminating_failed, standby_failed, illuminating, standby, mid_flight]
+    #     trimed_timeline, num_metrics, start_time = trim_timeline(merged_timeline, init_num)
 
     with open(os.path.join(directory, 'timeline.json'), "w") as f:
-        json.dump(trimed_timeline, f)
+        json.dump(merged_timeline, f)
 
-    chart_data = gen_charts(merged_timeline, start_time, num_metrics, fig_dir)
+    chart_data = gen_charts(merged_timeline, fig_dir)
     with open(os.path.join(directory, 'charts.json'), "w") as f:
         json.dump(chart_data, f)
+
     if initial_fls_num > 0:
         time_range = get_time_range(os.path.join(directory, 'charts.json'), initial_fls_num)
     else:

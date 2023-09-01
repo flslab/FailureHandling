@@ -47,7 +47,7 @@ general_props = [
         "keys": ["K", "INPUT"],
         "values": [
             {"K": "0", "INPUT": "'chess_K3'"},
-            # {"K": "3", "INPUT": "'chess_K3'"},
+            {"K": "3", "INPUT": "'chess_K3'"},
             # {"K": "5", "INPUT": "'chess_K5'"},
             # {"K": "10", "INPUT": "'chess_K10'"},
             # {"K": "20", "INPUT": "'chess_K20'"},

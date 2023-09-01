@@ -307,12 +307,16 @@ def write_final_report(csv_file_path, target_file_path, name, group_num, time_ra
         "Min MTTR",
         "Max MTTR",
         "Median MTTR",
-        "Deploy Rate",
+        "Deploy Rate Before Reset",
+        "Deploy Rate After Reset",
         "Number of Groups",
     ]
     report_metrics = get_report_metrics_no_group(csv_file_path, time_range)
     report_metrics = [metric for metric in report_metrics]
-    report_metrics.append(Config.DISPATCH_RATE)
+
+    report_metrics.append(report_metrics[0]/(time_range[0]))
+    report_metrics.append(report_metrics[0] / (time_range[1] - time_range[0]))
+
     report_metrics.append(group_num)
     report = []
 

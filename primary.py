@@ -100,7 +100,7 @@ class PrimaryNode:
         self.pid = 0
         self.dispatch_policy = ShortestDistancePolicy()
         self.num_handled_failures = 0
-        self.num_initial_flss = 0
+        self.num_initial_illum_flss = 0
         self.num_initial_standbys = 0
         self.num_replaced_flss = 0
         self.num_replaced_standbys = 0
@@ -298,7 +298,7 @@ class PrimaryNode:
 
                 # If is doing stnadby sanity test, deploy the FLS directly to points on ring
                 self._deploy_fls(fls, Config.SANITY_TEST == 2)
-                self.num_initial_flss += 1
+                self.num_initial_illum_flss += 1
 
             # deploy standby
             if Config.K:
@@ -391,7 +391,7 @@ class PrimaryNode:
     def _get_metrics(self):
         return [
             ["Metric", "Value"],
-            ["Initial illuminating FLSs", self.num_initial_flss],
+            ["Initial illuminating FLSs", self.num_initial_illum_flss],
             ["Initial standby FLSs", self.num_initial_standbys],
             ["Handled failures", self.num_handled_failures],
             ["Handled replica illuminating FLSs", self.num_replaced_flss],
@@ -405,20 +405,28 @@ class PrimaryNode:
         total_delay_list = []
 
         for dispatcher in self.dispatchers:
-            if Config.RESET_AFTER_INITIAL_DEPLOY:
-                info.append([dispatcher.coord.tolist(), dispatcher.num_dispatched - self.num_initial_standbys,
-                             sum(dispatcher.delay_list[self.num_initial_standbys:]) / len(
-                                 dispatcher.delay_list[self.num_initial_standbys:])
-                             if len(dispatcher.delay_list) > self.num_initial_standbys else 0,
-                             min(dispatcher.delay_list[self.num_initial_standbys:]),
-                             max(dispatcher.delay_list[self.num_initial_standbys:]),
-                             dispatcher.delay_list])
-            else:
-                info.append([dispatcher.coord.tolist(), dispatcher.num_dispatched,
-                             sum(dispatcher.delay_list) / len(dispatcher.delay_list) if len(
-                                 dispatcher.delay_list) > 0 else 0,
-                             min(dispatcher.delay_list), max(dispatcher.delay_list),
-                             dispatcher.delay_list])
+            # if Config.RESET_AFTER_INITIAL_DEPLOY:
+            #     if len(dispatcher.delay_list) > 0:
+            #         num_initial_fls = self.num_initial_standbys + self.num_initial_illum_flss
+            #         info.append([dispatcher.coord.tolist(), dispatcher.num_dispatched - self.num_initial_standbys,
+            #                      sum(dispatcher.delay_list[self.num_initial_standbys:]) /
+            #                      len(dispatcher.delay_list[self.num_initial_standbys:]),
+            #                      min(dispatcher.delay_list[self.num_initial_standbys:]),
+            #                      max(dispatcher.delay_list[self.num_initial_standbys:]),
+            #                      dispatcher.delay_list])
+            #     else:
+            #         info.append([dispatcher.coord.tolist(), dispatcher.num_dispatched - self.num_initial_standbys,
+            #                      sum(dispatcher.delay_list[self.num_initial_standbys:]) /
+            #                      len(dispatcher.delay_list[self.num_initial_standbys:]),
+            #                      min(dispatcher.delay_list[self.num_initial_standbys:]),
+            #                      max(dispatcher.delay_list[self.num_initial_standbys:]),
+            #                      dispatcher.delay_list])
+            # else:
+            info.append([dispatcher.coord.tolist(), dispatcher.num_dispatched,
+                         sum(dispatcher.delay_list) / len(dispatcher.delay_list) if len(
+                             dispatcher.delay_list) > 0 else 0,
+                         min(dispatcher.delay_list), max(dispatcher.delay_list),
+                         dispatcher.delay_list])
             total_delay_list.extend(dispatcher.delay_list)
 
         info.append(['','','','','',''])

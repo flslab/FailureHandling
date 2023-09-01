@@ -217,7 +217,11 @@ def read_point_info_from_cliques_xlsx(path):
     filtered_row = df[df['metric'] == 'number of cliques']
     group_num = filtered_row['value'].iloc[0]
     filtered_row = df[df['metric'] == 'number of single nodes']
-    total_point_num = group_num * Config.K + filtered_row['value'].iloc[0]
+    if Config.K == 0:
+        total_point_num = group_num * 3 + filtered_row['value'].iloc[0]
+        group_num = 0
+    else:
+        total_point_num = group_num * Config.K + filtered_row['value'].iloc[0]
 
     # Get the value from the 'Value' column for the filtered row
     return total_point_num, group_num

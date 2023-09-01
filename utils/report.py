@@ -167,6 +167,7 @@ def get_mttr_by_group(csv_path, group_num):
     mttr = [[] for i in range(group_num)]
     with open(csv_path, 'r') as file:
         reader = csv.DictReader(file)
+        logger.info("START READ MTTR")
         for row in reader:
             try:
                 group_id = int(row['group_id'])
@@ -181,11 +182,14 @@ def get_mttr_by_group(csv_path, group_num):
                 # Skip rows where the value is not a number
                 continue
 
+    logger.info("FINISH READ MTTR")
     if not mttr:
         return [0, 0, 0, 0]
 
     mttr_all = (list(chain.from_iterable(mttr)))
     mttr_all.sort()
+
+    logger.info(f"MTTR: {mttr_all}")
     mid = len(mttr_all) // 2
     median = (mttr_all[mid] + mttr_all[~mid]) / 2
 

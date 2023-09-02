@@ -15,7 +15,7 @@ def_general_conf = {
     "MAX_SPEED": "3",
     "DISPLAY_CELL_SIZE": "0.05",
     "BUSY_WAITING": "False",
-    "DURATION": "60 * 10",
+    "DURATION": "60 * 30",
     "K": "3",
     "SHAPE": "'chess'",
     "RESULTS_PATH": "'/proj/nova-PG0/shuqin/results'",
@@ -32,26 +32,27 @@ def_general_conf = {
     "RESET_AFTER_INITIAL_DEPLOY": "True",  # flag that if reset all metrics after intial FLSs are all deployed
     "SANITY_TEST": "0",  # 0 for not test, 1 for normal test with hub and no standby, 2 for standby test with no hub
     "SANITY_TEST_CONFIG": "[('NUMBER_OF_FLS', 10), ('DIST_TO_POINT', 10), ('CHECK_TIME_RANGE', 60 * 0.5, 60 * 1)]",
-    "STANDBY_TEST_CONFIG": "[('RADIUS', 10), ('DEPLOY_DIST', 10), ('FAILURE_TIMEOUT_GAP', 10), ('CHECK_TIME_RANGE', 60 * 0.5, 60 * 1)]"
+    "STANDBY_TEST_CONFIG": "[('RADIUS', 10), ('DEPLOY_DIST', 10), ('FAILURE_TIMEOUT_GAP', 10), ('CHECK_TIME_RANGE', 60 * 0.5, 60 * 1)]",
+    "DISPATCHER_ASSIGN_POLICY": "ShortestDistancePolicy"
 
 }
 
 general_props = [
     {
         "keys": ["DISPATCH_RATE"],
-        "values": ["'inf'"],
-        # "values": ["10", "50", "100", "'inf'"]
+        # "values": ["'inf'"],
+        "values": ["10", "50", "100", "'inf'"]
         # "values": ["10", "50"]
     },
 {
         "keys": ["K", "INPUT", "DISPATCHERS"],
         "values": [
-            # {"K": "0", "INPUT": "'chess_K3'", "DISPATCHERS": "1"},
-            # {"K": "0", "INPUT": "'chess_K3'", "DISPATCHERS": "3"},
+            {"K": "0", "INPUT": "'chess_K3'", "DISPATCHERS": "1"},
+            {"K": "0", "INPUT": "'chess_K3'", "DISPATCHERS": "3"},
             {"K": "3", "INPUT": "'chess_K3'", "DISPATCHERS": "1"},
             # {"K": "5", "INPUT": "'chess_K5'"},
-            # {"K": "10", "INPUT": "'chess_K10'", "DISPATCHERS": "1"},
-            # {"K": "20", "INPUT": "'chess_K20'", "DISPATCHERS": "1"},
+            {"K": "10", "INPUT": "'chess_K10'", "DISPATCHERS": "1"},
+            {"K": "20", "INPUT": "'chess_K20'", "DISPATCHERS": "1"},
         ]
     },
     # {
@@ -59,7 +60,7 @@ general_props = [
     #     "values": [
     #         {"K": "0", "INPUT": "'chess_K3'"},
     #         {"K": "3", "INPUT": "'chess_K3'"},
-    #         # {"K": "5", "INPUT": "'chess_K5'"},
+    #         {"K": "5", "INPUT": "'chess_K5'"},
     #         {"K": "10", "INPUT": "'chess_K10'"},
     #         {"K": "20", "INPUT": "'chess_K20'"},
     #     ]
@@ -71,7 +72,7 @@ general_props = [
     # },
     {
         "keys": ["FAILURE_TIMEOUT"],
-        "values": ["60"]
+        "values": ["30", "60"]
         # "values": ["0.1"]
         # "values": ["1", "3", "6", "30", "60", "120", "600"]
     },

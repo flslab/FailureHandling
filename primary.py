@@ -98,7 +98,7 @@ class PrimaryNode:
         self.group_standby_coord = {}
         self.group_radio_range = {}
         self.pid = 0
-        self.dispatch_policy = ShortestDistancePolicy()
+        self.dispatch_policy = eval(Config.DISPATCHER_ASSIGN_POLICY + "()")
         # self.dispatch_policy = PoDPolicy()
         self.num_handled_failures = 0
         self.num_initial_illum_flss = 0
@@ -547,6 +547,9 @@ class PrimaryNode:
             else:
                 total_point_num, group_num = read_point_info_from_cliques_xlsx(
                     os.path.join(self.dir_experiment, f'{Config.INPUT}.xlsx'))
+
+                if Config.K == 0:
+                    group_num = 0
 
             initial_fls_num = total_point_num + group_num
         else:

@@ -261,7 +261,6 @@ class PrimaryNode:
         if properties["el"] is None:
             properties["el"] = dispatcher.coord
 
-        print(distance_between(properties["el"], properties["gtl"]))
         dispatcher.q.put(lambda: self._send_msg_to_node(nid, properties))
         if initial_fls:
             dispatcher.time_q.put(-1)

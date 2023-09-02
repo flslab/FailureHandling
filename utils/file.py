@@ -322,10 +322,6 @@ def create_csv_from_json_no_group(config, init_num, directory, initial_fls_num, 
                 except json.decoder.JSONDecodeError:
                     print(filename)
 
-    # with open(os.path.join(directory, 'cliques.csv'), 'w', newline='') as csvfile:
-    #     writer = csv.writer(csvfile)
-    #     writer.writerows(rows)
-
     with open(os.path.join(directory, 'flss.csv'), 'w', newline='') as csvfile:
         writer = csv.writer(csvfile)
         writer.writerows(node_rows)

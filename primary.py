@@ -98,8 +98,8 @@ class PrimaryNode:
         self.group_standby_coord = {}
         self.group_radio_range = {}
         self.pid = 0
-        # self.dispatch_policy = ShortestDistancePolicy()
-        self.dispatch_policy = PoDPolicy()
+        self.dispatch_policy = ShortestDistancePolicy()
+        # self.dispatch_policy = PoDPolicy()
         self.num_handled_failures = 0
         self.num_initial_illum_flss = 0
         self.num_initial_standbys = 0
@@ -260,6 +260,8 @@ class PrimaryNode:
 
         if properties["el"] is None:
             properties["el"] = dispatcher.coord
+
+        print(distance_between(properties["el"], properties["gtl"]))
         dispatcher.q.put(lambda: self._send_msg_to_node(nid, properties))
         if initial_fls:
             dispatcher.time_q.put(-1)

@@ -15,7 +15,7 @@ def_general_conf = {
     "MAX_SPEED": "3",
     "DISPLAY_CELL_SIZE": "0.05",
     "BUSY_WAITING": "False",
-    "DURATION": "60",
+    "DURATION": "60 * 10",
     "K": "3",
     "SHAPE": "'chess'",
     "RESULTS_PATH": "'/proj/nova-PG0/shuqin/results'",
@@ -39,14 +39,14 @@ def_general_conf = {
 general_props = [
     {
         "keys": ["DISPATCH_RATE"],
-        "values": ["100"],
-        # "values": ["10", "50", "100", "'inf'"]
+        # "values": ["100"],
+        "values": ["10", "50", "100", "'inf'"]
         # "values": ["10", "50"]
     },
 {
         "keys": ["K", "INPUT", "DISPATCHERS"],
         "values": [
-            # {"K": "0", "INPUT": "'chess_K3'", "DISPATCHERS": "1"},
+            {"K": "0", "INPUT": "'chess_K3'", "DISPATCHERS": "1"},
             # {"K": "0", "INPUT": "'chess_K3'", "DISPATCHERS": "3"},
             {"K": "3", "INPUT": "'chess_K3'", "DISPATCHERS": "1"},
             # {"K": "5", "INPUT": "'chess_K5'"},
@@ -78,9 +78,9 @@ general_props = [
     {
         "keys": ["MAX_SPEED", "ACCELERATION", "DECELERATION"],
         "values": [
-            # {"MAX_SPEED": "6.11", "ACCELERATION": "6.11", "DECELERATION": "6.11"},
-            # {"MAX_SPEED": "66.67", "ACCELERATION": "66.67", "DECELERATION": "66.67"}
-            {"MAX_SPEED": "600", "ACCELERATION": "600", "DECELERATION": "600"}
+            {"MAX_SPEED": "6.11", "ACCELERATION": "6.11", "DECELERATION": "6.11"},
+            {"MAX_SPEED": "66.67", "ACCELERATION": "66.67", "DECELERATION": "66.67"}
+            # {"MAX_SPEED": "600", "ACCELERATION": "600", "DECELERATION": "600"}
         ]
     },
     # {

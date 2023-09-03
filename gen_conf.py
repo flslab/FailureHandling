@@ -15,7 +15,7 @@ def_general_conf = {
     "MAX_SPEED": "3",
     "DISPLAY_CELL_SIZE": "0.05",
     "BUSY_WAITING": "False",
-    "DURATION": "60 * 30",
+    "DURATION": "60 * 10",
     "K": "3",
     "SHAPE": "'chess'",
     "RESULTS_PATH": "'/proj/nova-PG0/shuqin/results_10min/'",

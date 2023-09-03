@@ -86,8 +86,8 @@ general_props = [
     },
     {
         "keys": ["DISPATCHER_ASSIGN_POLICY"],
-        "values": ["'ShortestDistance'", "'PoD'", "'RR'"]
-        # "values": ["'RRPolicy'"]
+        # "values": ["'ShortestDistance'", "'PoD'", "'RR'"]
+        "values": ["'ShortestDistance'", "'PoD'"]
     },
     # {
     #     "keys": ["SANITY_TEST", "DISPATCHERS"],

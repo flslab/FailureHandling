@@ -18,7 +18,7 @@ def_general_conf = {
     "DURATION": "60 * 10",
     "K": "3",
     "SHAPE": "'chess'",
-    "RESULTS_PATH": "'/proj/nova-PG0/shuqin/results_10min/'",
+    "RESULTS_PATH": "'/proj/nova-PG0/shuqin/results-10min/'",
     # "RESULTS_PATH": "'/Users/shuqinzhu/Desktop/experiments_aug29.nosync'",
     "DEBUG": "False",
     "FILE_NAME_KEYS": "[('DISPATCHERS', 'D'), ('DISPATCH_RATE', 'R'), ('FAILURE_TIMEOUT', 'T'), ('MAX_SPEED', 'S')]",

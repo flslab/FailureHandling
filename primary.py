@@ -62,7 +62,7 @@ class PoDPolicy(DispatchPolicy):
 class RRPolicy(DispatchPolicy):
     def assign(self, **kwargs):
         ds = kwargs["dispatchers"]
-        pid = kwargs["pid"]
+        pid = kwargs["fid"]
 
         return ds[pid % len(ds)]
 

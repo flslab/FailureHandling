@@ -98,7 +98,7 @@ class PrimaryNode:
         self.group_standby_coord = {}
         self.group_radio_range = {}
         self.pid = 0
-        self.dispatch_policy = eval(Config.DISPATCHER_ASSIGN_POLICY + "()")
+        self.dispatch_policy = eval(Config.DISPATCHER_ASSIGN_POLICY + "Policy()")
         # self.dispatch_policy = PoDPolicy()
         self.num_handled_failures = 0
         self.num_initial_illum_flss = 0

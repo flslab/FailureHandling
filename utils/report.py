@@ -315,7 +315,7 @@ def write_final_report(csv_file_path, target_file_path, name, group_num, time_ra
     report_metrics = [metric for metric in report_metrics]
 
     report_metrics.append(report_metrics[0]/(time_range[0]))
-    report_metrics.append(report_metrics[1] / (time_range[1] - time_range[0]))
+    report_metrics.append(report_metrics[1] / (Config.DURATION - time_range[0]))
 
     report_metrics.append(group_num)
     report = []

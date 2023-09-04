@@ -67,6 +67,15 @@ class RRPolicy(DispatchPolicy):
         return ds[pid % len(ds)]
 
 
+class RandomPolicy(DispatchPolicy):
+    def assign(self, **kwargs):
+        ds = kwargs["dispatchers"]
+
+        random.seed()
+
+        return ds[random.randint(0, len(ds) - 1)]
+
+
 class ShortestDistancePolicy(DispatchPolicy):
     def assign(self, **kwargs):
         ds = kwargs["dispatchers"]
@@ -439,11 +448,11 @@ class PrimaryNode:
             else:
                 info.append([dispatcher.coord.tolist(), dispatcher.num_dispatched, 0, 0, 0])
 
-        info.append(['','','','','',''])
+        info.append(['', '', '', '', '', ''])
         info.append([
-             'Overall Avg Delay', str(sum(total_delay_list)/len(total_delay_list)),
-             'Overall Max Delay', str(max(total_delay_list)),
-             'Overall Min Delay', str(min(total_delay_list))
+            'Overall Avg Delay', str(sum(total_delay_list) / len(total_delay_list)),
+            'Overall Max Delay', str(max(total_delay_list)),
+            'Overall Min Delay', str(min(total_delay_list))
         ])
         return info
 
@@ -556,7 +565,7 @@ class PrimaryNode:
             initial_fls_num = 0
 
         time_range = utils.create_csv_from_json_no_group(Config, self.init_num, self.dir_meta, initial_fls_num,
-                                            os.path.join(self.dir_figure, f'{self.result_name}.jpg'))
+                                                         os.path.join(self.dir_figure, f'{self.result_name}.jpg'))
         utils.write_configs(self.dir_meta, self.start_time)
         utils.combine_csvs(self.dir_meta, self.dir_experiment, "reli_" + self.result_name)
 
@@ -648,7 +657,7 @@ def rewrite_reports():
 
             time_range = get_time_range(os.path.join(dir_meta, 'charts.json'), total_point_num + group_num)
         else:
-            time_range = [0, Config.DURATION + 0.1]
+            time_range = [0, Config.DURATION + 1]
 
         write_final_report(dir_meta, target_file_path, result_name, group_num, time_range)
 
@@ -665,4 +674,3 @@ if __name__ == '__main__':
     primary_node.start_experiment()
 
     # rewrite_reports()
-

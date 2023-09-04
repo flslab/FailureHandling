@@ -15,7 +15,7 @@ def_general_conf = {
     "MAX_SPEED": "3",
     "DISPLAY_CELL_SIZE": "0.05",
     "BUSY_WAITING": "False",
-    "DURATION": "60 * 10",
+    "DURATION": "60 * 30",
     "K": "3",
     "SHAPE": "'chess'",
     "RESULTS_PATH": "'/proj/nova-PG0/shuqin/results-10min/'",
@@ -86,8 +86,8 @@ general_props = [
     },
     {
         "keys": ["DISPATCHER_ASSIGN_POLICY"],
-        # "values": ["'ShortestDistance'", "'PoD'", "'RR'"]
-        "values": ["'Random'"]
+        "values": ["'ShortestDistance'", "'PoD'", "'RR'", "'Random'"]
+        # "values": ["'Random'"]
     },
     # {
     #     "keys": ["SANITY_TEST", "DISPATCHERS"],

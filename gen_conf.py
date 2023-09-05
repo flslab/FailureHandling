@@ -40,15 +40,15 @@ def_general_conf = {
 general_props = [
     {
         "keys": ["DISPATCH_RATE"],
-        "values": ["50"],
+        "values": ["5"],
         # "values": ["10", "50", "100", "'inf'"]
         # "values": ["10", "50"]
     },
     {
         "keys": ["K", "INPUT", "DISPATCHERS"],
         "values": [
-            {"K": "0", "INPUT": "'chess_K3'", "DISPATCHERS": "1"},
-            # {"K": "0", "INPUT": "'chess_K3'", "DISPATCHERS": "3"},
+            # {"K": "0", "INPUT": "'chess_K3'", "DISPATCHERS": "1"},
+            {"K": "0", "INPUT": "'chess_K3'", "DISPATCHERS": "3"},
             # {"K": "3", "INPUT": "'chess_K3'", "DISPATCHERS": "1"},
             # {"K": "5", "INPUT": "'chess_K5'"},
             # {"K": "10", "INPUT": "'chess_K10'", "DISPATCHERS": "1"},
@@ -79,16 +79,16 @@ general_props = [
     {
         "keys": ["MAX_SPEED", "ACCELERATION", "DECELERATION"],
         "values": [
-            # {"MAX_SPEED": "6.11", "ACCELERATION": "6.11", "DECELERATION": "6.11"},
+            {"MAX_SPEED": "6.11", "ACCELERATION": "6.11", "DECELERATION": "6.11"},
             {"MAX_SPEED": "66.67", "ACCELERATION": "66.67", "DECELERATION": "66.67"}
             # {"MAX_SPEED": "600", "ACCELERATION": "600", "DECELERATION": "600"}
         ]
     },
-    # {
-    #     "keys": ["DISPATCHER_ASSIGN_POLICY"],
-    #     "values": ["'ShortestDistance'", "'PoD'", "'RR'", "'Random'"]
-    #     # "values": ["'Random'"]
-    # },
+    {
+        "keys": ["DISPATCHER_ASSIGN_POLICY"],
+        "values": ["'ShortestDistance'", "'PoD'", "'RR'", "'Random'"]
+        # "values": ["'Random'"]
+    },
     # {
     #     "keys": ["SANITY_TEST", "DISPATCHERS"],
     #     "values": [

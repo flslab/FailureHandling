@@ -51,8 +51,8 @@ general_props = [
             # {"K": "0", "INPUT": "'chess_K3'", "DISPATCHERS": "3"},
             # {"K": "3", "INPUT": "'chess_K3'", "DISPATCHERS": "1"},
             # {"K": "5", "INPUT": "'chess_K5'"},
-            {"K": "10", "INPUT": "'chess_K10'", "DISPATCHERS": "1"},
-            {"K": "20", "INPUT": "'chess_K20'", "DISPATCHERS": "1"},
+            {"K": "10", "INPUT": "'dragon_K10'", "DISPATCHERS": "1"},
+            {"K": "20", "INPUT": "'dragon_K20'", "DISPATCHERS": "1"},
         ]
     },
     # {

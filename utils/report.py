@@ -46,7 +46,9 @@ def get_report_metrics(dir_meta, time_range, group_num):
         #         print(f"An error occurred: {e}")
         #         metrics.append(0)
 
-        metrics.extend(get_dist_metrics(csv_path_flss, time_range[0]))
+        metrics.extend(get_metrics_by_name(csv_path_flss, time_range[0], '27_time_to_fail'))
+        metrics.extend(get_metrics_by_name(csv_path_flss, time_range[0], '26_dist_traveled'))
+
         metrics.extend(get_mttr_by_group(csv_path_points, 1))
 
     except Exception as e:
@@ -140,27 +142,28 @@ def calculate_mean(csv_path, column_heading):
 
     return sum(values) / len(values)
 
-
-def get_dist_metrics(csv_path, start_time):
-    dists = []
+def get_metrics_by_name(csv_path, start_time, metric_name):
+    values = []
     with open(csv_path, 'r') as file:
         reader = csv.DictReader(file)
         for row in reader:
             try:
-                if eval(row['26_dist_traveled']) >= 0 and eval(row['timeline'])[0][0] >= start_time:
-                    dists.append(eval(row['26_dist_traveled']))
+                # Reset after initial FLSs dispatched, only count those were not initial FLSs
+                # if eval(row[metric_name]) >= 0 and eval(row['timeline'])[0][0] >= start_time:
+                if eval(row[metric_name]) >= 0:
+                    values.append(eval(row[metric_name]))
             except ValueError:
                 # Skip rows where the value is not a number
                 continue
 
-    if not dists:
+    if not values:
         return [0, 0, 0, 0]
-    dists.sort()
+    values.sort()
 
-    mid = len(dists) // 2
-    median = (dists[mid] + dists[~mid]) / 2
+    mid = len(values) // 2
+    median = (values[mid] + values[~mid]) / 2
 
-    return [sum(dists) / len(dists), dists[0], dists[-1], median]
+    return [sum(values) / len(values), values[0], values[-1], median]
 
 
 def get_mttr_by_group(csv_path, group_num):
@@ -264,7 +267,9 @@ def get_report_metrics_no_group(dir_meta, time_range):
                         metrics.append(data[metric_name]['y'][i])
                         break
 
-        metrics.extend(get_dist_metrics(csv_path_flss, time_range[0]))
+        metrics.extend(get_metrics_by_name(csv_path_flss, time_range[0], '27_time_to_fail'))
+        metrics.extend(get_metrics_by_name(csv_path_flss, time_range[0], '26_dist_traveled'))
+
         metrics.extend(get_mttr_by_group(csv_path_points, 1))
 
     except Exception as e:
@@ -299,6 +304,10 @@ def write_final_report(csv_file_path, target_file_path, name, group_num, time_ra
         "Mid-Flight",
         "Illuminating",
         "Stationary Standby",
+        "Avg Travel Time",
+        "Min Travel Time",
+        "Max Travel Time",
+        "Median Travel Time",
         "Avg Dist Traveled",
         "Min Dist Traveled",
         "Max Dist Traveled",
@@ -314,7 +323,7 @@ def write_final_report(csv_file_path, target_file_path, name, group_num, time_ra
     report_metrics = get_report_metrics_no_group(csv_file_path, time_range)
     report_metrics = [metric for metric in report_metrics]
 
-    report_metrics.append(report_metrics[0]/(time_range[0]))
+    report_metrics.append(report_metrics[0]/(time_range[0]) if time_range[0] is 0 else 0)
     report_metrics.append(report_metrics[1] / (Config.DURATION - time_range[0]))
 
     report_metrics.append(group_num)

@@ -16,27 +16,34 @@ class Dispatcher(threading.Thread):
         self.coord = coord
         self.should_stop = False
         self.num_dispatched = 0
-        self.time_q = queue.Queue()
-        self.delay_list = []
+        self.delay_list = [[], []]
 
     def run(self):
         while not self.should_stop:
             try:
                 item = self.q.get(timeout=1)
-                enque_time = self.time_q.get()
+                fls_type = item[0]
+                in_que_timestamp = item[1]
+                send_message = item[2]
             except queue.Empty:
                 continue
-            if isinstance(item, WorkerProcess):
-                item.start()
-            elif callable(item):
+            if isinstance(send_message, WorkerProcess):
+                send_message.start()
+            elif callable(send_message):
                 try:
-                    item()
+                    send_message()
                 except BrokenPipeError:
                     continue
 
-            if enque_time > 0:
-                que_delay = time.time() - enque_time
-                self.delay_list.append(que_delay)
+            if fls_type == 0:
+                # if the message is for creating an illuminating FLS
+                self.delay_list[0].append(time.time() - in_que_timestamp)
+                logger.debug(f"Illum FLS dispatched {in_que_timestamp}")
+
+            else:
+                # the message is for creating a standby FLS
+                self.delay_list[1].append(time.time() - in_que_timestamp)
+                logger.debug(f"Standby FLS dispatched {in_que_timestamp}")
 
             if self.delay:
                 time.sleep(self.delay)

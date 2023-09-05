@@ -186,7 +186,7 @@ class PrimaryNode:
         logger.info(f"Initializing {Config.DISPATCHERS} dispatchers")
 
         for coord in self.dispatchers_coords:
-            q = queue.Queue()
+            q = queue.PriorityQueue()
             d = Dispatcher(q, Config.DISPATCH_RATE, coord)
             self.dispatchers.append(d)
 
@@ -230,8 +230,8 @@ class PrimaryNode:
             self.radio_ranges = [Config.MAX_RANGE] * len(self.groups)
 
         if Config.DEBUG and Config.SANITY_TEST == 0:
-            self.groups = self.groups[:2]
-            self.radio_ranges = self.radio_ranges[:2]
+            self.groups = self.groups[:4]
+            self.radio_ranges = self.radio_ranges[:4]
 
         for group in self.groups:
             for coord in group:
@@ -270,11 +270,20 @@ class PrimaryNode:
         if properties["el"] is None:
             properties["el"] = dispatcher.coord
 
-        dispatcher.q.put(lambda: self._send_msg_to_node(nid, properties))
-        if initial_fls:
-            dispatcher.time_q.put(-1)
-        else:
-            dispatcher.time_q.put(time.time())
+        try:
+            if "is_standby" not in properties:
+                fls_type = 0
+            elif properties["is_standby"]:
+                fls_type = 1
+            else:
+                logger.info("UNIDENTIFIED FLS")
+                fls_type = 1
+        except Exception as e:
+            print(e)
+            fls_type = 1
+
+        timestamp = time.time()
+        dispatcher.q.put((fls_type, timestamp, lambda: self._send_msg_to_node(nid, properties)))
 
         dispatcher.num_dispatched += 1
 
@@ -415,38 +424,21 @@ class PrimaryNode:
         ]
 
     def _get_dispatched_num(self):
-        info = [["dispatcher_coord", "num_dispatched", "Avg_delay", "Min_delay", "Max_delay", "delay_info"]]
+        info = [["dispatcher_coord", "num_dispatched", "Avg_illum_delay", "Min_illum_delay", "Max_illum_delay",
+                 "Avg_standby_delay", "Min_standby_delay", "Max_standby_delay", "delay_info"]]
 
         total_delay_list = []
 
         for dispatcher in self.dispatchers:
-            # if Config.RESET_AFTER_INITIAL_DEPLOY:
-            #     if len(dispatcher.delay_list) > 0:
-            #         num_initial_fls = self.num_initial_standbys + self.num_initial_illum_flss
-            #         info.append([dispatcher.coord.tolist(), dispatcher.num_dispatched - self.num_initial_standbys,
-            #                      sum(dispatcher.delay_list[self.num_initial_standbys:]) /
-            #                      len(dispatcher.delay_list[self.num_initial_standbys:]),
-            #                      min(dispatcher.delay_list[self.num_initial_standbys:]),
-            #                      max(dispatcher.delay_list[self.num_initial_standbys:]),
-            #                      dispatcher.delay_list])
-            #     else:
-            #         info.append([dispatcher.coord.tolist(), dispatcher.num_dispatched - self.num_initial_standbys,
-            #                      sum(dispatcher.delay_list[self.num_initial_standbys:]) /
-            #                      len(dispatcher.delay_list[self.num_initial_standbys:]),
-            #                      min(dispatcher.delay_list[self.num_initial_standbys:]),
-            #                      max(dispatcher.delay_list[self.num_initial_standbys:]),
-            #                      dispatcher.delay_list])
-            # else:
+            info.append([dispatcher.coord.tolist(), dispatcher.num_dispatched])
 
-            if len(dispatcher.delay_list) > 0:
-                info.append([dispatcher.coord.tolist(), dispatcher.num_dispatched,
-                             sum(dispatcher.delay_list) / len(dispatcher.delay_list) if len(
-                                 dispatcher.delay_list) > 0 else 0,
-                             min(dispatcher.delay_list), max(dispatcher.delay_list),
-                             dispatcher.delay_list])
-                total_delay_list.extend(dispatcher.delay_list)
-            else:
-                info.append([dispatcher.coord.tolist(), dispatcher.num_dispatched, 0, 0, 0])
+            for delay_list in dispatcher.delay_list:
+                if len(delay_list) > 0:
+                    info.append([sum(delay_list) / len(delay_list) if len(delay_list) > 0 else 0,
+                                 min(delay_list), max(delay_list), delay_list])
+                    total_delay_list.extend(delay_list)
+                else:
+                    info.append([0, 0, 0])
 
         info.append(['', '', '', '', '', ''])
         info.append([
@@ -552,15 +544,19 @@ class PrimaryNode:
             elif Config.SANITY_TEST == 3:
                 total_point_num = Config.K
                 group_num = 1
-
+            elif Config.DEBUG:
+                total_point_num = len(self.groups) * len(self.groups[0])
             else:
                 total_point_num, group_num = read_point_info_from_cliques_xlsx(
                     os.path.join(self.dir_experiment, f'{Config.INPUT}.xlsx'))
 
                 if Config.K == 0:
                     group_num = 0
+            # reset after all initial illumination FLSs and initial Standby FLSs were dispatched
+            # initial_fls_num = total_point_num + group_num
 
-            initial_fls_num = total_point_num + group_num
+            # reset after all initial illumination FLSs were dispatched
+            initial_fls_num = total_point_num
         else:
             initial_fls_num = 0
 

@@ -40,8 +40,8 @@ def_general_conf = {
 general_props = [
     {
         "keys": ["DISPATCH_RATE"],
-        # "values": ["5"],
-        "values": ["10", "50", "100", "'inf'"]
+        "values": ["10"],
+        # "values": ["10", "50", "100", "'inf'"]
         # "values": ["10", "50"]
     },
     {
@@ -49,10 +49,10 @@ general_props = [
         "values": [
             # {"K": "0", "INPUT": "'chess_K3'", "DISPATCHERS": "1"},
             # {"K": "0", "INPUT": "'chess_K3'", "DISPATCHERS": "3"},
-            # {"K": "3", "INPUT": "'chess_K3'", "DISPATCHERS": "1"},
-            # {"K": "5", "INPUT": "'chess_K5'"},
-            {"K": "10", "INPUT": "'dragon_K10'", "DISPATCHERS": "1"},
-            {"K": "20", "INPUT": "'dragon_K20'", "DISPATCHERS": "1"},
+            {"K": "3", "INPUT": "'chess_K3'", "DISPATCHERS": "1"},
+            # # {"K": "5", "INPUT": "'chess_K5'"},
+            # {"K": "10", "INPUT": "'dragon_K10'", "DISPATCHERS": "1"},
+            # {"K": "20", "INPUT": "'dragon_K20'", "DISPATCHERS": "1"},
         ]
     },
     # {
@@ -72,7 +72,7 @@ general_props = [
     # },
     {
         "keys": ["FAILURE_TIMEOUT"],
-        "values": ["30", "60"]
+        "values": ["60"]
         # "values": ["60"]
         # "values": ["1", "3", "6", "30", "60", "120", "600"]
     },

@@ -434,12 +434,14 @@ class PrimaryNode:
 
             for delay_list in dispatcher.delay_list:
                 if len(delay_list) > 0:
-                    info.append([sum(delay_list) / len(delay_list) if len(delay_list) > 0 else 0,
-                                 min(delay_list), max(delay_list), delay_list])
-                    total_delay_list.extend(delay_list)
+                    info[-1].extend([sum(delay_list) / len(delay_list) if len(delay_list) > 0 else 0,
+                                     min(delay_list), max(delay_list)])
                 else:
-                    info.append([0, 0, 0])
+                    info[-1].extend([0, 0, 0])
 
+            total_delay_list.extend(delay_list)
+
+        info[-1].append(delay_list)
         info.append(['', '', '', '', '', ''])
         info.append([
             'Overall Avg Delay', str(sum(total_delay_list) / len(total_delay_list)),

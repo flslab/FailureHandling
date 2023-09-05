@@ -282,6 +282,7 @@ class PrimaryNode:
             print(e)
             fls_type = 1
 
+        fls_type = 1
         timestamp = time.time()
         dispatcher.q.put((fls_type, timestamp, lambda: self._send_msg_to_node(nid, properties)))
 

@@ -17,7 +17,7 @@ def_general_conf = {
     "BUSY_WAITING": "False",
     "DURATION": "60 * 30",
     "K": "3",
-    "SHAPE": "'dragon'",
+    "SHAPE": "'chess'",
     "RESULTS_PATH": "'/proj/nova-PG0/shuqin/results/'",
     # "RESULTS_PATH": "'/Users/shuqinzhu/Desktop/experiments_aug29.nosync'",
     "DEBUG": "False",

@@ -38,12 +38,12 @@ class Dispatcher(threading.Thread):
             if fls_type == 0:
                 # if the message is for creating an illuminating FLS
                 self.delay_list[0].append(time.time() - in_que_timestamp)
-                logger.info(f"Illum FLS dispatched {in_que_timestamp}")
+                logger.debug(f"Illum FLS dispatched {in_que_timestamp}")
 
             else:
                 # the message is for creating a standby FLS
                 self.delay_list[1].append(time.time() - in_que_timestamp)
-                logger.info(f"Standby FLS dispatched {in_que_timestamp}")
+                logger.debug(f"Standby FLS dispatched {in_que_timestamp}")
 
             if self.delay:
                 time.sleep(self.delay)

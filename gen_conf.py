@@ -17,7 +17,7 @@ def_general_conf = {
     "BUSY_WAITING": "False",
     "DURATION": "60 * 30",
     "K": "3",
-    "SHAPE": "'chess'",
+    "SHAPE": "'dragon'",
     "RESULTS_PATH": "'/proj/nova-PG0/shuqin/results_priority/'",
     # "RESULTS_PATH": "'/Users/shuqinzhu/Desktop/experiments_aug29.nosync'",
     "DEBUG": "False",
@@ -40,19 +40,19 @@ def_general_conf = {
 general_props = [
     {
         "keys": ["DISPATCH_RATE"],
-        "values": ["10"],
+        # "values": ["10"],
         # "values": ["10", "50", "100", "'inf'"]
-        # "values": ["10", "50"]
+        "values": ["5", "10", "50"]
     },
     {
         "keys": ["K", "INPUT", "DISPATCHERS"],
         "values": [
             # {"K": "0", "INPUT": "'chess_K3'", "DISPATCHERS": "1"},
-            # {"K": "0", "INPUT": "'chess_K3'", "DISPATCHERS": "3"},
+            {"K": "0", "INPUT": "'dragon_K3'", "DISPATCHERS": "3"},
             # {"K": "3", "INPUT": "'chess_K3'", "DISPATCHERS": "1"},
             # # {"K": "5", "INPUT": "'chess_K5'"},
-            {"K": "10", "INPUT": "'chess_K10'", "DISPATCHERS": "1"},
-            {"K": "20", "INPUT": "'chess_K20'", "DISPATCHERS": "1"},
+            # {"K": "10", "INPUT": "'chess_K10'", "DISPATCHERS": "1"},
+            # {"K": "20", "INPUT": "'chess_K20'", "DISPATCHERS": "1"},
         ]
     },
     # {
@@ -72,22 +72,22 @@ general_props = [
     # },
     {
         "keys": ["FAILURE_TIMEOUT"],
-        "values": ["30", "60"]
-        # "values": ["60"]
+        # "values": ["30", "60"]
+        "values": ["60"]
         # "values": ["1", "3", "6", "30", "60", "120", "600"]
     },
     {
         "keys": ["MAX_SPEED", "ACCELERATION", "DECELERATION"],
         "values": [
-            {"MAX_SPEED": "6.11", "ACCELERATION": "6.11", "DECELERATION": "6.11"},
+            # {"MAX_SPEED": "6.11", "ACCELERATION": "6.11", "DECELERATION": "6.11"},
             {"MAX_SPEED": "66.67", "ACCELERATION": "66.67", "DECELERATION": "66.67"}
             # {"MAX_SPEED": "600", "ACCELERATION": "600", "DECELERATION": "600"}
         ]
     },
     {
         "keys": ["DISPATCHER_ASSIGN_POLICY"],
-        # "values": ["'ShortestDistance'", "'PoD'", "'RR'", "'Random'"]
-        "values": ["'ShortestDistance'"]
+        "values": ["'ShortestDistance'", "'PoD'", "'RR'", "'Random'"]
+        # "values": ["'ShortestDistance'"]
     },
     # {
     #     "keys": ["SANITY_TEST", "DISPATCHERS"],

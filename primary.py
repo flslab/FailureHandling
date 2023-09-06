@@ -443,7 +443,7 @@ class PrimaryNode:
                 else:
                     info[-1].extend([0, 0, 0])
 
-            total_delay_list.extend(delay_list)
+                total_delay_list.extend(delay_list)
 
         info[-1].append(delay_list)
         info.append(['', '', '', '', '', ''])

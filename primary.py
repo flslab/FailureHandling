@@ -186,7 +186,11 @@ class PrimaryNode:
         logger.info(f"Initializing {Config.DISPATCHERS} dispatchers")
 
         for coord in self.dispatchers_coords:
-            q = queue.PriorityQueue()
+
+            if Config.PRIORITIZE_ILLUMINATING_FLS:
+                q = queue.PriorityQueue()
+            else:
+                q = queue.Queue()
             d = Dispatcher(q, Config.DISPATCH_RATE, coord)
             self.dispatchers.append(d)
 
@@ -282,7 +286,6 @@ class PrimaryNode:
             print(e)
             fls_type = 1
 
-        fls_type = 1
         timestamp = time.time()
         dispatcher.q.put((fls_type, timestamp, lambda: self._send_msg_to_node(nid, properties)))
 

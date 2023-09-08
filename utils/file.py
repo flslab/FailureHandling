@@ -272,7 +272,7 @@ def get_time_range(json_file_path, intial_num, set_end_time=None):
             time_range.append(data[metric_name]['t'][i])
             break
     if len(time_range) <= 0:
-        time_range.append(0)
+        time_range.append(intial_num / Config.DISPATCH_RATE)
 
     if set_end_time is not None:
         time_range.append(set_end_time)

@@ -8,14 +8,12 @@ from matplotlib.animation import FuncAnimation, FFMpegWriter
 import matplotlib as mpl
 from worker.metrics import TimelineEvents
 
-
-
 ticks_gap = 20
 
 start_time = 0
 duration = 180
 fps = 30
-frame_rate = 1/fps
+frame_rate = 1 / fps
 total_points = 11888
 
 # t30_d1_g0	t30_d1_g20	t30_d5_g0	t30_d5_g20	t600_d1_g0	t600_d1_g20	t600_d5_g0	t600_d5_g20
@@ -29,9 +27,9 @@ def set_axis(ax, length, width, height):
     ax.axes.set_zlim3d(bottom=0, top=height)
     ax.set_aspect('equal')
     ax.grid(False)
-    ax.set_xticks(range(0, length+1, ticks_gap))
-    ax.set_yticks(range(0, width+1, ticks_gap))
-    ax.set_zticks(range(0, height+1, ticks_gap))
+    ax.set_xticks(range(0, length + 1, ticks_gap))
+    ax.set_yticks(range(0, width + 1, ticks_gap))
+    ax.set_zticks(range(0, height + 1, ticks_gap))
 
 
 def set_text(tx, t, missing_flss):
@@ -39,9 +37,9 @@ def set_text(tx, t, missing_flss):
 
 
 def draw_figure():
-    px = 1/plt.rcParams['figure.dpi']
-    fig_width = 1280*px
-    fig_height = 720*px
+    px = 1 / plt.rcParams['figure.dpi']
+    fig_width = 1280 * px
+    fig_height = 720 * px
     fig = plt.figure(figsize=(fig_width, fig_height))
     ax = fig.add_subplot(projection='3d')
     tx = fig.text(0.1, 0.8, s="", fontsize=16)
@@ -128,6 +126,18 @@ def show_last_frame(events, t=30):
     return xs, ys, zs
 
 
+def draw_last_frame(result_path, fig_name, end_time):
+    input_path = result_path + "/timeline.json"
+    filtered_events, length, width, height = read_point_cloud(input_path)
+    fig, ax, _ = draw_figure()
+    init(ax)
+    xs, ys, zs = show_last_frame(filtered_events, t=end_time)
+    ax.scatter(xs, ys, zs, c='blue', s=2, alpha=1)
+    set_axis(ax, length, width, height)
+    plt.savefig(f"{result_path}/{fig_name}.png")
+    plt.close()
+
+
 if __name__ == '__main__':
     # mpl.use('macosx')
     #
@@ -162,38 +172,47 @@ if __name__ == '__main__':
         }
     ]
 
-    props_values = [p["values"] for p in configs]
-    combinations = list(itertools.product(*props_values))
-    # print(combinations)
+    # props_values = [p["values"] for p in configs]
+    # combinations = list(itertools.product(*props_values))
+    # # print(combinations)
+    #
+    # exp_dir = "/Users/hamed/Desktop/chess_30_min"
+    #
+    # for c in combinations:
+    #     exp_name = f"chess_K{c[0]}_D{c[1]}_R{c[2]}_T{c[3]}"
+    #     print(exp_name)
+    #     input_path = f"{exp_dir}/{exp_name}/timeline.json"
+    #     filtered_events, length, width, height = read_point_cloud(input_path)
+    #     fig, ax, _ = draw_figure()
+    #     init(ax)
+    #     xs, ys, zs = show_last_frame(filtered_events, t=1799)
+    #     ax.scatter(xs, ys, zs, c='blue', s=2, alpha=1)
+    #     set_axis(ax, length, width, height)
+    #     plt.show()
+    #     # plt.savefig(f"{exp_dir}/{exp_name}.png")
+    #     plt.close()
+    #     # break
+    # exit()
+    # for c in combinations:
+    #     exp_name = f"chess_K{c[0]}_D{c[1]}_R{c[2]}_T{c[3]}"
+    #     input_path = f"{exp_dir}/{exp_name}/timeline.json"
+    #     filtered_events, length, width, height = read_point_cloud(input_path)
+    #     fig, ax, tx = draw_figure()
+    #     points = dict()
+    #     ani = FuncAnimation(
+    #         fig, partial(update,),
+    #         frames=30 * duration,
+    #         init_func=partial(init, ax))
+    #     #
+    #     # plt.show()
+    #     writer = FFMpegWriter(fps=fps)
+    #     ani.save(f"{exp_dir}/{exp_name}.mp4", writer=writer)
 
-    exp_dir = "/Users/hamed/Desktop/chess_30_min"
-
-    for c in combinations:
-        exp_name = f"chess_K{c[0]}_D{c[1]}_R{c[2]}_T{c[3]}"
-        print(exp_name)
-        input_path = f"{exp_dir}/{exp_name}/timeline.json"
-        filtered_events, length, width, height = read_point_cloud(input_path)
-        fig, ax, _ = draw_figure()
-        init(ax)
-        xs, ys, zs = show_last_frame(filtered_events, t=1799)
-        ax.scatter(xs, ys, zs, c='blue', s=2, alpha=1)
-        set_axis(ax, length, width, height)
-        # plt.show()
-        plt.savefig(f"{exp_dir}/{exp_name}.png")
-        plt.close()
-        # break
-    exit()
-    for c in combinations:
-        exp_name = f"chess_K{c[0]}_D{c[1]}_R{c[2]}_T{c[3]}"
-        input_path = f"{exp_dir}/{exp_name}/timeline.json"
-        filtered_events, length, width, height = read_point_cloud(input_path)
-        fig, ax, tx = draw_figure()
-        points = dict()
-        ani = FuncAnimation(
-            fig, partial(update,),
-            frames=30 * duration,
-            init_func=partial(init, ax))
-        #
-        # plt.show()
-        writer = FFMpegWriter(fps=fps)
-        ani.save(f"{exp_dir}/{exp_name}.mp4", writer=writer)
+    input_path = f"/Users/shuqinzhu/Desktop/timeline.json"
+    filtered_events, length, width, height = read_point_cloud(input_path)
+    fig, ax, _ = draw_figure()
+    init(ax)
+    xs, ys, zs = show_last_frame(filtered_events, t=1799)
+    ax.scatter(xs, ys, zs, c='blue', s=2, alpha=1)
+    set_axis(ax, length, width, height)
+    plt.show()

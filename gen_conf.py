@@ -40,7 +40,7 @@ def_general_conf = {
 general_props = [
     {
         "keys": ["Shape", "K", "INPUT", "DISPATCHERS", "DISPATCH_RATE", "FAILURE_TIMEOUT", "MAX_SPEED", "ACCELERATION",
-                 "DECELERATION", "PRIORITIZE_ILLUMINATING_FLS", "RESULTS_PATH"],
+                 "DECELERATION", "PRIORITIZE_ILLUMINATING_FLS", "RESULTS_PATH", "DISPLAY_CELL_SIZE"],
         "values": [
 
             # 6
@@ -104,13 +104,13 @@ general_props = [
             #  "PRIORITIZE_ILLUMINATING_FLS": "True", "RESULTS_PATH": "'/proj/nova-PG0/shuqin/results_priority/'"},
 
             # 2
-            {"SHAPE": "'chess'", "K": "3", "INPUT": "'chess_K3'", "DISPATCHERS": "1", "DISPATCH_RATE": "50",
-             "FAILURE_TIMEOUT": "30", "MAX_SPEED": "6.11", "ACCELERATION": "6.11", "DECELERATION": "6.11",
-             "PRIORITIZE_ILLUMINATING_FLS": "True", "RESULTS_PATH": "'/proj/nova-PG0/shuqin/results_priority/'"},
-
-            {"ShaSHAPEpe": "'chess'", "K": "3", "INPUT": "'chess_K3'", "DISPATCHERS": "1", "DISPATCH_RATE": "50",
-             "FAILURE_TIMEOUT": "30", "MAX_SPEED": "66.67", "ACCELERATION": "66.67", "DECELERATION": "66.67",
-             "PRIORITIZE_ILLUMINATING_FLS": "True", "RESULTS_PATH": "'/proj/nova-PG0/shuqin/results_priority/'"},
+            # {"SHAPE": "'chess'", "K": "3", "INPUT": "'chess_K3'", "DISPATCHERS": "1", "DISPATCH_RATE": "50",
+            #  "FAILURE_TIMEOUT": "30", "MAX_SPEED": "6.11", "ACCELERATION": "6.11", "DECELERATION": "6.11",
+            #  "PRIORITIZE_ILLUMINATING_FLS": "True", "RESULTS_PATH": "'/proj/nova-PG0/shuqin/results_priority/'"},
+            #
+            # {"ShaSHAPEpe": "'chess'", "K": "3", "INPUT": "'chess_K3'", "DISPATCHERS": "1", "DISPATCH_RATE": "50",
+            #  "FAILURE_TIMEOUT": "30", "MAX_SPEED": "66.67", "ACCELERATION": "66.67", "DECELERATION": "66.67",
+            #  "PRIORITIZE_ILLUMINATING_FLS": "True", "RESULTS_PATH": "'/proj/nova-PG0/shuqin/results_priority/'"},
 
             #3
             # {"SHAPE": "'dragon'", "K": "20", "INPUT": "'dragon_K20'", "DISPATCHERS": "1", "DISPATCH_RATE": "100",
@@ -125,40 +125,50 @@ general_props = [
             #  "FAILURE_TIMEOUT": "60", "MAX_SPEED": "66.67", "ACCELERATION": "66.67", "DECELERATION": "66.67",
             #  "PRIORITIZE_ILLUMINATING_FLS": "False", "RESULTS_PATH": "'/proj/nova-PG0/shuqin/results/'"},
 
+            {"SHAPE": "'racecar'", "K": "20", "INPUT": "'racecar_K20'", "DISPATCHERS": "1", "DISPATCH_RATE": "50",
+             "FAILURE_TIMEOUT": "30", "MAX_SPEED": "6.11", "ACCELERATION": "6.11", "DECELERATION": "6.11",
+             "PRIORITIZE_ILLUMINATING_FLS": "False", "RESULTS_PATH": "'/proj/nova-PG0/shuqin/results/'",
+            "DISPLAY_CELL_SIZE": "0.05"},
+
+            {"SHAPE": "'racecar'", "K": "20", "INPUT": "'racecar_K20'", "DISPATCHERS": "1", "DISPATCH_RATE": "50",
+             "FAILURE_TIMEOUT": "30", "MAX_SPEED": "6.11", "ACCELERATION": "6.11", "DECELERATION": "6.11",
+             "PRIORITIZE_ILLUMINATING_FLS": "False", "RESULTS_PATH": "'/proj/nova-PG0/shuqin/results/'",
+            "DISPLAY_CELL_SIZE": "0.05"},
+
         ]
     },
     # {
     #     "keys": ["DISPATCH_RATE"],
-    #     # "values": ["10"],
+    #     "values": ["10"],
     #     # "values": ["10", "50", "100", "'inf'"]
-    #     "values": ["5", "10"]
+    #     # "values": ["5", "10"]
     # },
     # {
     #     "keys": ["K", "INPUT", "DISPATCHERS"],
     #     "values": [
     #         # {"K": "0", "INPUT": "'chess_K3'", "DISPATCHERS": "1"},
-    #         {"K": "0", "INPUT": "'dragon_K10'", "DISPATCHERS": "3"},
+    #         # {"K": "0", "INPUT": "'dragon_K10'", "DISPATCHERS": "3"},
     #         # {"K": "3", "INPUT": "'chess_K3'", "DISPATCHERS": "1"},
     #         # # {"K": "5", "INPUT": "'chess_K5'"},
     #         # {"K": "10", "INPUT": "'chess_K10'", "DISPATCHERS": "1"},
-    #         # {"K": "20", "INPUT": "'chess_K20'", "DISPATCHERS": "1"},
+    #         {"K": "20", "INPUT": "'chess_K20'", "DISPATCHERS": "1"},
     #     ]
     # },
-    # {
-    #     "keys": ["K", "INPUT"],
-    #     "values": [
-    #         {"K": "0", "INPUT": "'chess_K3'"},
-    #         {"K": "3", "INPUT": "'chess_K3'"},
-    #         {"K": "5", "INPUT": "'chess_K5'"},
-    #         {"K": "10", "INPUT": "'chess_K10'"},
-    #         {"K": "20", "INPUT": "'chess_K20'"},
-    #     ]
-    # },
-    # {
-    #     "keys": ["DISPATCHERS"],
-    #     "values": ["1"],
-    #     # "values": ["1", "3"]
-    # },
+    # # {
+    # #     "keys": ["K", "INPUT"],
+    # #     "values": [
+    # #         {"K": "0", "INPUT": "'chess_K3'"},
+    # #         {"K": "3", "INPUT": "'chess_K3'"},
+    # #         {"K": "5", "INPUT": "'chess_K5'"},
+    # #         {"K": "10", "INPUT": "'chess_K10'"},
+    # #         {"K": "20", "INPUT": "'chess_K20'"},
+    # #     ]
+    # # },
+    # # {
+    # #     "keys": ["DISPATCHERS"],
+    # #     "values": ["1"],
+    # #     # "values": ["1", "3"]
+    # # },
     # {
     #     "keys": ["FAILURE_TIMEOUT"],
     #     # "values": ["30", "60"]

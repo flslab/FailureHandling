@@ -39,7 +39,7 @@ def_general_conf = {
 
 general_props = [
     {
-        "keys": ["Shape", "K", "INPUT", "DISPATCHERS", "DISPATCH_RATE", "FAILURE_TIMEOUT", "MAX_SPEED", "ACCELERATION",
+        "keys": ["SHAPE", "K", "INPUT", "DISPATCHERS", "DISPATCH_RATE", "FAILURE_TIMEOUT", "MAX_SPEED", "ACCELERATION",
                  "DECELERATION", "PRIORITIZE_ILLUMINATING_FLS", "RESULTS_PATH", "DISPLAY_CELL_SIZE"],
         "values": [
 

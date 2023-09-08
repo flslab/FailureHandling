@@ -323,7 +323,7 @@ def write_final_report(csv_file_path, target_file_path, name, group_num, time_ra
     report_metrics = get_report_metrics_no_group(csv_file_path, time_range)
     report_metrics = [metric for metric in report_metrics]
 
-    report_metrics.append(report_metrics[0]/(time_range[0])) if time_range[0] is 0 else report_metrics.append(0)
+    report_metrics.append(report_metrics[0]/(time_range[0])) if time_range[0] == 0 else report_metrics.append(0)
     report_metrics.append(report_metrics[1] / (Config.DURATION - time_range[0]))
 
     report_metrics.append(group_num)

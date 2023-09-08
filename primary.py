@@ -217,8 +217,11 @@ class PrimaryNode:
 
     def _read_groups(self):
         if Config.SANITY_TEST == 0:
-            self.groups, self.radio_ranges = read_cliques_xlsx(
+            # self.groups, self.radio_ranges = read_cliques_xlsx(
+            #     os.path.join(self.dir_experiment, f'{Config.INPUT}.xlsx'))
+            self.groups = read_cliques_xlsx(
                 os.path.join(self.dir_experiment, f'{Config.INPUT}.xlsx'))
+            self.radio_ranges = int('inf')
         elif Config.SANITY_TEST == 1:
             height = min([2, math.sqrt(Config.SANITY_TEST_CONFIG[1][1])])
             radius = math.sqrt(Config.SANITY_TEST_CONFIG[1][1] ** 2 - height ** 2)

@@ -562,10 +562,10 @@ class PrimaryNode:
             # initial_fls_num = total_point_num + group_num
 
             # reset after all initial illumination FLSs were dispatched
-            initial_fls_num = float(total_point_num)
+            initial_fls_num = total_point_num
         else:
             initial_fls_num = 0
-
+        initial_fls_num = float(initial_fls_num)
         time_range = utils.create_csv_from_json_no_group(Config, self.init_num, self.dir_meta, initial_fls_num,
                                                          os.path.join(self.dir_figure, f'{self.result_name}.jpg'))
         utils.write_configs(self.dir_meta, self.start_time)

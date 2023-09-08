@@ -562,7 +562,7 @@ class PrimaryNode:
             # initial_fls_num = total_point_num + group_num
 
             # reset after all initial illumination FLSs were dispatched
-            initial_fls_num = total_point_num
+            initial_fls_num = float(total_point_num)
         else:
             initial_fls_num = 0
 

@@ -211,6 +211,7 @@ def read_cliques_xlsx(path):
     df = pd.read_excel(path, sheet_name='cliques')
     return [np.array(eval(c)) for c in df["7 coordinates"]], [max(eval(d)) + 1 for d in df["6 dist between each pair"]]
 
+
 def read_point_info_from_cliques_xlsx(path):
     df = pd.read_excel(path, sheet_name='metrics')
     filtered_row = df[df['metric'] == 'number of cliques']

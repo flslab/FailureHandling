@@ -184,7 +184,7 @@ def get_mttr_by_group(csv_path, group_num):
                 # Skip rows where the value is not a number
                 continue
 
-    if not mttr or mttr == []:
+    if mttr is None or mttr == [[] for i in range(group_num)]:
         return [0, 0, 0, 0]
 
     mttr_all = (list(chain.from_iterable(mttr)))

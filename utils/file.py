@@ -227,7 +227,7 @@ def read_point_info_from_cliques_xlsx(path):
         total_point_num = group_num * Config.K + int(filtered_row['value'].iloc[0])
 
     # Get the value from the 'Value' column for the filtered row
-    logger.info(f"INITIAL ILLUM NUM {total_point_num} TYPE={type(total_point_num)}")
+    # logger.info(f"INITIAL ILLUM NUM {total_point_num} TYPE={type(total_point_num)}")
     return total_point_num, group_num
 
 

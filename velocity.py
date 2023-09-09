@@ -43,6 +43,8 @@ class VelocityModel:
 
         self.total_time = self.a_time + self.v_time + self.d_time
 
+        logger.info(f"total_time={self.total_time} vmax={self.v_max}")
+
         v_norm_vec = self.x1 - self.x0
         if self.dist > 0.0:
             v_norm_vec /= self.dist

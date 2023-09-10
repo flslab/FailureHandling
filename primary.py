@@ -599,6 +599,8 @@ class PrimaryNode:
 
         self._setup_results_directory()
         utils.file.delete_previous_json_files(self.dir_meta)
+
+        logger.info("Try To Create Socket")
         self._create_server_socket()
         logger.info("Server Created")
         self._bind_server_socket()

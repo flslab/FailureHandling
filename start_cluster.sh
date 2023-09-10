@@ -8,4 +8,4 @@ for (( i=1; i<num_of_total_servers; i++ )); do
     server_addr=${USERNAME}@node-$i.${HOSTNAME}
     ssh -oStrictHostKeyChecking=no -f "${server_addr}" "ulimit -n 99999 && cd FailureHandling && cp experiments/config$1.py config.py && sleep 10 && sudo nohup python3 secondary.py > my.log 2>&1 &" &
 done
-ulimit -n 99999 && cp "experiments/config$1.py" config.py && sleep 10 && sudo python3 primary.py "${N}" "${now}"
+ulimit -n 99999 && cp "experiments/config$1.py" config.py && sleep 5 && sudo python3 primary.py "${N}" "${now}"

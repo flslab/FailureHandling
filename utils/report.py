@@ -235,7 +235,7 @@ def get_report_metrics_no_group(dir_meta, time_range):
 
         metrics = []
 
-        for metric_name in ['dispatched', 'failed']:
+        for metric_name in ['illuminating', 'dispatched', 'failed']:
 
             if data[metric_name]['t'][-1] < time_range[0]:
                 metrics.append(data[metric_name]['y'][-1])
@@ -257,6 +257,12 @@ def get_report_metrics_no_group(dir_meta, time_range):
                     if data[metric_name]['t'][i] <= time_range[1]:
                         metrics.append(data[metric_name]['y'][i] - metrics[-1])
                         break
+
+
+            initial_illum_num = metrics[2]
+            metrics[1] += metrics[0]
+            metrics[0] /= initial_illum_num
+            metrics[1] /= initial_illum_num
 
         for metric_name in ['mid_flight', 'illuminating', 'standby']:
             if data[metric_name]['t'][0] > time_range[1]:
@@ -297,6 +303,8 @@ def write_final_report(csv_file_path, target_file_path, name, group_num, time_ra
     #     return
 
     report_key = [
+        "QoI Before Reset",
+        "QoI After Reset",
         "Dispatched Before Reset",
         "Dispatched After Reset",
         "Failure Before Reset",

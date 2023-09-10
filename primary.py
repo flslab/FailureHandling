@@ -122,10 +122,7 @@ class PrimaryNode:
 
     def _create_server_socket(self):
         # Experimental artifact to gather theoretical stats for scientific publications.
-
-        logger.info("Try To Create Socket")
         self.sock = socket.socket()
-        logger.info("Create Socket")
 
     def _bind_server_socket(self):
         logger.info(f"Binding primary node to {Constants.SERVER_ADDRESS}")
@@ -611,14 +608,9 @@ class PrimaryNode:
     def start_experiment(self):
 
         self._setup_results_directory()
-
-        logger.info("Delete Files")
         self.delete_previous_json_files(self.dir_meta)
-        logger.info("Try To Create Socket")
         self._create_server_socket()
-        logger.info("Server Created")
         self._bind_server_socket()
-        logger.info("Bind Server")
         self._listen_to_secondary_nodes()
         self._read_groups()
         self._define_dispatcher_coords()

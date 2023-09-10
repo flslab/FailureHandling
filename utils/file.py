@@ -254,7 +254,7 @@ def delete_previous_json_files(path):
                 path = os.path.join(root, file)
                 # Delete the file
                 os.remove(path)
-        print("All files under the folder have been deleted.")
+        logger.info("All files under the folder have been deleted.")
     except Exception as e:
         print(f"Error occurred: {e}")
 

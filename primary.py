@@ -123,6 +123,7 @@ class PrimaryNode:
     def _create_server_socket(self):
         # Experimental artifact to gather theoretical stats for scientific publications.
         self.sock = socket.socket()
+        logger.info("Create Socket")
 
     def _bind_server_socket(self):
         logger.info(f"Binding primary node to {Constants.SERVER_ADDRESS}")

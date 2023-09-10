@@ -168,6 +168,19 @@ class PrimaryNode:
         if not os.path.exists(self.dir_figure):
             os.makedirs(self.dir_figure, exist_ok=True)
 
+
+    def delete_previous_json_files(self, path):
+        try:
+            # Iterate over all files in the folder
+            for root, dirs, files in os.walk(path):
+                for file in files:
+                    path = os.path.join(root, file)
+                    # Delete the file
+                    os.remove(path)
+            logger.info("All files under the folder have been deleted.")
+        except Exception as e:
+            logger.info(f"Error occurred: {e}")
+
     def _define_dispatcher_coords(self):
         l = 98
         w = 49
@@ -598,8 +611,9 @@ class PrimaryNode:
     def start_experiment(self):
 
         self._setup_results_directory()
-        utils.file.delete_previous_json_files(self.dir_meta)
 
+        logger.info("Delete Files")
+        self.delete_previous_json_files(self.dir_meta)
         logger.info("Try To Create Socket")
         self._create_server_socket()
         logger.info("Server Created")

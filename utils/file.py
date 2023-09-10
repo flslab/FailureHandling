@@ -246,19 +246,6 @@ def get_group_mapping(path):
     return group_map, group_id
 
 
-def delete_previous_json_files(path):
-    try:
-        # Iterate over all files in the folder
-        for root, dirs, files in os.walk(path):
-            for file in files:
-                path = os.path.join(root, file)
-                # Delete the file
-                os.remove(path)
-        logger.info("All files under the folder have been deleted.")
-    except Exception as e:
-        logger.info(f"Error occurred: {e}")
-
-
 def get_time_range(json_file_path, intial_num, set_end_time=None):
     time_range = []
 

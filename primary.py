@@ -603,7 +603,9 @@ class PrimaryNode:
 
         logger.info("Directory Set")
         self._create_server_socket()
+        logger.info("Server Created")
         self._bind_server_socket()
+        logger.info("Bind Server")
         self._listen_to_secondary_nodes()
         self._read_groups()
         self._define_dispatcher_coords()

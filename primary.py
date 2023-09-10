@@ -678,6 +678,7 @@ if __name__ == '__main__':
 
     primary_node = PrimaryNode(N, name)
     primary_node.start_termination_timer()
+    logger.info("START EXPERIMENT")
     primary_node.start_experiment()
 
     # rewrite_reports()

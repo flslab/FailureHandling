@@ -130,17 +130,17 @@ general_props = [
 
             {"SHAPE": "'racecar'", "K": "20", "INPUT": "'racecar_K20'", "DISPATCHERS": "1", "DISPATCH_RATE": "350",
              "FAILURE_TIMEOUT": "30", "MAX_SPEED": "6.11", "ACCELERATION": "6.11", "DECELERATION": "6.11",
-             "PRIORITIZE_ILLUMINATING_FLS": "False", "RESULTS_PATH": "'/proj/nova-PG0/shuqin/results/'",
+             "PRIORITIZE_ILLUMINATING_FLS": "False", "RESULTS_PATH": "'/proj/nova-PG0/shuqin/results_350/'",
              "DISPLAY_CELL_SIZE": "0.000672"},
 
             {"SHAPE": "'racecar'", "K": "20", "INPUT": "'racecar_K20'", "DISPATCHERS": "1", "DISPATCH_RATE": "350",
              "FAILURE_TIMEOUT": "30", "MAX_SPEED": "6.11", "ACCELERATION": "6.11", "DECELERATION": "6.11",
-             "PRIORITIZE_ILLUMINATING_FLS": "False", "RESULTS_PATH": "'/proj/nova-PG0/shuqin/results/'",
+             "PRIORITIZE_ILLUMINATING_FLS": "False", "RESULTS_PATH": "'/proj/nova-PG0/shuqin/results_350/'",
              "DISPLAY_CELL_SIZE": "0.016"},
 
             {"SHAPE": "'racecar'", "K": "20", "INPUT": "'racecar_K20'", "DISPATCHERS": "1", "DISPATCH_RATE": "350",
              "FAILURE_TIMEOUT": "30", "MAX_SPEED": "6.11", "ACCELERATION": "6.11", "DECELERATION": "6.11",
-             "PRIORITIZE_ILLUMINATING_FLS": "False", "RESULTS_PATH": "'/proj/nova-PG0/shuqin/results/'",
+             "PRIORITIZE_ILLUMINATING_FLS": "False", "RESULTS_PATH": "'/proj/nova-PG0/shuqin/results_350/'",
              "DISPLAY_CELL_SIZE": "0.0043"},
 
         ]

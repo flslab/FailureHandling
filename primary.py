@@ -567,8 +567,8 @@ class PrimaryNode:
             elif Config.SANITY_TEST == 3:
                 total_point_num = Config.K
                 group_num = 1
-            # elif Config.DEBUG:
-            #     total_point_num = len(self.groups) * len(self.groups[0])
+            elif Config.DEBUG:
+                total_point_num = len(self.groups) * len(self.groups[0])
             else:
                 total_point_num, group_num = read_point_info_from_cliques_xlsx(
                     os.path.join(self.dir_experiment, f'{Config.INPUT}.xlsx'))

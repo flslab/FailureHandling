@@ -259,10 +259,10 @@ def get_report_metrics_no_group(dir_meta, time_range):
                         break
 
 
-            initial_illum_num = metrics[2]
-            metrics[1] += metrics[0]
-            metrics[0] /= initial_illum_num
-            metrics[1] /= initial_illum_num
+        initial_illum_num = metrics[2]
+        metrics[1] += metrics[0]
+        metrics[0] /= initial_illum_num
+        metrics[1] /= initial_illum_num
 
         for metric_name in ['mid_flight', 'illuminating', 'standby']:
             if data[metric_name]['t'][0] > time_range[1]:

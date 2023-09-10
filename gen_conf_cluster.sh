@@ -7,4 +7,5 @@ python3 gen_conf.py
 for (( i=1; i<num_of_total_servers; i++ )); do
     server_addr=${USERNAME}@node-$i.${HOSTNAME}
     ssh -oStrictHostKeyChecking=no -f "${server_addr}" "cd FailureHandling && python3 gen_conf.py" &
+    echo "Generate Config"
 done

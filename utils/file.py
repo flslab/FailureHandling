@@ -256,7 +256,7 @@ def delete_previous_json_files(path):
                 os.remove(path)
         logger.info("All files under the folder have been deleted.")
     except Exception as e:
-        print(f"Error occurred: {e}")
+        logger.info(f"Error occurred: {e}")
 
 
 def get_time_range(json_file_path, intial_num, set_end_time=None):

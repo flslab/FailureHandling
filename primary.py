@@ -594,10 +594,14 @@ class PrimaryNode:
         self._write_results()
 
     def start_experiment(self):
+
+        logger.info("START EXPERIMENT")
         self._setup_results_directory()
+        logger.info("Directory Set")
 
         utils.file.delete_previous_json_files(self.dir_meta)
 
+        logger.info("Directory Set")
         self._create_server_socket()
         self._bind_server_socket()
         self._listen_to_secondary_nodes()
@@ -678,7 +682,6 @@ if __name__ == '__main__':
 
     primary_node = PrimaryNode(N, name)
     primary_node.start_termination_timer()
-    logger.info("START EXPERIMENT")
     primary_node.start_experiment()
 
     # rewrite_reports()

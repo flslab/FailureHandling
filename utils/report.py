@@ -509,12 +509,12 @@ def write_final_report(csv_file_path, target_file_path, name, group_num, time_ra
         with open(os.path.join(csv_file_path, 'charts.json'), 'r') as json_file:
             function_of_time = json.load(json_file)
 
-        metric_names = ['illuminating']
-        for metric_name in metric_names:
-            df = pd.DataFrame()
-            df['Time'] = function_of_time[metric_name]['t']
-            df['Value'] = function_of_time[metric_name]['y']
-            df.to_excel(writer, sheet_name=metric_name)
+        # metric_names = ['illuminating']
+        # for metric_name in metric_names:
+        #     df = pd.DataFrame()
+        #     df['Time'] = function_of_time[metric_name]['t']
+        #     df['Value'] = function_of_time[metric_name]['y']
+        #     df.to_excel(writer, sheet_name=metric_name)
 
         df = pd.read_csv(os.path.join(csv_file_path, 'config.csv'))
         df.to_excel(writer, sheet_name='Config')

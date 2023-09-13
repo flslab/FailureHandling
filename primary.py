@@ -301,10 +301,7 @@ class PrimaryNode:
                     if distance < closest_distance:
                         closest_distance = distance
                         closest_index = i
-                self.groups[closest_index].append(coord)
-
-            def calculate_centroid(points):
-                return [sum(coord) / len(coord) for coord in zip(*points)]
+                self.groups[closest_index] = np.append(self.groups[closest_index], coord, axis=0)
 
 
     def _assign_dispatcher(self, properties):

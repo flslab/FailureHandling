@@ -116,7 +116,10 @@ def show_last_frame(events, t=30):
         if event_type == TimelineEvents.ILLUMINATE or event_type == TimelineEvents.ILLUMINATE_STANDBY:
             final_points[fls_id] = event[2]
         else:
-            final_points.pop(fls_id)
+            try:
+                final_points.pop(fls_id)
+            except Exception as e:
+                continue
 
     coords = final_points.values()
     xs = [c[0] for c in coords]
@@ -212,7 +215,7 @@ if __name__ == '__main__':
     filtered_events, length, width, height = read_point_cloud(input_path)
     fig, ax, _ = draw_figure()
     init(ax)
-    xs, ys, zs = show_last_frame(filtered_events, t=1799)
+    xs, ys, zs = show_last_frame(filtered_events, t=1800)
     ax.scatter(xs, ys, zs, c='blue', s=2, alpha=1)
     set_axis(ax, length, width, height)
     plt.show()

@@ -119,6 +119,7 @@ class PrimaryNode:
         self.stop_thread = None
         self.center = []
         self.init_num = 0
+        self.single_indexes = []
 
     def _create_server_socket(self):
         # Experimental artifact to gather theoretical stats for scientific publications.
@@ -266,15 +267,45 @@ class PrimaryNode:
                 single_members.append(self.groups[k][0])
                 single_indexes.append(k)
 
-        # remove single nodes from groups
-        for k in reversed(single_indexes):
-            self.groups.pop(k)
-            self.radio_ranges.pop(k)
+        if Config.CEDED_POLICY == 0:
+            # remove single nodes from groups
+            for k in reversed(single_indexes):
+                self.groups.pop(k)
+                self.radio_ranges.pop(k)
 
-        # add single nodes as one group to the groups
-        if len(single_members):
-            self.groups.append(np.stack(single_members))
-            self.radio_ranges.append(max_dist_singles)
+            # add single nodes as one group to the groups
+            if len(single_members):
+                self.groups.append(np.stack(single_members))
+                self.radio_ranges.append(max_dist_singles)
+
+        elif Config.CEDED_POLICY == 2:
+            self.single_indexes = single_indexes
+
+        elif Config.CEDED_POLICY == 3:
+            for k in reversed(single_indexes):
+                self.groups.pop(k)
+                self.radio_ranges.pop(k)
+
+            centers = []
+            for group in self.groups:
+                centers.append([sum(coord) / len(coord) for coord in zip(*group)])
+
+
+            for coord in single_members:
+
+                closest_index = 0
+                closest_distance = float('inf')
+
+                for i, center in enumerate(centers[1:], 1):
+                    distance = distance_between(coord, center)
+                    if distance < closest_distance:
+                        closest_distance = distance
+                        closest_index = i
+                self.groups[closest_index].append(coord)
+
+            def calculate_centroid(points):
+                return [sum(coord) / len(coord) for coord in zip(*points)]
+
 
     def _assign_dispatcher(self, properties):
         return self.dispatch_policy.assign(dispatchers=self.dispatchers, **properties)
@@ -341,6 +372,10 @@ class PrimaryNode:
                 # If is doing stnadby sanity test, deploy the FLS directly to points on ring
                 self._deploy_fls(fls, Config.SANITY_TEST == 2)
                 self.num_initial_illum_flss += 1
+
+            # Do not dispatch standby FLSs for cedded FLS Group
+            if Config.CEDED_POLICY == 2 and i in self.single_indexes:
+                continue
 
             # deploy standby
             if Config.K:

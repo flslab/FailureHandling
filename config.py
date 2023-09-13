@@ -31,3 +31,4 @@ class Config:
     STANDBY_TEST_CONFIG = [('RADIUS', 5), ('DEPLOY_DIST', 10), ('FAILURE_TIMEOUT_GAP', 10), ('CHECK_TIME_RANGE', 0, 60 * 1)]
     DISPATCHER_ASSIGN_POLICY = "Random"
     PRIORITIZE_ILLUMINATING_FLS = True
+    CEDED_POLICY = 0  # 0 for put into a group, 1 for each into a group with standby, 2 for no shandby, 3 for merge to closest group

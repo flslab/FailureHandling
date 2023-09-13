@@ -602,8 +602,10 @@ class PrimaryNode:
             elif Config.DEBUG:
                 total_point_num = len(self.groups) * len(self.groups[0])
             else:
-                total_point_num, group_num = read_point_info_from_cliques_xlsx(
-                    os.path.join(self.dir_experiment, f'{Config.INPUT}.xlsx'))
+                # IMPORTANT !!!!!
+                total_point_num = 454
+                # total_point_num, group_num = read_point_info_from_cliques_xlsx(
+                #     os.path.join(self.dir_experiment, f'{Config.INPUT}.xlsx'))
 
                 if Config.K == 0:
                     group_num = 0

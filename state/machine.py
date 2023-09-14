@@ -7,6 +7,7 @@ import numpy as np
 
 from message import Message, MessageTypes
 from config import Config
+from utils.distribution import left_half_exponential
 from worker.metrics import TimelineEvents
 from .types import StateTypes
 from worker.network import PrioritizedItem
@@ -154,7 +155,7 @@ class StateMachine:
         if failure_timeout is None:
             # failure_timeout = random.random() * Config.FAILURE_TIMEOUT
 
-            failure_timeout = np.random.exponential(Config.FAILURE_TIMEOUT)
+            failure_timeout = left_half_exponential(Config.FAILURE_TIMEOUT)
         self.timer_failure = threading.Timer(failure_timeout, self.put_state_in_q, (MessageTypes.FAILURE_DETECTED,))
         self.timer_failure.start()
 

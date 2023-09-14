@@ -43,8 +43,6 @@ class VelocityModel:
 
         self.total_time = self.a_time + self.v_time + self.d_time
 
-        # print(f"total_time={self.total_time} vmax={self.v_max}")
-
         v_norm_vec = self.x1 - self.x0
         if self.dist > 0.0:
             v_norm_vec /= self.dist
@@ -72,16 +70,19 @@ class VelocityModel:
 
 
 if __name__ == '__main__':
-    t = time.time()
-    vm = VelocityModel(np.array([.0, .0, .0]), np.array([.0, .0, .0]))
-    vm.solve()
-    print(vm.get_location(t))
-    print(vm.get_location(t+1))
-    print(vm.get_location(t+2))
-    print(vm.get_location(t+3))
-    print(vm.get_location(t+4))
-    print(vm.get_location(t+5))
-    print(vm.get_location(t+6))
-    print(vm.get_location(t+7))
-    print(vm.get_location(t+vm.total_time))
-    print(vm.total_time)
+    speeds = [1, 3, 5, 6.11, 10, 15, 20, 60, 66.76, 100]
+    # speeds = [6.11]
+    for distance in [3.13, 2.85, 4.65, 3.86, 17.6, 5.35]:
+        report = []
+        report.append(distance * Config.DISPLAY_CELL_SIZE)
+        for speed_model in speeds:
+            Config.MAX_SPEED = speed_model
+            Config.ACCELERATION = speed_model
+            Config.DECELERATION = speed_model
+
+            vm = VelocityModel(np.array([.0, .0, .0]), np.array([.0, .0, distance]))
+            vm.solve()
+            report.append(vm.total_time)
+        print(report)
+
+

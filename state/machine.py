@@ -152,8 +152,9 @@ class StateMachine:
 
     def set_timer_to_fail(self, failure_timeout=None):
         if failure_timeout is None:
-            failure_timeout = random.random() * Config.FAILURE_TIMEOUT
+            # failure_timeout = random.random() * Config.FAILURE_TIMEOUT
 
+            failure_timeout = np.random.exponential(Config.FAILURE_TIMEOUT)
         self.timer_failure = threading.Timer(failure_timeout, self.put_state_in_q, (MessageTypes.FAILURE_DETECTED,))
         self.timer_failure.start()
 

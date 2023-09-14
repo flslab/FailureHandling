@@ -9,7 +9,7 @@ class Config:
     ACCELERATION = 1
     DECELERATION = 1
     MAX_SPEED = 3
-    DISPLAY_CELL_SIZE = 1
+    DISPLAY_CELL_SIZE = 0.05
     BUSY_WAITING = False
     DURATION = 10
     K = 3 # if k = 0 no standbys are deployed

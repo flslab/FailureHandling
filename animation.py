@@ -215,7 +215,9 @@ if __name__ == '__main__':
     filtered_events, length, width, height = read_point_cloud(input_path)
     fig, ax, _ = draw_figure()
     init(ax)
-    xs, ys, zs = show_last_frame(filtered_events, t=1800)
+    xs, ys, zs = show_last_frame(filtered_events, t=800)
     ax.scatter(xs, ys, zs, c='blue', s=2, alpha=1)
     set_axis(ax, length, width, height)
-    plt.show()
+    # plt.show()
+
+    plt.savefig("/Users/shuqinzhu/Desktop/racecar_figure/K3/matchbox_size.png")

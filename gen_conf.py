@@ -23,8 +23,8 @@ def_general_conf = {
     "DEBUG": "False",
     "FILE_NAME_KEYS": "[('DISPATCHERS', 'D'), ('DISPATCH_RATE', 'R'), ('FAILURE_TIMEOUT', 'T'), ('MAX_SPEED', 'S'),"
                       # "('DISPATCHER_ASSIGN_POLICY', 'P')]",
-                      # "('NAME', 'N')]",
-                      "]",
+                      "('NAME', 'N')]",
+                      # "]",
     "DIR_KEYS": "['K']",
     "SERVER_TIMEOUT": "120",
     "PROCESS_JOIN_TIMEOUT": "120",

@@ -68,7 +68,7 @@ general_props = [
             {"SHAPE": "'chess'", "K": "0", "INPUT": "'chess_K3'", "DISPATCHERS": "1", "DISPATCH_RATE": "50",
              "FAILURE_TIMEOUT": "30", "MAX_SPEED": "6.11", "ACCELERATION": "6.11", "DECELERATION": "6.11",
              "PRIORITIZE_ILLUMINATING_FLS": "False", "RESULTS_PATH": "'/proj/nova-PG0/shuqin/results/'",
-             "CEDED_POLICY": "0", "DISPLAY_CELL_SIZE": "", "NAME": "'0.00210526mega'"},
+             "CEDED_POLICY": "0", "DISPLAY_CELL_SIZE": "0.00210526", "NAME": "'mega'"},
             {"SHAPE": "'chess'", "K": "3", "INPUT": "'chess_K3'", "DISPATCHERS": "1", "DISPATCH_RATE": "50",
              "FAILURE_TIMEOUT": "30", "MAX_SPEED": "6.11", "ACCELERATION": "6.11", "DECELERATION": "6.11",
              "PRIORITIZE_ILLUMINATING_FLS": "False", "RESULTS_PATH": "'/proj/nova-PG0/shuqin/results/'",

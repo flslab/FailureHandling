@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation, FFMpegWriter
 import matplotlib as mpl
 from worker.metrics import TimelineEvents
+from PIL import Image
 
 ticks_gap = 20
 
@@ -141,6 +142,39 @@ def draw_last_frame(result_path, fig_name, end_time):
     plt.close()
 
 
+def trim_png(image_path, output_path, trim_values):
+    try:
+        # Open the image file
+        with Image.open(image_path) as img:
+            # Get the dimensions of the image
+            width, height = img.size
+
+            # Calculate the new dimensions
+            left = trim_values[0]
+            top = trim_values[1]
+            right = width - trim_values[2]
+            bottom = height - trim_values[3]
+
+            # Check if the trim values are valid
+            if left >= right or top >= bottom:
+                raise ValueError("Invalid trim values, resulting in non-positive width or height.")
+
+            # Crop the image
+            img_cropped = img.crop((left, top, right, bottom))
+
+            # Save the cropped image
+            img_cropped.save(output_path)
+
+            print(f"The image has been trimmed and saved to {output_path}")
+    except FileNotFoundError:
+        print(f"The file at path {image_path} does not exist.")
+    except ValueError as e:
+        print(f"An error occurred: {e}")
+    except Exception as e:
+        print(f"An unexpected error occurred: {e}")
+
+
+
 if __name__ == '__main__':
     # mpl.use('macosx')
     #
@@ -211,13 +245,23 @@ if __name__ == '__main__':
     #     writer = FFMpegWriter(fps=fps)
     #     ani.save(f"{exp_dir}/{exp_name}.mp4", writer=writer)
 
-    input_path = f"/Users/shuqinzhu/Desktop/timeline.json"
-    filtered_events, length, width, height = read_point_cloud(input_path)
-    fig, ax, _ = draw_figure()
-    init(ax)
-    xs, ys, zs = show_last_frame(filtered_events, t=800)
-    ax.scatter(xs, ys, zs, c='blue', s=2, alpha=1)
-    set_axis(ax, length, width, height)
-    # plt.show()
 
-    plt.savefig("/Users/shuqinzhu/Desktop/racecar_figure/K3/matchbox_size.png")
+
+
+    for folder in ["K0", "K3", "K10", "K20"]:
+        for filename in ["mega", "giant", "standard"]:
+            input_path = f"/Users/shuqinzhu/Desktop/raw_results/Sep_16/chess/{folder}/chess_D1_R50_T30_S6_N{filename}/timeline.json"
+            filtered_events, length, width, height = read_point_cloud(input_path)
+            fig, ax, _ = draw_figure()
+            init(ax)
+            xs, ys, zs = show_last_frame(filtered_events, t=800)
+            ax.scatter(xs, ys, zs, c='blue', s=2, alpha=1)
+            set_axis(ax, length, width, height)
+            # plt.show()
+
+            plt.savefig(f"/Users/shuqinzhu/Desktop/exp_figure/chess/{folder}_{filename}.png")
+            image_path = f"/Users/shuqinzhu/Desktop/exp_figure/chess/{folder}_{filename}.png"  # Replace with the path to your PNG file
+            output_path = f"/Users/shuqinzhu/Desktop/exp_figure/chess/{folder}_{filename}.png"  # Replace with the path to save the trimmed image
+            trim_values = [445, 102, 383, 48]  # Replace with the number of pixels to trim from each side (left, top, right, bottom)
+
+            trim_png(image_path, output_path, trim_values)

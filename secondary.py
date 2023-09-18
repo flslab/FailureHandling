@@ -2,7 +2,7 @@ import socket
 import pickle
 import threading
 import time
-
+import psutil
 import stop
 from config import Config
 from constants import Constants
@@ -19,6 +19,12 @@ class SecondaryNode:
         self.processes = dict()
         self.should_stop = False
         self.failure_handler_thread = None
+        self.cpu_util = []
+
+    def _collect_cpu_data(self, interval):
+        while True:
+            self.cpu_util.append((1, psutil.cpu_percent()))
+            time.sleep(interval)
 
     def _connect_to_primary(self):
         logger.info("Connecting to the primary node")
@@ -100,16 +106,31 @@ class SecondaryNode:
                 logger.debug(f"Process Alive: {p.name}")
                 p.terminate()
 
+    def _write_cpu_data(self, filename):
+        with open(filename, 'w') as file:
+            for data in self.cpu_util:
+                file.write(f"{data[0]},{data[1]}\n")
+
+    def _log_cpu_util(self):
+        self.cpu_util_tread = threading.Thread(target=self._collect_cpu_data(1))
+        self.cpu_util_tread.start()
+
+    def _stop_log_cpu(self):
+        self.cpu_util_tread.join()
+
     def start_node(self):
         self._connect_to_primary()
         self._wait_for_start_command()
         self._start_failure_handler_thread()
         self._handle_deployments()
+        self._log_cpu_util()
 
     def stop_node(self):
         self._stop_failure_handler_thread()
+        self._stop_log_cpu()
         self._stop_processes()
         self._ack_primary_node()
+        self._collect_cpu_data("~/cpu_util.txt")
 
 
 if __name__ == '__main__':

@@ -8,6 +8,7 @@ import time
 import os
 from abc import ABC, abstractmethod
 import numpy as np
+import psutil
 
 from animation import draw_last_frame
 from dispatcher import Dispatcher
@@ -120,6 +121,7 @@ class PrimaryNode:
         self.center = []
         self.init_num = 0
         self.single_indexes = []
+        self.cpu_util = []
 
     def _create_server_socket(self):
         # Experimental artifact to gather theoretical stats for scientific publications.
@@ -628,6 +630,18 @@ class PrimaryNode:
 
         write_final_report(self.dir_meta, self.dir_meta, self.result_name, len(group_id), time_range)
 
+    def _collect_cpu_data(self, interval):
+        while True:
+            self.cpu_util.append((1, psutil.cpu_percent()))
+            time.sleep(interval)
+
+    def _log_cpu_util(self):
+        self.cpu_util_tread = threading.Thread(target=self._collect_cpu_data(1))
+        self.cpu_util_tread.start()
+
+    def _stop_log_cpu(self):
+        self.cpu_util_tread.join()
+
     def stop_experiment(self):
         self._stop_dispatchers()
 
@@ -637,11 +651,14 @@ class PrimaryNode:
         self._stop_secondary_nodes()
         logger.info(f"Time for All process stop={time.time() - stop_send_time}")
 
+        self._stop_log_cpu()
         self.stop_flag = True
         self._write_results()
+        self._collect_cpu_data("~/cpu_util.txt")
 
     def start_experiment(self):
 
+        self._log_cpu_util()
         self._setup_results_directory()
         self.delete_previous_json_files(self.dir_meta)
         self._create_server_socket()

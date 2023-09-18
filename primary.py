@@ -632,15 +632,21 @@ class PrimaryNode:
 
     def _collect_cpu_data(self, interval):
         while True:
-            self.cpu_util.append((1, psutil.cpu_percent()))
+            self.cpu_util.append((time.time(), psutil.cpu_percent()))
             time.sleep(interval)
 
     def _log_cpu_util(self):
         self.cpu_util_tread = threading.Thread(target=self._collect_cpu_data(1))
         self.cpu_util_tread.start()
+        logger.info("Start Logging CPU")
 
     def _stop_log_cpu(self):
         self.cpu_util_tread.join()
+
+    def _write_cpu_data(self, filename):
+        with open(filename, 'w') as file:
+            for data in self.cpu_util:
+                file.write(f"{data[0]},{data[1]}\n")
 
     def stop_experiment(self):
         self._stop_dispatchers()
@@ -654,7 +660,7 @@ class PrimaryNode:
         self._stop_log_cpu()
         self.stop_flag = True
         self._write_results()
-        self._collect_cpu_data("~/cpu_util.txt")
+        self._write_cpu_data("~/cpu_util.txt")
 
     def start_experiment(self):
 

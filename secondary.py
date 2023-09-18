@@ -23,7 +23,7 @@ class SecondaryNode:
 
     def _collect_cpu_data(self, interval):
         while True:
-            self.cpu_util.append((1, psutil.cpu_percent()))
+            self.cpu_util.append((time.time(), psutil.cpu_percent()))
             time.sleep(interval)
 
     def _connect_to_primary(self):
@@ -119,18 +119,19 @@ class SecondaryNode:
         self.cpu_util_tread.join()
 
     def start_node(self):
+
+        self._log_cpu_util()
         self._connect_to_primary()
         self._wait_for_start_command()
         self._start_failure_handler_thread()
         self._handle_deployments()
-        self._log_cpu_util()
 
     def stop_node(self):
         self._stop_failure_handler_thread()
         self._stop_log_cpu()
         self._stop_processes()
         self._ack_primary_node()
-        self._collect_cpu_data("~/cpu_util.txt")
+        self._write_cpu_data("~/cpu_util.txt")
 
 
 if __name__ == '__main__':

@@ -619,7 +619,6 @@ class PrimaryNode:
         time_range = utils.create_csv_from_json_no_group(Config, self.init_num, self.dir_meta, initial_fls_num,
                                                          os.path.join(self.dir_figure, f'{self.result_name}.jpg'))
 
-        logger.info(f"Time Range: {time_range}")
         # draw_last_frame(self.dir_meta, self.result_name, time_range[1])
         utils.write_configs(self.dir_meta, self.start_time)
         utils.combine_csvs(self.dir_meta, self.dir_experiment, "reli_" + self.result_name)

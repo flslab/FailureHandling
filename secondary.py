@@ -112,7 +112,7 @@ class SecondaryNode:
                 file.write(f"{data[0]},{data[1]}\n")
 
     def _log_cpu_util(self):
-        self.cpu_util_tread = threading.Thread(target=self._collect_cpu_data(1))
+        self.cpu_util_tread = threading.Thread(target=self._collect_cpu_data, args=(1,))
         self.cpu_util_tread.start()
 
     def _stop_log_cpu(self):

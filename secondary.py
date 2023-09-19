@@ -21,11 +21,6 @@ class SecondaryNode:
         self.failure_handler_thread = None
         self.cpu_util = []
 
-    def _collect_cpu_data(self, interval):
-        while not self.should_stop:
-            self.cpu_util.append((time.time(), psutil.cpu_percent()))
-            time.sleep(interval)
-
     def _connect_to_primary(self):
         logger.info("Connecting to the primary node")
 
@@ -48,6 +43,8 @@ class SecondaryNode:
         logger.info("Started deployment handler")
 
         while True:
+            self.cpu_util.append((time.time(), psutil.cpu_percent()))
+
             msg = recv_msg(self.sock)
             logger.debug(msg)
 
@@ -111,16 +108,7 @@ class SecondaryNode:
             for data in self.cpu_util:
                 file.write(f"{data[0]},{data[1]}\n")
 
-    def _log_cpu_util(self):
-        self.cpu_util_tread = threading.Thread(target=self._collect_cpu_data, args=(1,))
-        self.cpu_util_tread.start()
-
-    def _stop_log_cpu(self):
-        self.cpu_util_tread.join()
-
     def start_node(self):
-
-        self._log_cpu_util()
         self._connect_to_primary()
         self._wait_for_start_command()
         self._start_failure_handler_thread()
@@ -128,7 +116,6 @@ class SecondaryNode:
 
     def stop_node(self):
         self._stop_failure_handler_thread()
-        self._stop_log_cpu()
         self._stop_processes()
         self._ack_primary_node()
         self._write_cpu_data("~/cpu_util.txt")

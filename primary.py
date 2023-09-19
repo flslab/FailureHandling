@@ -401,6 +401,7 @@ class PrimaryNode:
 
         # while time.time() - self.start_time <= Config.DURATION:
         while not self.stop_flag:
+            self.cpu_util.append((time.time(), psutil.cpu_percent()))
             try:
                 msg, _ = self.failure_handler_socket.receive()
             except socket.timeout:
@@ -629,19 +630,6 @@ class PrimaryNode:
             self.write_sanity_results()
 
         write_final_report(self.dir_meta, self.dir_meta, self.result_name, len(group_id), time_range)
-
-    def _collect_cpu_data(self, interval):
-        while True:
-            self.cpu_util.append((time.time(), psutil.cpu_percent()))
-            time.sleep(interval)
-
-    def _log_cpu_util(self):
-        self.cpu_util_tread = threading.Thread(target=self._collect_cpu_data, args=(1,))
-        self.cpu_util_tread.start()
-        logger.info("Start Logging CPU")
-
-    def _stop_log_cpu(self):
-        self.cpu_util_tread.join()
 
     def _write_cpu_data(self, filename):
         with open(filename, 'w') as file:

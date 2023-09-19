@@ -48,7 +48,7 @@ general_props = [
         "keys": ["SHAPE", "K", "INPUT", "DISPATCHERS", "DISPATCH_RATE", "FAILURE_TIMEOUT", "MAX_SPEED", "ACCELERATION",
                  "DECELERATION", "PRIORITIZE_ILLUMINATING_FLS", "RESULTS_PATH", "CEDED_POLICY", "DISPLAY_CELL_SIZE", "NAME"],
         "values": [
-            {"SHAPE": "'butterfly'", "K": "0", "INPUT": "'butterfly_G3'", "DISPATCHERS": "1", "DISPATCH_RATE": "50",
+            {"SHAPE": "'butterfly'", "K": "0", "INPUT": "'butterfly_G3'", "DISPATCHERS": "1", "DISPATCH_RATE": "'50'",
              "FAILURE_TIMEOUT": "30", "MAX_SPEED": "6.11", "ACCELERATION": "6.11", "DECELERATION": "6.11",
              "PRIORITIZE_ILLUMINATING_FLS": "False", "RESULTS_PATH": "'/proj/nova-PG0/shuqin/results/'",
              "CEDED_POLICY": "0", "DISPLAY_CELL_SIZE": "0.001619", "NAME": "'monarch'"},

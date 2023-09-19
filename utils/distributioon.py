@@ -1,6 +1,7 @@
 import random
 import numpy as np
 
+
 def left_half_exponential(n):
     if n <= 0:
         raise ValueError("Input n must be a positive float")
@@ -21,5 +22,4 @@ fail_time = []
 for i in range(100000):
     fail_time.append(left_half_exponential(30))
 
-print(sum(fail_time)/len(fail_time))
-
+print(sum(fail_time) / len(fail_time))

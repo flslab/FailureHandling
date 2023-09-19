@@ -645,14 +645,12 @@ class PrimaryNode:
         self._stop_secondary_nodes()
         logger.info(f"Time for All process stop={time.time() - stop_send_time}")
 
-        self._stop_log_cpu()
         self.stop_flag = True
         self._write_results()
         self._write_cpu_data("~/cpu_util.txt")
 
     def start_experiment(self):
 
-        self._log_cpu_util()
         self._setup_results_directory()
         self.delete_previous_json_files(self.dir_meta)
         self._create_server_socket()

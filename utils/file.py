@@ -209,7 +209,7 @@ def combine_xlsx(directory):
 
 def read_cliques_xlsx(path):
     df = pd.read_excel(path, sheet_name='cliques')
-    return [np.array(eval(c)) for c in df["7 coordicnates"]], [max(eval(d)) + 1 if eval(d) != [] else 1 for d in df["6 dist between each pair"]]
+    return [np.array(eval(c)) for c in df["7 coordinates"]], [max(eval(d)) + 1 if eval(d) != [] else 1 for d in df["6 dist between each pair"]]
 
 
 def read_point_info_from_cliques_xlsx(path):

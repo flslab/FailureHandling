@@ -22,7 +22,7 @@ class SecondaryNode:
         self.cpu_util = []
 
     def _collect_cpu_data(self, interval):
-        while True:
+        while not self.should_stop:
             self.cpu_util.append((time.time(), psutil.cpu_percent()))
             time.sleep(interval)
 

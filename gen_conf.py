@@ -193,11 +193,11 @@ general_props = [
             {"SHAPE": "'racecar'", "K": "5", "INPUT": "'racecar_K5'", "DISPATCHERS": "1", "DISPATCH_RATE": "350",
              "FAILURE_TIMEOUT": "30", "MAX_SPEED": "6.11", "ACCELERATION": "6.11", "DECELERATION": "6.11",
              "PRIORITIZE_ILLUMINATING_FLS": "True", "RESULTS_PATH": "'/proj/nova-PG0/shuqin/results/'",
-             "CEDED_POLICY": "0", "DISPLAY_CELL_SIZE": "0.000672", "NAME": "'match_pri'"},
+             "CEDED_POLICY": "0", "DISPLAY_CELL_SIZE": "0.000672", "NAME": "'match_pri0'"},
             {"SHAPE": "'racecar'", "K": "5", "INPUT": "'racecar_K5'", "DISPATCHERS": "1", "DISPATCH_RATE": "350",
              "FAILURE_TIMEOUT": "30", "MAX_SPEED": "6.11", "ACCELERATION": "6.11", "DECELERATION": "6.11",
              "PRIORITIZE_ILLUMINATING_FLS": "True", "RESULTS_PATH": "'/proj/nova-PG0/shuqin/results/'",
-             "CEDED_POLICY": "0", "DISPLAY_CELL_SIZE": "0.043", "NAME": "'real_pri'"},
+             "CEDED_POLICY": "0", "DISPLAY_CELL_SIZE": "0.043", "NAME": "'real_pri0'"},
             #
             # {"SHAPE": "'chess'", "K": "0", "INPUT": "'chess_K3'", "DISPATCHERS": "1", "DISPATCH_RATE": "20",
             #  "FAILURE_TIMEOUT": "30", "MAX_SPEED": "6.11", "ACCELERATION": "6.11", "DECELERATION": "6.11",

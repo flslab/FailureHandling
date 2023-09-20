@@ -647,7 +647,7 @@ class PrimaryNode:
 
         self.stop_flag = True
         self._write_results()
-        self._write_cpu_data(self.dir_meta + "/cpu_util.txt")
+        self._write_cpu_data(self.dir_meta + "/cpu_util/0_cpu_util.txt")
 
     def start_experiment(self):
 

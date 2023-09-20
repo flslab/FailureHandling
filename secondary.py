@@ -9,10 +9,11 @@ from constants import Constants
 import worker
 from utils import logger
 from utils.socket import recv_msg
+import sys
 
 
 class SecondaryNode:
-    def __init__(self):
+    def __init__(self, argv):
         self.sock = None
         self.start_time = 0
         self.dir_meta = ''
@@ -20,6 +21,7 @@ class SecondaryNode:
         self.should_stop = False
         self.failure_handler_thread = None
         self.cpu_util = []
+        self.id = argv
 
     def _connect_to_primary(self):
         logger.info("Connecting to the primary node")
@@ -118,10 +120,10 @@ class SecondaryNode:
         self._stop_failure_handler_thread()
         self._stop_processes()
         self._ack_primary_node()
-        self._write_cpu_data(self.dir_meta + "/cpu_util.txt")
+        self._write_cpu_data(f"{self.dir_meta}/cpu_util/{self.id}_cpu_util.txt")
 
 
 if __name__ == '__main__':
-    node = SecondaryNode()
+    node = SecondaryNode(sys.argv[1:])
     node.start_node()
     node.stop_node()

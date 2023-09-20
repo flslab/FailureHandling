@@ -118,7 +118,7 @@ class SecondaryNode:
         self._stop_failure_handler_thread()
         self._stop_processes()
         self._ack_primary_node()
-        self._write_cpu_data("/users/Shuqin/cpu_util.txt")
+        self._write_cpu_data(self.dir_meta + "/cpu_util.txt")
 
 
 if __name__ == '__main__':

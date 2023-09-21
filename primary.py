@@ -20,7 +20,7 @@ import worker
 import utils
 from utils import logger
 from utils.file import read_cliques_xlsx, get_group_mapping, read_point_info_from_cliques_xlsx, get_time_range
-from utils.socket_1 import send_msg
+from utils.socket import send_msg
 from utils.generate_circle_coord import generate_circle_coordinates
 from utils.sanity_metrics import *
 from utils.report import *

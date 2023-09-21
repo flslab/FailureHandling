@@ -9,7 +9,7 @@ from config import Config
 from constants import Constants
 import worker
 from utils import logger
-from utils.socket_1 import recv_msg
+from utils.socket import recv_msg
 import sys
 
 

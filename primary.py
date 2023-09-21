@@ -20,7 +20,7 @@ import worker
 import utils
 from utils import logger
 from utils.file import read_cliques_xlsx, get_group_mapping, read_point_info_from_cliques_xlsx, get_time_range
-from utils.socket import send_msg
+from utils.socket_1 import send_msg
 from utils.generate_circle_coord import generate_circle_coordinates
 from utils.sanity_metrics import *
 from utils.report import *
@@ -603,9 +603,9 @@ class PrimaryNode:
                 total_point_num = len(self.groups) * len(self.groups[0])
             else:
                 # IMPORTANT !!!!!
-                # total_point_num = 454
-                total_point_num, group_num = read_point_info_from_cliques_xlsx(
-                    os.path.join(self.dir_experiment, f'{Config.INPUT}.xlsx'))
+                total_point_num = 760
+                # total_point_num, group_num = read_point_info_from_cliques_xlsx(
+                #     os.path.join(self.dir_experiment, f'{Config.INPUT}.xlsx'))
 
                 if Config.K == 0:
                     group_num = 0

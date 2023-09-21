@@ -269,5 +269,5 @@ if __name__ == '__main__':
             plt.savefig(f"/Users/shuqinzhu/Desktop/exp_figure/dragon_pri_cmp/{folder}_{filename}.png")
             image_path = f"/Users/shuqinzhu/Desktop/exp_figure/dragon_pri_cmp/{folder}_{filename}.png"  # Replace with the path to your PNG file
             output_path = f"/Users/shuqinzhu/Desktop/exp_figure/dragon_pri_cmp/{folder}_{filename}.png"  # Replace with the path to save the trimmed image
-            # trim_values = [400, 191, 390, 150]  # Replace with the number of pixels to trim from each side (left, top, right, bottom)
-            # trim_png(image_path, output_path, trim_values)
+            trim_values = [377, 216, 300, 127]  # Replace with the number of pixels to trim from each side (left, top, right, bottom)
+            trim_png(image_path, output_path, trim_values)

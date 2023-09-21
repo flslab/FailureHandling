@@ -249,8 +249,8 @@ if __name__ == '__main__':
 
 
     for folder in ["K0", "K3", "K5", "K10", "K20"]:
-        for filename in ["monarch_pri", "10_pri", "100_pri"]:
-            input_path = f"/Users/shuqinzhu/Desktop/butterfly_with_pri/{folder}/butterfly_D1_R60_T30_S3_N{filename}/timeline.json"
+        for filename in ["pri", "no"]:
+            input_path = f"/Users/shuqinzhu/Desktop/dragon/{folder}/dragon_D1_R10_T30_S6_N{filename}/timeline.json"
             # input_path = f"/Users/shuqinzhu/Desktop/timeline.json"
             filtered_events, length, width, height = read_point_cloud(input_path)
             fig, ax, _ = draw_figure()
@@ -258,7 +258,7 @@ if __name__ == '__main__':
             xs, ys, zs = show_last_frame(filtered_events, t=800)
             ax.scatter(xs, ys, zs, c='blue', s=2, alpha=1)
             set_axis(ax, length, width, height)
-            ax.view_init(elev=90, azim=-90)
+            # ax.view_init(elev=90, azim=-90)
             # plt.show()
             # plt.savefig(f"/Users/shuqinzhu/Desktop/K3_toy_inf.png")
             # image_path = "/Users/shuqinzhu/Desktop/K3_toy_inf.png"
@@ -266,8 +266,8 @@ if __name__ == '__main__':
             # trim_values = [375, 200, 300, 120]  # Replace with the number of pixels to trim from each side (left, top, right, bottom)
             # trim_png(image_path, output_path, trim_values)
             #
-            plt.savefig(f"/Users/shuqinzhu/Desktop/exp_figure/butterfly_pri/{folder}_{filename}.png")
-            image_path = f"/Users/shuqinzhu/Desktop/exp_figure/butterfly_pri/{folder}_{filename}.png"  # Replace with the path to your PNG file
-            output_path = f"/Users/shuqinzhu/Desktop/exp_figure/butterfly_pri/{folder}_{filename}.png"  # Replace with the path to save the trimmed image
-            trim_values = [400, 191, 390, 150]  # Replace with the number of pixels to trim from each side (left, top, right, bottom)
-            trim_png(image_path, output_path, trim_values)
+            plt.savefig(f"/Users/shuqinzhu/Desktop/exp_figure/dragon_pri_cmp/{folder}_{filename}.png")
+            image_path = f"/Users/shuqinzhu/Desktop/exp_figure/dragon_pri_cmp/{folder}_{filename}.png"  # Replace with the path to your PNG file
+            output_path = f"/Users/shuqinzhu/Desktop/exp_figure/dragon_pri_cmp/{folder}_{filename}.png"  # Replace with the path to save the trimmed image
+            # trim_values = [400, 191, 390, 150]  # Replace with the number of pixels to trim from each side (left, top, right, bottom)
+            # trim_png(image_path, output_path, trim_values)

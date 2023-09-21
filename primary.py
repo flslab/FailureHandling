@@ -494,7 +494,7 @@ class PrimaryNode:
 
                 total_delay_list.extend(delay_list)
 
-        info[-1].append(delay_list)
+            info[-1].append(total_delay_list)
         info.append(['', '', '', '', '', ''])
         info.append([
             'Overall Avg Delay', str(sum(total_delay_list) / len(total_delay_list)),

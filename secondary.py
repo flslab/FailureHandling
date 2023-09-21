@@ -1,3 +1,4 @@
+import os
 import socket
 import pickle
 import threading
@@ -120,6 +121,10 @@ class SecondaryNode:
         self._stop_failure_handler_thread()
         self._stop_processes()
         self._ack_primary_node()
+
+        if not os.path.exists(f"{self.dir_meta}/cpu_util/"):
+            os.makedirs(f"{self.dir_meta}/cpu_util/", exist_ok=True)
+
         self._write_cpu_data(f"{self.dir_meta}/cpu_util/{self.id}_cpu_util.txt")
 
 

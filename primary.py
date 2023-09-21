@@ -647,6 +647,9 @@ class PrimaryNode:
 
         self.stop_flag = True
         self._write_results()
+
+        if not os.path.exists(f"{self.dir_meta}/cpu_util/"):
+            os.makedirs(f"{self.dir_meta}/cpu_util/", exist_ok=True)
         self._write_cpu_data(self.dir_meta + "/cpu_util/0_cpu_util.txt")
 
     def start_experiment(self):

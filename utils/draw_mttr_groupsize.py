@@ -7,7 +7,7 @@ QoI_list = [[],[]]
 for i, filename in enumerate(["pri", "no"]):
 
     for folder in ["K0", "K3", "K5", "K10", "K15", "K20"]:
-        input_path = f"/Users/shuqinzhu/Desktop/dragon/{folder}/dragon_D1_R10_T30_S6_N{filename}/dragon_D1_R10_T30_S6_N{filename}_final_report.xlsx"
+        input_path = f"/Users/shuqinzhu/Desktop/dragon_10min/{folder}/dragon_D1_R10_T60_S6_N{filename}/dragon_D1_R10_T60_S6_N{filename}_final_report.xlsx"
 
         metrics_df = pd.read_excel(input_path, sheet_name='Metrics')
 
@@ -36,9 +36,9 @@ ax.set_xlabel('Group Size (G)', loc='right')
 plt.tight_layout()
 
 
-plt.text(5, 59, 'With Priority Queue', color=pri_line.get_color(), fontweight='bold')
+plt.text(6, 40, 'With Priority Queue', color=pri_line.get_color(), fontweight='bold')
 
-plt.text(5, 69, 'No Priority Queue', color=nopri_line.get_color(), fontweight='bold')
+plt.text(6, 48, 'No Priority Queue', color=nopri_line.get_color(), fontweight='bold')
 
 # Add legend
 # plt.show(dpi=500)
@@ -51,9 +51,9 @@ pri_line, = plt.plot([0, 3, 5, 10, 15, 20], QoI_list[0], marker='o', label=f'Wit
 nopri_line, = plt.plot([0, 3, 5, 10, 15, 20], QoI_list[1], marker='x', label=f'No Priority Queue')
 
 
-plt.text(5, 0.22, 'With Priority Queue', color=pri_line.get_color(), fontweight='bold')
+plt.text(6, 0.46, 'With Priority Queue', color=pri_line.get_color(), fontweight='bold')
 
-plt.text(5, 0.17, 'No Priority Queue', color=nopri_line.get_color(), fontweight='bold')
+plt.text(6, 0.40, 'No Priority Queue', color=nopri_line.get_color(), fontweight='bold')
 # plt.tight_layout()
 
 ax = plt.gca()

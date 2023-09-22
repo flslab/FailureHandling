@@ -45,17 +45,17 @@ def_general_conf = {
 }
 
 general_props = [
-    {
-        "keys": ["SHAPE", "K", "INPUT", "DISPATCHERS", "DISPATCH_RATE", "FAILURE_TIMEOUT", "MAX_SPEED", "ACCELERATION",
-                 "DECELERATION", "PRIORITIZE_ILLUMINATING_FLS", "RESULTS_PATH", "CEDED_POLICY", "DISPLAY_CELL_SIZE", "NAME"],
-        "values": [
-            {"SHAPE": "'skateboard'", "K": "3", "INPUT": "'skateboard_G3'", "DISPATCHERS": "1", "DISPATCH_RATE": "30",
-             "FAILURE_TIMEOUT": "60", "MAX_SPEED": "6.11", "ACCELERATION": "6.11", "DECELERATION": "6.11",
-             "PRIORITIZE_ILLUMINATING_FLS": "True", "RESULTS_PATH": "'/proj/nova-PG0/shuqin/results/'",
-             "CEDED_POLICY": "0", "DISPLAY_CELL_SIZE": "0.05", "NAME": "'prikmeans'"},
-
-        ]
-    },
+    # {
+    #     "keys": ["SHAPE", "K", "INPUT", "DISPATCHERS", "DISPATCH_RATE", "FAILURE_TIMEOUT", "MAX_SPEED", "ACCELERATION",
+    #              "DECELERATION", "PRIORITIZE_ILLUMINATING_FLS", "RESULTS_PATH", "CEDED_POLICY", "DISPLAY_CELL_SIZE", "NAME"],
+    #     "values": [
+    #         {"SHAPE": "'skateboard'", "K": "3", "INPUT": "'skateboard_G3'", "DISPATCHERS": "1", "DISPATCH_RATE": "30",
+    #          "FAILURE_TIMEOUT": "60", "MAX_SPEED": "6.11", "ACCELERATION": "6.11", "DECELERATION": "6.11",
+    #          "PRIORITIZE_ILLUMINATING_FLS": "True", "RESULTS_PATH": "'/proj/nova-PG0/shuqin/results/'",
+    #          "CEDED_POLICY": "0", "DISPLAY_CELL_SIZE": "0.05", "NAME": "'prikmeans'"},
+    #
+    #     ]
+    # },
     {
         "keys": ["DISPATCH_RATE"],
         "values": ["20"],

@@ -246,9 +246,7 @@ if __name__ == '__main__':
     #     ani.save(f"{exp_dir}/{exp_name}.mp4", writer=writer)
 
 
-
-
-    for folder in ["K3"]:
+    for folder in ["K0", "K5", "K10", "K20"]:
         for filename in ["pri30", "no30"]:
             input_path = f"/Users/shuqinzhu/Desktop/dragon/{folder}/dragon_D1_R10_T60_S6_N{filename}/timeline.json"
             # input_path = f"/Users/shuqinzhu/Desktop/timeline.json"
@@ -266,8 +264,8 @@ if __name__ == '__main__':
             # trim_values = [375, 200, 300, 120]  # Replace with the number of pixels to trim from each side (left, top, right, bottom)
             # trim_png(image_path, output_path, trim_values)
             #
-            plt.savefig(f"/Users/shuqinzhu/Desktop/exp_figure/dragon_pri_cmp/{folder}_{filename}_30.png")
-            image_path = f"/Users/shuqinzhu/Desktop/exp_figure/dragon_pri_cmp/{folder}_{filename}_30.png"  # Replace with the path to your PNG file
-            output_path = f"/Users/shuqinzhu/Desktop/exp_figure/dragon_pri_cmp/{folder}_{filename}_30.png"  # Replace with the path to save the trimmed image
+            plt.savefig(f"/Users/shuqinzhu/Desktop/exp_figure/dragon_pri_cmp/{folder}_{filename}.png")
+            image_path = f"/Users/shuqinzhu/Desktop/exp_figure/dragon_pri_cmp/{folder}_{filename}.png"  # Replace with the path to your PNG file
+            output_path = f"/Users/shuqinzhu/Desktop/exp_figure/dragon_pri_cmp/{folder}_{filename}.png"  # Replace with the path to save the trimmed image
             trim_values = [377, 216, 300, 127]  # Replace with the number of pixels to trim from each side (left, top, right, bottom)
             trim_png(image_path, output_path, trim_values)

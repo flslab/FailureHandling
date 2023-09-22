@@ -4,7 +4,7 @@ mkdir -p experiments
 python3 gen_conf.py -t
 sleep 1
 
-for i in {0..8}
+for i in {0..0}
 do
    cp "./experiments/test_config$i.py" test_config.py
    sleep 1

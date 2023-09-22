@@ -14,4 +14,7 @@ def generate_circle_coordinates(center, radius, height, num_points, group=0):
         groups.append(np.array([[x, y, height]]))
     return groups
 
+if __name__ == "__main__":
+    group_formation = generate_circle_coordinates([10,10,10], 5, 10, 3)
 
+    print([group[0].tolist() for group in group_formation])

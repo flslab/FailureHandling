@@ -64,12 +64,12 @@ general_props = [
     {
         "keys": ["K", "INPUT"],
         "values": [
-            {"K": "0", "INPUT": "'dragon_K3'"},
-            {"K": "3", "INPUT": "'dragon_K3'"},
-            {"K": "5", "INPUT": "'dragon_K5'"},
-            {"K": "10", "INPUT": "'dragon_K10'"},
-            {"K": "15", "INPUT": "'dragon_K15'"},
-            {"K": "20", "INPUT": "'dragon_K20'"},
+            {"K": "0", "INPUT": "'dragon_G3'"},
+            {"K": "3", "INPUT": "'dragon_G3'"},
+            {"K": "5", "INPUT": "'dragon_G5'"},
+            {"K": "10", "INPUT": "'dragon_G10'"},
+            {"K": "15", "INPUT": "'dragon_G15'"},
+            {"K": "20", "INPUT": "'dragon_G20'"},
         ]
     },
     # {

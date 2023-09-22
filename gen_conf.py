@@ -123,12 +123,12 @@ general_props = [
             #  "CEDED_POLICY": "0", "DISPLAY_CELL_SIZE": "0.05", "NAME": "'no30'"},
 
 
-            {"SHAPE": "'dragon'", "K": "0", "INPUT": "'dragon_G3'", "DISPATCHERS": "1", "DISPATCH_RATE": "10",
+            {"SHAPE": "'dragon'", "K": "0", "INPUT": "'dragon_K3'", "DISPATCHERS": "1", "DISPATCH_RATE": "10",
              "FAILURE_TIMEOUT": "60", "MAX_SPEED": "6", "ACCELERATION": "6", "DECELERATION": "6",
              "PRIORITIZE_ILLUMINATING_FLS": "True", "RESULTS_PATH": "'/proj/nova-PG0/shuqin/results/'",
              "CEDED_POLICY": "0", "DISPLAY_CELL_SIZE": "0.05", "NAME": "'prio'"},
 
-            {"SHAPE": "'dragon'", "K": "0", "INPUT": "'dragon_G3'", "DISPATCHERS": "1", "DISPATCH_RATE": "10",
+            {"SHAPE": "'dragon'", "K": "0", "INPUT": "'dragon_K3'", "DISPATCHERS": "1", "DISPATCH_RATE": "10",
              "FAILURE_TIMEOUT": "60", "MAX_SPEED": "6", "ACCELERATION": "6", "DECELERATION": "6",
              "PRIORITIZE_ILLUMINATING_FLS": "True", "RESULTS_PATH": "'/proj/nova-PG0/shuqin/results/'",
              "CEDED_POLICY": "0", "DISPLAY_CELL_SIZE": "0.05", "NAME": "'no'"},

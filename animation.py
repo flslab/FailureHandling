@@ -246,9 +246,9 @@ if __name__ == '__main__':
     #     ani.save(f"{exp_dir}/{exp_name}.mp4", writer=writer)
 
 
-    for folder in ["K0", "K5", "K10", "K20"]:
-        for filename in ["pri30", "no30"]:
-            input_path = f"/Users/shuqinzhu/Desktop/dragon/{folder}/dragon_D1_R10_T60_S6_N{filename}/timeline.json"
+    for folder in ["K0", "K3", "K5", "K10", "K20"]:
+        for filename in ["priCANF", "prikmeans"]:
+            input_path = f"/Users/shuqinzhu/Desktop/raw_results/skateboard/{folder}/skateboard_D1_R30_T60_S6_N{filename}/timeline.json"
             # input_path = f"/Users/shuqinzhu/Desktop/timeline.json"
             filtered_events, length, width, height = read_point_cloud(input_path)
             fig, ax, _ = draw_figure()
@@ -264,8 +264,8 @@ if __name__ == '__main__':
             # trim_values = [375, 200, 300, 120]  # Replace with the number of pixels to trim from each side (left, top, right, bottom)
             # trim_png(image_path, output_path, trim_values)
             #
-            plt.savefig(f"/Users/shuqinzhu/Desktop/exp_figure/dragon_pri_cmp/{folder}_{filename}.png")
-            image_path = f"/Users/shuqinzhu/Desktop/exp_figure/dragon_pri_cmp/{folder}_{filename}.png"  # Replace with the path to your PNG file
-            output_path = f"/Users/shuqinzhu/Desktop/exp_figure/dragon_pri_cmp/{folder}_{filename}.png"  # Replace with the path to save the trimmed image
-            trim_values = [377, 216, 300, 127]  # Replace with the number of pixels to trim from each side (left, top, right, bottom)
+            plt.savefig(f"/Users/shuqinzhu/Desktop/exp_figure/skateboard/{folder}_{filename}.png")
+            image_path = f"/Users/shuqinzhu/Desktop/exp_figure/skateboard/{folder}_{filename}.png"  # Replace with the path to your PNG file
+            output_path = f"/Users/shuqinzhu/Desktop/exp_figure/skateboard/{folder}_{filename}.png"  # Replace with the path to save the trimmed image
+            trim_values = [375, 221, 335, 159]  # Replace with the number of pixels to trim from each side (left, top, right, bottom)
             trim_png(image_path, output_path, trim_values)

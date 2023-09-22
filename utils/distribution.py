@@ -1,4 +1,7 @@
+import random
+
 import numpy as np
+import matplotlib.pyplot as plt
 
 
 def left_half_exponential(n):
@@ -15,3 +18,16 @@ def left_half_exponential(n):
 
     # Get the left half of the distribution
     return n - x
+
+
+if __name__ == '__main__':
+    data = []
+    alpha, beta = 5, 1
+    for i in range(1000000):
+        r = random.betavariate(alpha, beta)
+        # while x > 60:
+        #     x = np.random.exponential(scale=1 / lambda_param)
+
+        data.append(r*60)
+    count, bins, ignored = plt.hist(data, bins=1000, density=False)
+    plt.show()

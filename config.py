@@ -5,6 +5,7 @@ class Config:
     DROP_PROB_RECEIVER = 0
     DEAD_RECKONING_ANGLE = 0
     FAILURE_TIMEOUT = 60 * 0.5
+    FAILURE_MODEL = 0  # 0 for random, 1 for exponential
     FAILURE_PROB = 0
     ACCELERATION = 1
     DECELERATION = 1

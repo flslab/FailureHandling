@@ -92,7 +92,7 @@ general_props = [
         "keys": ["MAX_SPEED", "ACCELERATION", "DECELERATION"],
         "values": [
             {"MAX_SPEED": "6.11", "ACCELERATION": "6.11", "DECELERATION": "6.11"},
-            # {"MAX_SPEED": "66.67", "ACCELERATION": "66.67", "DECELERATION": "66.67"}
+            {"MAX_SPEED": "66.67", "ACCELERATION": "66.67", "DECELERATION": "66.67"}
             # {"MAX_SPEED": "600", "ACCELERATION": "600", "DECELERATION": "600"}
         ]
     },

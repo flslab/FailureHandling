@@ -23,8 +23,8 @@ def_general_conf = {
     # "RESULTS_PATH": "'/Users/shuqinzhu/Desktop/experiments_aug29.nosync'",
     "DEBUG": "False",
     "FILE_NAME_KEYS": "[('DISPATCHERS', 'D'), ('DISPATCH_RATE', 'R'), ('FAILURE_TIMEOUT', 'T'), ('MAX_SPEED', 'S'),"
-                      # "('PRIORITIZE_ILLUMINATING_FLS', 'P')]",
-                      "('NAME', 'N')]",
+                      "('PRIORITIZE_ILLUMINATING_FLS', 'P')]",
+                      # "('NAME', 'N')]",
                       # "]",
     "DIR_KEYS": "['K']",
     "SERVER_TIMEOUT": "120",
@@ -57,24 +57,24 @@ general_props = [
     # },
     {
         "keys": ["DISPATCH_RATE"],
-        "values": ["3000"],
+        "values": ["10"],
         # "values": ["10", "50", "100"]
         # "values": ["5", "10"]
     },
     {
         "keys": ["K", "INPUT", "NAME"],
         "values": [
-            # {"K": "0", "INPUT": "'dragon_G3'"},
-            {"K": "3", "INPUT": "'skateboard_G3'", "NAME": "'kmeans'"},
-            {"K": "5", "INPUT": "'skateboard_G5'", "NAME": "'kmeans'"},
-            {"K": "10", "INPUT": "'skateboard_G10'", "NAME": "'kmeans'"},
-            # {"K": "15", "INPUT": "'dragon_G15'"},
-            {"K": "20", "INPUT": "'skateboard_G20'", "NAME": "'kmeans'"},
-            {"K": "3", "INPUT": "'skateboard_K3'", "NAME": "'CANF'"},
-            {"K": "5", "INPUT": "'skateboard_K5'", "NAME": "'CANF'"},
-            {"K": "10", "INPUT": "'skateboard_K10'", "NAME": "'CANF'"},
-            # {"K": "15", "INPUT": "'dragon_G15'"},
-            {"K": "20", "INPUT": "'skateboard_K20'", "NAME": "'CANF'"},
+            {"K": "0", "INPUT": "'dragon_G3'"},
+            {"K": "3", "INPUT": "'dragon_G3'"},
+            {"K": "5", "INPUT": "'dragon_G5'"},
+            {"K": "10", "INPUT": "'dragon_G10'"},
+            {"K": "15", "INPUT": "'dragon_G15'"},
+            {"K": "20", "INPUT": "'dragon_G20'"},
+            # {"K": "3", "INPUT": "'skateboard_K3'", "NAME": "'CANF'"},
+            # {"K": "5", "INPUT": "'skateboard_K5'", "NAME": "'CANF'"},
+            # {"K": "10", "INPUT": "'skateboard_K10'", "NAME": "'CANF'"},
+            # # {"K": "15", "INPUT": "'dragon_G15'"},
+            # {"K": "20", "INPUT": "'skateboard_K20'", "NAME": "'CANF'"},
         ]
     },
     # {
@@ -113,7 +113,7 @@ general_props = [
 
     {
         "keys": ["PRIORITIZE_ILLUMINATING_FLS"],
-        "values": ["True"]
+        "values": ["True", "False"]
     },
     # # {
     {
@@ -129,7 +129,7 @@ general_props = [
     # },
     {
         "keys": ["SHAPE"],
-        "values": ["'skateboard'"]
+        "values": ["'dragon'"]
     },
     # {
     #     "keys": ["SAMPLE_SIZE", "SHAPE"],

@@ -87,6 +87,17 @@ class ShortestDistancePolicy(DispatchPolicy):
         return ds[np.argmin(np.linalg.norm(dispatcher_coords - coord, axis=1))]
 
 
+class HybridSDPoDPolicy(DispatchPolicy):
+    sd = ShortestDistancePolicy()
+    pod = PoDPolicy()
+
+    def assign(self, **kwargs):
+        closest_d = HybridSDPoDPolicy.sd.assign(**kwargs)
+        if closest_d.q.qsize():
+            return HybridSDPoDPolicy.pod.assign(**kwargs)
+        return closest_d
+
+
 class PrimaryNode:
     def __init__(self, N, name):
         self.N = N  # number of secondary servers

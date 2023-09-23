@@ -1,6 +1,7 @@
 import json
 import math
 import heapq
+import os.path
 import time
 
 import numpy as np
@@ -728,9 +729,62 @@ class Metrics:
         # self.timeline.append((t + replacement_duration, TimelineEvents.ILLUMINATE_STANDBY, failed_fls_gtl.tolist()))
 
 
+def gen_sliding_window_chart_data(timeline, start_time, value_fn, sw=1):  # 0.01
+    xs = [0]
+    ys = [0]
+
+    i = 0
+    while i < len(timeline):
+        event = timeline[i]
+        e_type = event[1]
+        e_fid = event[-1]
+        t = event[0]
+
+        if xs[-1] <= t < xs[-1] + sw:
+            if e_type == TimelineEvents.FAIL:
+                ys[-1] += 1
+            i += 1
+        else:
+            xs.append(xs[-1] + sw)
+            ys.append(0)
+
+    return xs, ys
+
+
+def gen_sw_charts(path, name):
+    fig = plt.figure(layout='constrained')
+    ax = fig.add_subplot()
+
+    with open(os.path.join(path, name, 'timeline.json')) as f:
+        timeline = json.load(f)
+    f_xs, f_ys = gen_sliding_window_chart_data(timeline, timeline[0][0], lambda x: x[2])
+
+    ax.step(f_xs, f_ys, where='post', label="Number of failures")
+    # ax.set_ylabel('Number of failures', loc='top', rotation=0, labelpad=-133)
+    ax.set_title('Number of failures', loc='left')
+    ax.set_xlabel('Time (Second)', loc='right')
+    ax.spines['top'].set_color('white')
+    ax.spines['right'].set_color('white')
+    ax.margins(0, 0)
+    # ax.legend()
+    # plt.xlim([0, 60])
+    # plt.show()
+    plt.savefig(f'{path}/{name}.png', dpi=300)
+
+
 if __name__ == '__main__':
+    mpl.rcParams['font.family'] = 'Times New Roman'
     mpl.use('macosx')
 
+    gen_sw_charts("/Users/hamed/Desktop/skateboard 2/K0", "skateboard_D1_R20_T30_S6_F0")
+    gen_sw_charts("/Users/hamed/Desktop/skateboard 2/K0", "skateboard_D1_R20_T30_S6_F1")
+    gen_sw_charts("/Users/hamed/Desktop/skateboard 2/K0", "skateboard_D1_R20_T60_S6_F0")
+    gen_sw_charts("/Users/hamed/Desktop/skateboard 2/K0", "skateboard_D1_R20_T60_S6_F1")
+    gen_sw_charts("/Users/hamed/Desktop/skateboard 2/K0", "skateboard_D1_R20_T120_S6_F0")
+    gen_sw_charts("/Users/hamed/Desktop/skateboard 2/K0", "skateboard_D1_R20_T120_S6_F1")
+    gen_sw_charts("/Users/hamed/Desktop/skateboard 2/K0", "skateboard_D1_R20_T300_S6_F0")
+    gen_sw_charts("/Users/hamed/Desktop/skateboard 2/K0", "skateboard_D1_R20_T300_S6_F1")
+    exit()
     # with open("../results/racecar/H2/racecar_D5_H2/timeline.json") as f:
     #     data = json.load(f)
     #

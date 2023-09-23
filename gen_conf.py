@@ -16,7 +16,7 @@ def_general_conf = {
     "MAX_SPEED": "3",
     "DISPLAY_CELL_SIZE": "0.05",
     "BUSY_WAITING": "False",
-    "DURATION": "6 * FAILURE_TIMEOUT",
+    "DURATION": "60 * 30",
     "K": "3",
     "SHAPE": "'chess'",
     "RESULTS_PATH": "'/proj/nova-PG0/hamed/results/fh/'",
@@ -44,6 +44,7 @@ def_general_conf = {
 
 }
 
+
 general_props = [
     # {
     #     "keys": ["SHAPE", "K", "INPUT", "DISPATCHERS", "DISPATCH_RATE", "FAILURE_TIMEOUT", "MAX_SPEED", "ACCELERATION",
@@ -58,7 +59,7 @@ general_props = [
     # },
     {
         "keys": ["DISPATCH_RATE"],
-        "values": ["20"],
+        "values": ["10"],
         # "values": ["10", "50", "100"]
         # "values": ["5", "10"]
     },
@@ -71,8 +72,8 @@ general_props = [
     {
         "keys": ["K", "INPUT"],
         "values": [
-            # {"K": "0", "INPUT": "'skateboard_K3'"},
-            {"K": "3", "INPUT": "'skateboard_K3'"},
+            {"K": "0", "INPUT": "'dragon_K3'"},
+            # {"K": "3", "INPUT": "'skateboard_K3'"},
             # {"K": "5", "INPUT": "'skateboard_K5'"},
             # {"K": "10", "INPUT": "'skateboard_K10'"},
             # {"K": "15", "INPUT": "'skateboard_K15'"},
@@ -81,14 +82,14 @@ general_props = [
     },
     {
         "keys": ["DISPATCHERS"],
-        "values": ["1"],
+        "values": ["3"],
         # "values": ["1", "3"]
     },
     {
         "keys": ["FAILURE_TIMEOUT"],
         # "values": ["30", "60"]
         # "values": ["30"]
-        "values": ["1800", "3600", "14400"]
+        "values": ["60"]
     },
     {
         "keys": ["MAX_SPEED", "ACCELERATION", "DECELERATION"],
@@ -103,7 +104,7 @@ general_props = [
     {
         "keys": ["DISPATCHER_ASSIGN_POLICY"],
         # "values": ["'ShortestDistance'", "'PoD'", "'RR'", "'Random'"]
-        "values": ["'ShortestDistance'"]
+        "values": ["'HybridSDPoD'"]
     },
     # {
     #     "keys": ["SANITY_TEST", "DISPATCHERS"],
@@ -113,7 +114,7 @@ general_props = [
     # },
     {
         "keys": ["SHAPE"],
-        "values": ["'skateboard'"]
+        "values": ["'dragon'"]
     }
     # {
     #     "keys": ["SAMPLE_SIZE", "SHAPE"],

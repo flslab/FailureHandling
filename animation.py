@@ -209,27 +209,27 @@ if __name__ == '__main__':
         }
     ]
 
-    # props_values = [p["values"] for p in configs]
-    # combinations = list(itertools.product(*props_values))
-    # # print(combinations)
-    #
-    # exp_dir = "/Users/hamed/Desktop/chess_30_min"
-    #
-    # for c in combinations:
-    #     exp_name = f"chess_K{c[0]}_D{c[1]}_R{c[2]}_T{c[3]}"
-    #     print(exp_name)
-    #     input_path = f"{exp_dir}/{exp_name}/timeline.json"
-    #     filtered_events, length, width, height = read_point_cloud(input_path)
-    #     fig, ax, _ = draw_figure()
-    #     init(ax)
-    #     xs, ys, zs = show_last_frame(filtered_events, t=1799)
-    #     ax.scatter(xs, ys, zs, c='blue', s=2, alpha=1)
-    #     set_axis(ax, length, width, height)
-    #     plt.show()
-    #     # plt.savefig(f"{exp_dir}/{exp_name}.png")
-    #     plt.close()
-    #     # break
-    # exit()
+    props_values = [p["values"] for p in configs]
+    combinations = list(itertools.product(*props_values))
+    # print(combinations)
+
+    exp_dir = "/Users/hamed/Desktop/chess_30_min"
+
+    for c in combinations:
+        exp_name = f"chess_K{c[0]}_D{c[1]}_R{c[2]}_T{c[3]}"
+        print(exp_name)
+        input_path = f"{exp_dir}/{exp_name}/timeline.json"
+        filtered_events, length, width, height = read_point_cloud(input_path)
+        fig, ax, _ = draw_figure()
+        init(ax)
+        xs, ys, zs = show_last_frame(filtered_events, t=1799)
+        ax.scatter(xs, ys, zs, c='blue', s=2, alpha=1)
+        set_axis(ax, length, width, height)
+        plt.show()
+        # plt.savefig(f"{exp_dir}/{exp_name}.png")
+        plt.close()
+        # break
+    exit()
     # for c in combinations:
     #     exp_name = f"chess_K{c[0]}_D{c[1]}_R{c[2]}_T{c[3]}"
     #     input_path = f"{exp_dir}/{exp_name}/timeline.json"
@@ -246,26 +246,26 @@ if __name__ == '__main__':
     #     ani.save(f"{exp_dir}/{exp_name}.mp4", writer=writer)
 
 
-    for folder in ["K0", "K3", "K5", "K10", "K20"]:
-        for filename in ["priCANF", "prikmeans"]:
-            input_path = f"/Users/shuqinzhu/Desktop/raw_results/skateboard/{folder}/skateboard_D1_R30_T60_S6_N{filename}/timeline.json"
-            # input_path = f"/Users/shuqinzhu/Desktop/timeline.json"
-            filtered_events, length, width, height = read_point_cloud(input_path)
-            fig, ax, _ = draw_figure()
-            init(ax)
-            xs, ys, zs = show_last_frame(filtered_events, t=800)
-            ax.scatter(xs, ys, zs, c='blue', s=2, alpha=1)
-            set_axis(ax, length, width, height)
-            # ax.view_init(elev=90, azim=-90)
-            # plt.show()
-            # plt.savefig(f"/Users/shuqinzhu/Desktop/K3_toy_inf.png")
-            # image_path = "/Users/shuqinzhu/Desktop/K3_toy_inf.png"
-            # output_path = "/Users/shuqinzhu/Desktop/K3_toy_inf.png"
-            # trim_values = [375, 200, 300, 120]  # Replace with the number of pixels to trim from each side (left, top, right, bottom)
-            # trim_png(image_path, output_path, trim_values)
-            #
-            plt.savefig(f"/Users/shuqinzhu/Desktop/exp_figure/skateboard/{folder}_{filename}.png")
-            image_path = f"/Users/shuqinzhu/Desktop/exp_figure/skateboard/{folder}_{filename}.png"  # Replace with the path to your PNG file
-            output_path = f"/Users/shuqinzhu/Desktop/exp_figure/skateboard/{folder}_{filename}.png"  # Replace with the path to save the trimmed image
-            trim_values = [375, 221, 335, 159]  # Replace with the number of pixels to trim from each side (left, top, right, bottom)
-            trim_png(image_path, output_path, trim_values)
+    # for folder in ["K0", "K3", "K5", "K10", "K20"]:
+    #     for filename in ["priCANF", "prikmeans"]:
+    #         input_path = f"/Users/shuqinzhu/Desktop/raw_results/skateboard/{folder}/skateboard_D1_R30_T60_S6_N{filename}/timeline.json"
+    #         # input_path = f"/Users/shuqinzhu/Desktop/timeline.json"
+    #         filtered_events, length, width, height = read_point_cloud(input_path)
+    #         fig, ax, _ = draw_figure()
+    #         init(ax)
+    #         xs, ys, zs = show_last_frame(filtered_events, t=800)
+    #         ax.scatter(xs, ys, zs, c='blue', s=2, alpha=1)
+    #         set_axis(ax, length, width, height)
+    #         # ax.view_init(elev=90, azim=-90)
+    #         # plt.show()
+    #         # plt.savefig(f"/Users/shuqinzhu/Desktop/K3_toy_inf.png")
+    #         # image_path = "/Users/shuqinzhu/Desktop/K3_toy_inf.png"
+    #         # output_path = "/Users/shuqinzhu/Desktop/K3_toy_inf.png"
+    #         # trim_values = [375, 200, 300, 120]  # Replace with the number of pixels to trim from each side (left, top, right, bottom)
+    #         # trim_png(image_path, output_path, trim_values)
+    #         #
+    #         plt.savefig(f"/Users/shuqinzhu/Desktop/exp_figure/skateboard/{folder}_{filename}.png")
+    #         image_path = f"/Users/shuqinzhu/Desktop/exp_figure/skateboard/{folder}_{filename}.png"  # Replace with the path to your PNG file
+    #         output_path = f"/Users/shuqinzhu/Desktop/exp_figure/skateboard/{folder}_{filename}.png"  # Replace with the path to save the trimmed image
+    #         trim_values = [375, 221, 335, 159]  # Replace with the number of pixels to trim from each side (left, top, right, bottom)
+    #         trim_png(image_path, output_path, trim_values)

@@ -57,14 +57,14 @@ general_props = [
     # },
     {
         "keys": ["DISPATCH_RATE"],
-        "values": ["10"],
+        "values": ["3000"],
         # "values": ["10", "50", "100"]
         # "values": ["5", "10"]
     },
     {
         "keys": ["K", "INPUT"],
         "values": [
-            # {"K": "0", "INPUT": "'dragon_G3'"},
+            {"K": "0", "INPUT": "'dragon_G3'"},
             {"K": "3", "INPUT": "'dragon_G3'"},
             # {"K": "5", "INPUT": "'skateboard_G5'"},
             # {"K": "10", "INPUT": "'skateboard_G10'"},
@@ -92,7 +92,7 @@ general_props = [
         "keys": ["MAX_SPEED", "ACCELERATION", "DECELERATION"],
         "values": [
             {"MAX_SPEED": "6.11", "ACCELERATION": "6.11", "DECELERATION": "6.11"},
-            {"MAX_SPEED": "66.67", "ACCELERATION": "66.67", "DECELERATION": "66.67"}
+            # {"MAX_SPEED": "66.67", "ACCELERATION": "66.67", "DECELERATION": "66.67"}
             # {"MAX_SPEED": "600", "ACCELERATION": "600", "DECELERATION": "600"}
         ]
     },
@@ -113,7 +113,7 @@ general_props = [
 
     {
         "keys": ["PRIORITIZE_ILLUMINATING_FLS"],
-        "values": ["False"]
+        "values": ["True", "False"]
     },
     # # {
     {

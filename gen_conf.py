@@ -62,7 +62,7 @@ general_props = [
         # "values": ["5", "10"]
     },
     {
-        "keys": ["K", "INPUT", "NAME"],
+        "keys": ["K", "INPUT"],
         "values": [
             {"K": "0", "INPUT": "'dragon_G3'"},
             {"K": "3", "INPUT": "'dragon_G3'"},

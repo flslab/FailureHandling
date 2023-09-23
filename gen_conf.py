@@ -113,7 +113,7 @@ general_props = [
 
     {
         "keys": ["PRIORITIZE_ILLUMINATING_FLS"],
-        "values": ["True", "False"]
+        "values": ["True"]
     },
     # # {
     {

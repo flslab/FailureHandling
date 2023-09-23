@@ -12,10 +12,10 @@ from PIL import Image
 ticks_gap = 20
 
 start_time = 0
-duration = 180
+duration = 1800
 fps = 30
 frame_rate = 1 / fps
-total_points = 11888
+total_points = 760
 
 # t30_d1_g0	t30_d1_g20	t30_d5_g0	t30_d5_g20	t600_d1_g0	t600_d1_g20	t600_d5_g0	t600_d5_g20
 output_name = "testd"
@@ -193,19 +193,27 @@ if __name__ == '__main__':
     configs = [
         {
             "keys": ["K"],
-            "values": ["0", "3"]
+            "values": ["0"]
         },
         {
             "keys": ["D"],
-            "values": ["5"]
+            "values": ["1"]
         },
         {
             "keys": ["R"],
-            "values": ["1", "inf"]
+            "values": ["3000"]
         },
         {
             "keys": ["T"],
-            "values": ["30", "120"]
+            "values": ["60"]
+        },
+        {
+            "keys": ["S"],
+            "values": ["6"]
+        },
+        {
+            "keys": ["P"],
+            "values": ["True"]
         }
     ]
 
@@ -213,37 +221,38 @@ if __name__ == '__main__':
     combinations = list(itertools.product(*props_values))
     # print(combinations)
 
-    exp_dir = "/Users/hamed/Desktop/chess_30_min"
+    shape = 'dragon'
+    exp_dir = f"/Users/shuqinzhu/Desktop/{shape}"
 
-    for c in combinations:
-        exp_name = f"chess_K{c[0]}_D{c[1]}_R{c[2]}_T{c[3]}"
-        print(exp_name)
-        input_path = f"{exp_dir}/{exp_name}/timeline.json"
-        filtered_events, length, width, height = read_point_cloud(input_path)
-        fig, ax, _ = draw_figure()
-        init(ax)
-        xs, ys, zs = show_last_frame(filtered_events, t=1799)
-        ax.scatter(xs, ys, zs, c='blue', s=2, alpha=1)
-        set_axis(ax, length, width, height)
-        plt.show()
-        # plt.savefig(f"{exp_dir}/{exp_name}.png")
-        plt.close()
-        # break
-    exit()
     # for c in combinations:
-    #     exp_name = f"chess_K{c[0]}_D{c[1]}_R{c[2]}_T{c[3]}"
+    #     exp_name = f"K{c[0]}/{shape}_D{c[1]}_R{c[2]}_T{c[3]}_S{c[4]}_P{c[5]}"
+    #     print(exp_name)
     #     input_path = f"{exp_dir}/{exp_name}/timeline.json"
     #     filtered_events, length, width, height = read_point_cloud(input_path)
-    #     fig, ax, tx = draw_figure()
-    #     points = dict()
-    #     ani = FuncAnimation(
-    #         fig, partial(update,),
-    #         frames=30 * duration,
-    #         init_func=partial(init, ax))
-    #     #
-    #     # plt.show()
-    #     writer = FFMpegWriter(fps=fps)
-    #     ani.save(f"{exp_dir}/{exp_name}.mp4", writer=writer)
+    #     fig, ax, _ = draw_figure()
+    #     init(ax)
+    #     xs, ys, zs = show_last_frame(filtered_events, t=1799)
+    #     ax.scatter(xs, ys, zs, c='blue', s=2, alpha=1)
+    #     set_axis(ax, length, width, height)
+    #     plt.show()
+    #     # plt.savefig(f"{exp_dir}/{exp_name}.png")
+    #     plt.close()
+    #     # break
+    # exit()
+    for c in combinations:
+        exp_name = f"K{c[0]}/{shape}_D{c[1]}_R{c[2]}_T{c[3]}_S{c[4]}_P{c[5]}"
+        input_path = f"{exp_dir}/{exp_name}/timeline.json"
+        filtered_events, length, width, height = read_point_cloud(input_path)
+        fig, ax, tx = draw_figure()
+        points = dict()
+        ani = FuncAnimation(
+            fig, partial(update,),
+            frames=30 * duration,
+            init_func=partial(init, ax))
+        #
+        # plt.show()
+        writer = FFMpegWriter(fps=fps)
+        ani.save(f"{exp_dir}/{exp_name}.mp4", writer=writer)
 
 
     # for folder in ["K0", "K3", "K5", "K10", "K20"]:

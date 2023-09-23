@@ -57,19 +57,19 @@ general_props = [
     # },
     {
         "keys": ["DISPATCH_RATE"],
-        "values": ["3000"],
+        "values": ["25"],
         # "values": ["10", "50", "100"]
         # "values": ["5", "10"]
     },
     {
         "keys": ["K", "INPUT"],
         "values": [
-            # {"K": "0", "INPUT": "'dragon_G3'"},
-            {"K": "3", "INPUT": "'dragon_G3'"},
-            # {"K": "5", "INPUT": "'skateboard_G5'"},
-            # {"K": "10", "INPUT": "'skateboard_G10'"},
-            # {"K": "15", "INPUT": "'dragon_G15'"},
-            # {"K": "20", "INPUT": "'skateboard_G20'"},
+            {"K": "0", "INPUT": "'skateboard_G3'"},
+            {"K": "3", "INPUT": "'skateboard_G3'"},
+            {"K": "5", "INPUT": "'skateboard_G5'"},
+            {"K": "10", "INPUT": "'skateboard_G10'"},
+            {"K": "15", "INPUT": "'skateboard_G15'"},
+            {"K": "20", "INPUT": "'skateboard_G20'"},
             # {"K": "3", "INPUT": "'skateboard_K3'"},
             # {"K": "5", "INPUT": "'skateboard_K5'"},
             # {"K": "10", "INPUT": "'skateboard_K10'"},
@@ -113,7 +113,7 @@ general_props = [
 
     {
         "keys": ["PRIORITIZE_ILLUMINATING_FLS"],
-        "values": ["True"]
+        "values": ["True", "False"]
     },
     # # {
     {
@@ -129,7 +129,7 @@ general_props = [
     # },
     {
         "keys": ["SHAPE"],
-        "values": ["'dragon'"]
+        "values": ["'skateboard'"]
     },
     # {
     #     "keys": ["SAMPLE_SIZE", "SHAPE"],

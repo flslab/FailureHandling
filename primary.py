@@ -602,10 +602,14 @@ class PrimaryNode:
             elif Config.DEBUG:
                 total_point_num = len(self.groups) * len(self.groups[0])
             else:
+
                 # IMPORTANT !!!!!
-                # total_point_num = 760
-                total_point_num, group_num = read_point_info_from_cliques_xlsx(
-                    os.path.join(self.dir_experiment, f'{Config.INPUT}.xlsx'))
+                if Config.SHAPE == "dragon":
+                    total_point_num = 760
+                elif Config.SHAPE == "skateboard":
+                    total_point_num = 1729
+                # total_point_num, group_num = read_point_info_from_cliques_xlsx(
+                #     os.path.join(self.dir_experiment, f'{Config.INPUT}.xlsx'))
 
                 if Config.K == 0:
                     group_num = 0

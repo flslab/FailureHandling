@@ -44,7 +44,6 @@ def_general_conf = {
 
 }
 
-
 general_props = [
     # {
     #     "keys": ["SHAPE", "K", "INPUT", "DISPATCHERS", "DISPATCH_RATE", "FAILURE_TIMEOUT", "MAX_SPEED", "ACCELERATION",
@@ -59,20 +58,20 @@ general_props = [
     # },
     {
         "keys": ["DISPATCH_RATE"],
-        "values": ["10"],
+        "values": ["20"],
         # "values": ["10", "50", "100"]
         # "values": ["5", "10"]
     },
     {
         "keys": ["FAILURE_MODEL"],
-        "values": ["0"],
+        "values": ["1"],
         # "values": ["10", "50", "100"]
         # "values": ["5", "10"]
     },
     {
         "keys": ["K", "INPUT"],
         "values": [
-            {"K": "0", "INPUT": "'dragon_K3'"},
+            {"K": "0", "INPUT": "'skateboard_K3'"},
             # {"K": "3", "INPUT": "'skateboard_K3'"},
             # {"K": "5", "INPUT": "'skateboard_K5'"},
             # {"K": "10", "INPUT": "'skateboard_K10'"},
@@ -82,14 +81,14 @@ general_props = [
     },
     {
         "keys": ["DISPATCHERS"],
-        "values": ["3"],
+        "values": ["1"],
         # "values": ["1", "3"]
     },
     {
         "keys": ["FAILURE_TIMEOUT"],
         # "values": ["30", "60"]
         # "values": ["30"]
-        "values": ["60"]
+        "values": ["30"]
     },
     {
         "keys": ["MAX_SPEED", "ACCELERATION", "DECELERATION"],
@@ -104,7 +103,7 @@ general_props = [
     {
         "keys": ["DISPATCHER_ASSIGN_POLICY"],
         # "values": ["'ShortestDistance'", "'PoD'", "'RR'", "'Random'"]
-        "values": ["'HybridSDPoD'"]
+        "values": ["'ShortestDistance'"]
     },
     # {
     #     "keys": ["SANITY_TEST", "DISPATCHERS"],
@@ -114,7 +113,7 @@ general_props = [
     # },
     {
         "keys": ["SHAPE"],
-        "values": ["'dragon'"]
+        "values": ["'skateboard'"]
     }
     # {
     #     "keys": ["SAMPLE_SIZE", "SHAPE"],

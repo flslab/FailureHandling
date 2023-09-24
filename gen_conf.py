@@ -68,7 +68,7 @@ general_props = [
             # {"K": "3", "INPUT": "'skateboard_G3'"},
             # {"K": "5", "INPUT": "'skateboard_G5'"},
             # {"K": "10", "INPUT": "'skateboard_G10'"},
-            {"K": "0", "INPUT": "'skateboard_G0'", "SHAPE": "'skateboard'", "PRIORITIZE_ILLUMINATING_FLS": "True"},
+            {"K": "0", "INPUT": "'skateboard_G3'", "SHAPE": "'skateboard'", "PRIORITIZE_ILLUMINATING_FLS": "True"},
             {"K": "15", "INPUT": "'skateboard_G15'", "SHAPE": "'skateboard'", "PRIORITIZE_ILLUMINATING_FLS": "True"},
             # {"K": "20", "INPUT": "'dragon_G20'", "SHAPE": "'dragon'", "PRIORITIZE_ILLUMINATING_FLS": "True"},
             # {"K": "3", "INPUT": "'skateboard_K3'"},

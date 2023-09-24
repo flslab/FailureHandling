@@ -6,6 +6,8 @@ import csv
 import math
 import ast
 
+from matplotlib import pyplot as plt
+
 from config import Config
 from worker.metrics import gen_point_metrics_no_group
 from utils.file import write_csv
@@ -688,3 +690,41 @@ def get_value_in_row(df, row_title):
     # Get the value from the 'Value' column for the filtered row
     return filtered_row['Value'].iloc[0]
 
+
+if __name__ == "__main__":
+    with open('K3_charts_skateboard_D1_R20_T60_S6_F1.json', 'r') as json_file:
+        function_of_time = json.load(json_file)
+
+    # fig, ax = plt.subplots()
+    # df_I = pd.DataFrame()
+    # df_I['Time'] = function_of_time['illuminating']['t']
+    # df_I['Value'] = function_of_time['illuminating']['y']
+
+
+    df_F = pd.DataFrame()
+    df_F['Time'] = function_of_time['failed']['t']
+    df_F['Value'] = function_of_time['failed']['y']
+
+    rate = []
+    fail_per_sec = 0
+    time_index = 250
+    for i in range(len(df_F['Value'])):
+        if df_F['Time'][i] > 250:
+            if df_F['Time'][i] < time_index + 1:
+                fail_per_sec += 1
+            else:
+                rate.append(fail_per_sec)
+                time_index += 1
+                fail_per_sec=0
+
+    a = sum(rate)/len(rate)
+
+    print(a)
+
+    # df_I.plot(x='Time', y='Value', kind='line', ax=ax, label="Illuminating", linewidth=2)
+    # df_F.plot(x='Time', y='Value', kind='line', ax=ax, label="Failed", linewidth=2)
+    #
+    # plt.ylim(0, 3000)
+    # plt.xlim(left=0)
+    # plt.legend()
+    # plt.show()

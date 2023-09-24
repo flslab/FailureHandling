@@ -193,7 +193,7 @@ if __name__ == '__main__':
     configs = [
         {
             "keys": ["K"],
-            "values": ["0"]
+            "values": ["3"]
         },
         {
             "keys": ["D"],

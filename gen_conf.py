@@ -62,14 +62,16 @@ general_props = [
         # "values": ["5", "10"]
     },
     {
-        "keys": ["K", "INPUT"],
+        "keys": ["K", "INPUT", "PRIORITIZE_ILLUMINATING_FLS"],
         "values": [
-            {"K": "0", "INPUT": "'skateboard_G3'"},
-            {"K": "3", "INPUT": "'skateboard_G3'"},
-            {"K": "5", "INPUT": "'skateboard_G5'"},
-            {"K": "10", "INPUT": "'skateboard_G10'"},
-            {"K": "15", "INPUT": "'skateboard_G15'"},
-            {"K": "20", "INPUT": "'skateboard_G20'"},
+            {"K": "0", "INPUT": "'skateboard_G3'", "PRIORITIZE_ILLUMINATING_FLS": "True"},
+            # {"K": "3", "INPUT": "'skateboard_G3'"},
+            # {"K": "5", "INPUT": "'skateboard_G5'"},
+            # {"K": "10", "INPUT": "'skateboard_G10'"},
+            {"K": "15", "INPUT": "'skateboard_G15'", "PRIORITIZE_ILLUMINATING_FLS": "True"},
+            {"K": "15", "INPUT": "'skateboard_G15'", "PRIORITIZE_ILLUMINATING_FLS": "False"},
+            {"K": "20", "INPUT": "'skateboard_G20'", "PRIORITIZE_ILLUMINATING_FLS": "True"},
+            {"K": "20", "INPUT": "'skateboard_G20'", "PRIORITIZE_ILLUMINATING_FLS": "False"},
             # {"K": "3", "INPUT": "'skateboard_K3'"},
             # {"K": "5", "INPUT": "'skateboard_K5'"},
             # {"K": "10", "INPUT": "'skateboard_K10'"},

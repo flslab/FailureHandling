@@ -113,10 +113,10 @@ general_props = [
     #     ]
     # },
 
-    {
-        "keys": ["PRIORITIZE_ILLUMINATING_FLS"],
-        "values": ["True", "False"]
-    },
+    # {
+    #     "keys": ["PRIORITIZE_ILLUMINATING_FLS"],
+    #     "values": ["True", "False"]
+    # },
     # # {
     {
         "keys": ["DISPATCHER_ASSIGN_POLICY"],

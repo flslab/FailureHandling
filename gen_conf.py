@@ -57,8 +57,8 @@ general_props = [
     # },
     {
         "keys": ["DISPATCH_RATE"],
-        # "values": ["25"],
-        "values": ["10", "20", "100"]
+        "values": ["3000"],
+        # "values": ["10", "20", "100"]
         # "values": ["5", "10"]
     },
     {
@@ -68,9 +68,9 @@ general_props = [
             # {"K": "3", "INPUT": "'skateboard_G3'"},
             # {"K": "5", "INPUT": "'skateboard_G5'"},
             # {"K": "10", "INPUT": "'skateboard_G10'"},
-            {"K": "0", "INPUT": "'dragon_G0'", "SHAPE": "'dragon'", "PRIORITIZE_ILLUMINATING_FLS": "True"},
-            {"K": "3", "INPUT": "'dragon_G3'", "SHAPE": "'dragon'", "PRIORITIZE_ILLUMINATING_FLS": "True"},
-            {"K": "20", "INPUT": "'dragon_G20'", "SHAPE": "'dragon'", "PRIORITIZE_ILLUMINATING_FLS": "True"},
+            {"K": "0", "INPUT": "'skateboard_G0'", "SHAPE": "'skateboard'", "PRIORITIZE_ILLUMINATING_FLS": "True"},
+            {"K": "15", "INPUT": "'skateboard_G15'", "SHAPE": "'skateboard'", "PRIORITIZE_ILLUMINATING_FLS": "True"},
+            # {"K": "20", "INPUT": "'dragon_G20'", "SHAPE": "'dragon'", "PRIORITIZE_ILLUMINATING_FLS": "True"},
             # {"K": "3", "INPUT": "'skateboard_K3'"},
             # {"K": "5", "INPUT": "'skateboard_K5'"},
             # {"K": "10", "INPUT": "'skateboard_K10'"},
@@ -85,8 +85,8 @@ general_props = [
     # },
     {
         "keys": ["FAILURE_TIMEOUT"],
-        "values": ["30", "60", "120", "300"]
-        # "values": ["60"]
+        # "values": ["30", "60", "120", "300"]
+        "values": ["60"]
         # "values": ["1", "3", "6", "30", "60", "120", "600"]
     },
     {

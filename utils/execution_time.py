@@ -26,7 +26,7 @@ ax.yaxis.set_major_locator(y_locator)
 y_formatter = mpl.ticker.FixedFormatter(["0.001", "0.01", "0.1", "1", "10", "100", "1000"])
 ax.yaxis.set_major_formatter(y_formatter)
 
-ax.set_ylabel('Execution Time (Second)', loc='top', rotation=0, labelpad=-120)
+ax.set_ylabel('Execution Time (Second)', loc='top', rotation=0, labelpad=-124)
 ax.set_xlabel('Group Size (G)', loc='right', labelpad=-1)
 
 plt.text(7.5, 88.5, 'CANF Execution Time', color=CANF_line.get_color(), fontweight='bold')
@@ -61,14 +61,14 @@ plt.xlabel('Size of the Group')
 
 plt.xticks(sizes)
 
-ax.set_ylabel('Number of Groups', loc='top', rotation=0, labelpad=-120)
+ax.set_ylabel('Number of Groups', loc='top', rotation=0, labelpad=-91)
 
 ax = plt.gca()
 ax.get_xaxis().set_major_locator(plt.MaxNLocator(integer=True))
 ax.get_yaxis().set_major_locator(plt.MaxNLocator(integer=True))
 
 
-plt.tight_layout()
+# plt.tight_layout()
 plt.savefig(f"group_size.png", dpi=500)
 plt.show(dpi=500)
 plt.close()

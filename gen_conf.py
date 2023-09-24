@@ -57,21 +57,20 @@ general_props = [
     # },
     {
         "keys": ["DISPATCH_RATE"],
-        "values": ["25"],
-        # "values": ["10", "50", "100"]
+        # "values": ["25"],
+        "values": ["10", "20", "100"]
         # "values": ["5", "10"]
     },
     {
-        "keys": ["K", "INPUT", "PRIORITIZE_ILLUMINATING_FLS"],
+        "keys": ["K", "INPUT", "SHAPE", "PRIORITIZE_ILLUMINATING_FLS"],
         "values": [
             # {"K": "0", "INPUT": "'skateboard_G3'", "PRIORITIZE_ILLUMINATING_FLS": "True"},
             # {"K": "3", "INPUT": "'skateboard_G3'"},
             # {"K": "5", "INPUT": "'skateboard_G5'"},
             # {"K": "10", "INPUT": "'skateboard_G10'"},
-            {"K": "15", "INPUT": "'skateboard_G15'", "PRIORITIZE_ILLUMINATING_FLS": "True"},
-            {"K": "15", "INPUT": "'skateboard_G15'", "PRIORITIZE_ILLUMINATING_FLS": "False"},
-            {"K": "20", "INPUT": "'skateboard_G20'", "PRIORITIZE_ILLUMINATING_FLS": "True"},
-            {"K": "20", "INPUT": "'skateboard_G20'", "PRIORITIZE_ILLUMINATING_FLS": "False"},
+            {"K": "0", "INPUT": "'dragon_G0'", "SHAPE": "'dragon'", "PRIORITIZE_ILLUMINATING_FLS": "True"},
+            {"K": "3", "INPUT": "'dragon_G3'", "SHAPE": "'dragon'", "PRIORITIZE_ILLUMINATING_FLS": "True"},
+            {"K": "20", "INPUT": "'dragon_G20'", "SHAPE": "'dragon'", "PRIORITIZE_ILLUMINATING_FLS": "True"},
             # {"K": "3", "INPUT": "'skateboard_K3'"},
             # {"K": "5", "INPUT": "'skateboard_K5'"},
             # {"K": "10", "INPUT": "'skateboard_K10'"},
@@ -86,8 +85,8 @@ general_props = [
     # },
     {
         "keys": ["FAILURE_TIMEOUT"],
-        # "values": ["30", "60"]
-        "values": ["60"]
+        "values": ["30", "60", "120", "300"]
+        # "values": ["60"]
         # "values": ["1", "3", "6", "30", "60", "120", "600"]
     },
     {
@@ -129,10 +128,10 @@ general_props = [
     #         # {"SANITY_TEST": "True", "DISPATCHERS": "1"}]
     #     # "values": ["1", "3", "6", "30", "60", "120", "600"]
     # },
-    {
-        "keys": ["SHAPE"],
-        "values": ["'skateboard'"]
-    },
+    # {
+    #     "keys": ["SHAPE"],
+    #     "values": ["'skateboard'"]
+    # },
     # {
     #     "keys": ["SAMPLE_SIZE", "SHAPE"],
     #     "values": [{"SAMPLE_SIZE": 94, "SHAPE": "'butterfly'"},

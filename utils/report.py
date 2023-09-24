@@ -692,7 +692,7 @@ def get_value_in_row(df, row_title):
 
 
 if __name__ == "__main__":
-    with open('K3_charts_skateboard_D1_R20_T60_S6_F1.json', 'r') as json_file:
+    with open('K0_charts_skateboard_D1_R20_T30_S6_F1.json', 'r') as json_file:
         function_of_time = json.load(json_file)
 
     # fig, ax = plt.subplots()

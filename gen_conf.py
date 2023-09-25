@@ -115,6 +115,7 @@ general_props = [
         "keys": ["SHAPE"],
         "values": ["'skateboard'"]
     }
+
     # {
     #     "keys": ["SAMPLE_SIZE", "SHAPE"],
     #     "values": [{"SAMPLE_SIZE": 94, "SHAPE": "'butterfly'"},

@@ -65,18 +65,18 @@ general_props = [
         "keys": ["K", "INPUT", "SHAPE"],
         "values": [
 
-            {"K": "0", "INPUT": "'skateboard_G3'", "SHAPE": "'skateboard'"},
-            {"K": "3", "INPUT": "'skateboard_G3'", "SHAPE": "'skateboard'"},
-            {"K": "5", "INPUT": "'skateboard_G5'", "SHAPE": "'skateboard'"},
-            {"K": "10", "INPUT": "'skateboard_G10'", "SHAPE": "'skateboard'"},
-            {"K": "15", "INPUT": "'skateboard_G15'", "SHAPE": "'skateboard'"},
-            {"K": "20", "INPUT": "'skateboard_G20'", "SHAPE": "'skateboard'"},
-            # {"K": "0", "INPUT": "'dragon_G3'", "SHAPE": "'dragon'"},
-            # {"K": "3", "INPUT": "'dragon_G3'", "SHAPE": "'dragon'"},
-            # {"K": "5", "INPUT": "'dragon_G5'", "SHAPE": "'dragon'"},
-            # {"K": "10", "INPUT": "'dragon_G10'", "SHAPE": "'dragon'"},
-            # {"K": "15", "INPUT": "'dragon_G15'", "SHAPE": "'dragon'"},
-            # {"K": "20", "INPUT": "'dragon_G20'", "SHAPE": "'dragon'"},
+            # {"K": "0", "INPUT": "'skateboard_G3'", "SHAPE": "'skateboard'"},
+            # {"K": "3", "INPUT": "'skateboard_G3'", "SHAPE": "'skateboard'"},
+            # {"K": "5", "INPUT": "'skateboard_G5'", "SHAPE": "'skateboard'"},
+            # {"K": "10", "INPUT": "'skateboard_G10'", "SHAPE": "'skateboard'"},
+            # {"K": "15", "INPUT": "'skateboard_G15'", "SHAPE": "'skateboard'"},
+            # {"K": "20", "INPUT": "'skateboard_G20'", "SHAPE": "'skateboard'"},
+            {"K": "0", "INPUT": "'dragon_G3'", "SHAPE": "'dragon'"},
+            {"K": "3", "INPUT": "'dragon_G3'", "SHAPE": "'dragon'"},
+            {"K": "5", "INPUT": "'dragon_G5'", "SHAPE": "'dragon'"},
+            {"K": "10", "INPUT": "'dragon_G10'", "SHAPE": "'dragon'"},
+            {"K": "15", "INPUT": "'dragon_G15'", "SHAPE": "'dragon'"},
+            {"K": "20", "INPUT": "'dragon_G20'", "SHAPE": "'dragon'"},
             # {"K": "0", "INPUT": "'chess_G3'", "SHAPE": "'chess'"},
             # {"K": "3", "INPUT": "'chess_G3'", "SHAPE": "'chess'"},
             # {"K": "5", "INPUT": "'chess_G5'", "SHAPE": "'chess'"},
@@ -99,9 +99,9 @@ general_props = [
     {
         "keys": ["MAX_SPEED", "ACCELERATION", "DECELERATION"],
         "values": [
-            # {"MAX_SPEED": "6.11", "ACCELERATION": "6.11", "DECELERATION": "6.11"},
-            {"MAX_SPEED": "66.67", "ACCELERATION": "66.67", "DECELERATION": "66.67"}
-            # {"MAX_SPEED": "30", "ACCELERATION": "30", "DECELERATION": "30"}
+            {"MAX_SPEED": "6.11", "ACCELERATION": "6.11", "DECELERATION": "6.11"},
+            {"MAX_SPEED": "30", "ACCELERATION": "30", "DECELERATION": "30"},
+            {"MAX_SPEED": "66.67", "ACCELERATION": "66.67", "DECELERATION": "66.67"},
         ]
     },
 

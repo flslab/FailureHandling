@@ -91,7 +91,8 @@ def update(frame):
             if event_type == TimelineEvents.ILLUMINATE or event_type == TimelineEvents.ILLUMINATE_STANDBY:
                 points[fls_id] = event[2]
             else:
-                points.pop(fls_id)
+                if fls_id in points:
+                    points.pop(fls_id)
         else:
             t += frame_rate
             break
@@ -243,19 +244,19 @@ if __name__ == '__main__':
         # exp_name = f"K{c[0]}/{shape}_D{c[1]}_R{c[2]}_T{c[3]}_S{c[4]}_P{c[5]}"
         # input_path = f"{exp_dir}/{exp_name}/timeline.json"
 
-        input_path = "/Users/shuqinzhu/Desktop/skateboard_cmp_group/K3/skateboard_D1_R3000_T60_S6_Nkmeans/timeline.json"
+        input_path = "/Users/shuqinzhu/Desktop/timeline.json"
         filtered_events, length, width, height = read_point_cloud(input_path)
         fig, ax, tx = draw_figure()
         points = dict()
         ani = FuncAnimation(
             fig, partial(update,),
-            frames=30 * duration,
+            frames=120 * duration,
             init_func=partial(init, ax))
         #
         # plt.show()
         writer = FFMpegWriter(fps=fps)
         # ani.save(f"{exp_dir}/{exp_name}.mp4", writer=writer)
-        ani.save(f"/Users/shuqinzhu/Desktop/skateboard_cmp_group/K3/skateboard_D1_R3000_T60_S6_Nkmeans/skateboard_D1_R3000_T60_S6_Nkmeans.mp4", writer=writer)
+        ani.save(f"/Users/shuqinzhu/Desktop/skateboard_K3_D1_R3000_T60_S66_PTrue.mp4", writer=writer)
 
 
     # for folder in ["K0", "K3", "K5", "K10", "K20"]:

@@ -73,11 +73,11 @@ general_props = [
             # {"K": "15", "INPUT": "'skateboard_G15'", "SHAPE": "'skateboard'"},
             # {"K": "20", "INPUT": "'skateboard_G20'", "SHAPE": "'skateboard'"},
             # {"K": "0", "INPUT": "'dragon_G3'", "SHAPE": "'dragon'"},
-            {"K": "3", "INPUT": "'dragon_K3'", "SHAPE": "'dragon'"},
+            # {"K": "3", "INPUT": "'dragon_K3'", "SHAPE": "'dragon'"},
             # {"K": "5", "INPUT": "'dragon_K5'", "SHAPE": "'dragon'"},
             # {"K": "10", "INPUT": "'dragon_K10'", "SHAPE": "'dragon'"},
             # {"K": "15", "INPUT": "'dragon_G15'", "SHAPE": "'dragon'"},
-            # {"K": "20", "INPUT": "'dragon_K20'", "SHAPE": "'dragon'"},
+            {"K": "20", "INPUT": "'dragon_K20'", "SHAPE": "'dragon'"},
             # {"K": "0", "INPUT": "'chess_G3'", "SHAPE": "'chess'"},
             # {"K": "3", "INPUT": "'chess_G3'", "SHAPE": "'chess'"},
             # {"K": "5", "INPUT": "'chess_G5'", "SHAPE": "'chess'"},
@@ -127,8 +127,8 @@ general_props = [
     # # {
     {
         "keys": ["DISPATCHER_ASSIGN_POLICY"],
-        # "values": ["'ShortestDistance'", "'PoD'", "'RR'", "'Random'", "'HybridSDPoD'"]
-        "values": ["'HybridSDPoD'"]
+        "values": ["'ShortestDistance'", "'PoD'", "'RR'", "'Random'", "'HybridSDPoD'"]
+        # "values": ["'HybridSDPoD'"]
     },
     # {
     #     "keys": ["SANITY_TEST", "DISPATCHERS"],

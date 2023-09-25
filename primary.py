@@ -415,6 +415,8 @@ class PrimaryNode:
             self.cpu_util.append((time.time(), psutil.cpu_percent()))
             try:
                 msg, _ = self.failure_handler_socket.receive()
+                if not msg or msg is None:
+                    continue
             except socket.timeout:
                 continue
 

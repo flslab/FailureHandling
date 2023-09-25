@@ -88,7 +88,7 @@ general_props = [
         "keys": ["FAILURE_TIMEOUT"],
         # "values": ["30", "60"]
         # "values": ["30"]
-        "values": ["3600", "7200"]
+        "values": ["1800", "3600"]
     },
     {
         "keys": ["MAX_SPEED", "ACCELERATION", "DECELERATION"],
@@ -103,7 +103,7 @@ general_props = [
     {
         "keys": ["DISPATCHER_ASSIGN_POLICY"],
         # "values": ["'ShortestDistance'", "'PoD'", "'RR'", "'Random'"]
-        "values": ["'ShortestDistance'"]
+        "values": ["'PoD'"]
     },
     # {
     #     "keys": ["SANITY_TEST", "DISPATCHERS"],

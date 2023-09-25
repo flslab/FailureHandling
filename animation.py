@@ -15,7 +15,7 @@ start_time = 0
 duration = 1800
 fps = 30
 frame_rate = 1 / fps
-total_points = 760
+total_points = 1729
 
 # t30_d1_g0	t30_d1_g20	t30_d5_g0	t30_d5_g20	t600_d1_g0	t600_d1_g20	t600_d5_g0	t600_d5_g20
 output_name = "testd"
@@ -193,7 +193,7 @@ if __name__ == '__main__':
     configs = [
         {
             "keys": ["K"],
-            "values": ["3"]
+            "values": ["0"]
         },
         {
             "keys": ["D"],
@@ -221,7 +221,7 @@ if __name__ == '__main__':
     combinations = list(itertools.product(*props_values))
     # print(combinations)
 
-    shape = 'dragon'
+    shape = 'skateboard'
     exp_dir = f"/Users/shuqinzhu/Desktop/{shape}"
 
     # for c in combinations:
@@ -240,8 +240,10 @@ if __name__ == '__main__':
     #     # break
     # exit()
     for c in combinations:
-        exp_name = f"K{c[0]}/{shape}_D{c[1]}_R{c[2]}_T{c[3]}_S{c[4]}_P{c[5]}"
-        input_path = f"{exp_dir}/{exp_name}/timeline.json"
+        # exp_name = f"K{c[0]}/{shape}_D{c[1]}_R{c[2]}_T{c[3]}_S{c[4]}_P{c[5]}"
+        # input_path = f"{exp_dir}/{exp_name}/timeline.json"
+
+        input_path = "/Users/shuqinzhu/Desktop/skateboard_cmp_group/K3/skateboard_D1_R3000_T60_S6_Nkmeans/timeline.json"
         filtered_events, length, width, height = read_point_cloud(input_path)
         fig, ax, tx = draw_figure()
         points = dict()
@@ -252,7 +254,8 @@ if __name__ == '__main__':
         #
         # plt.show()
         writer = FFMpegWriter(fps=fps)
-        ani.save(f"{exp_dir}/{exp_name}.mp4", writer=writer)
+        # ani.save(f"{exp_dir}/{exp_name}.mp4", writer=writer)
+        ani.save(f"/Users/shuqinzhu/Desktop/skateboard_cmp_group/K3/skateboard_D1_R3000_T60_S6_Nkmeans/skateboard_D1_R3000_T60_S6_Nkmeans.mp4", writer=writer)
 
 
     # for folder in ["K0", "K3", "K5", "K10", "K20"]:

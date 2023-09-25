@@ -87,6 +87,17 @@ class ShortestDistancePolicy(DispatchPolicy):
         return ds[np.argmin(np.linalg.norm(dispatcher_coords - coord, axis=1))]
 
 
+class HybridSDPoDPolicy(DispatchPolicy):
+    sd = ShortestDistancePolicy()
+    pod = PoDPolicy()
+
+    def assign(self, **kwargs):
+        closest_d = HybridSDPoDPolicy.sd.assign(**kwargs)
+        if closest_d.q.qsize():
+            return HybridSDPoDPolicy.pod.assign(**kwargs)
+        return closest_d
+
+
 class PrimaryNode:
     def __init__(self, N, name):
         self.N = N  # number of secondary servers
@@ -167,7 +178,6 @@ class PrimaryNode:
             os.makedirs(os.path.join(self.dir_meta, 'json'), exist_ok=True)
         if not os.path.exists(self.dir_figure):
             os.makedirs(self.dir_figure, exist_ok=True)
-
 
     def delete_previous_json_files(self, path):
         try:
@@ -292,7 +302,6 @@ class PrimaryNode:
             for group in self.groups:
                 centers.append([sum(coord) / len(coord) for coord in zip(*group)])
 
-
             for coord in single_members:
 
                 closest_index = 0
@@ -304,7 +313,6 @@ class PrimaryNode:
                         closest_distance = distance
                         closest_index = i
                 self.groups[closest_index] = np.append(self.groups[closest_index], coord, axis=0)
-
 
     def _assign_dispatcher(self, properties):
         return self.dispatch_policy.assign(dispatchers=self.dispatchers, **properties)

@@ -313,7 +313,7 @@ if __name__ == '__main__':
     for c in combinations:
         # exp_name = f"K{c[0]}/{shape}_D{c[1]}_R{c[2]}_T{c[3]}_S{c[4]}_P{c[5]}"
         # input_path = f"{exp_dir}/{exp_name}/timeline.json"
-        file_names = ["skateboard_K3_D1_R3000_T60_S66_PTrue"]
+        file_names = ["skateboard_K0_D1_R3000_T60_S66_PTrue"]
         for name in file_names:
             txt_file_path = f"/Users/shuqinzhu/Desktop/video/skateboard.txt"
             gtl = read_coordinates(txt_file_path)

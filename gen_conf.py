@@ -16,7 +16,7 @@ def_general_conf = {
     "MAX_SPEED": "3",
     "DISPLAY_CELL_SIZE": "0.05",
     "BUSY_WAITING": "False",
-    "DURATION": "60 * 30",
+    "DURATION": "6 * FAILURE_TIMEOUT",
     "K": "3",
     "SHAPE": "'chess'",
     "RESULTS_PATH": "'/proj/nova-PG0/hamed/results/fh/'",
@@ -71,8 +71,8 @@ general_props = [
     {
         "keys": ["K", "INPUT"],
         "values": [
-            {"K": "0", "INPUT": "'skateboard_K3'"},
-            # {"K": "3", "INPUT": "'skateboard_K3'"},
+            # {"K": "0", "INPUT": "'skateboard_K3'"},
+            {"K": "3", "INPUT": "'skateboard_K3'"},
             # {"K": "5", "INPUT": "'skateboard_K5'"},
             # {"K": "10", "INPUT": "'skateboard_K10'"},
             # {"K": "15", "INPUT": "'skateboard_K15'"},
@@ -88,7 +88,7 @@ general_props = [
         "keys": ["FAILURE_TIMEOUT"],
         # "values": ["30", "60"]
         # "values": ["30"]
-        "values": ["30"]
+        "values": ["3600", "7200"]
     },
     {
         "keys": ["MAX_SPEED", "ACCELERATION", "DECELERATION"],

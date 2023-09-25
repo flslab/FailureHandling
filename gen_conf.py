@@ -86,11 +86,11 @@ general_props = [
             # {"K": "20", "INPUT": "'chess_G20'", "SHAPE": "'chess'"}
         ]
     },
-    # {
-    #     "keys": ["DISPATCHERS"],
-    #     "values": ["1"],
-    #     # "values": ["1", "3"]
-    # },
+    {
+        "keys": ["DISPATCHERS"],
+        "values": ["3"],
+        # "values": ["1", "3"]
+    },
     {
         "keys": ["FAILURE_TIMEOUT"],
         # "values": ["30", "60", "120", "300"]

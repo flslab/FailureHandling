@@ -393,7 +393,7 @@ class PrimaryNode:
                     "radio_range": self.group_radio_range[group_id],
                     "is_standby": True, "group_id": group_id,
                 }
-                self._deploy_fls(fls, Config.SANITY_TEST == 2)
+                self._deploy_fls(fls, Config.SANITY_TEST == 4)
                 self.num_initial_standbys += 1
 
         logger.info(f"Assigned {self.pid} FLSs to dispatchers")
@@ -617,7 +617,7 @@ class PrimaryNode:
                 if Config.SHAPE == "dragon":
                     total_point_num = 760
                 elif Config.SHAPE == "skateboard":
-                    total_point_num = 1729
+                    total_point_num = 1727
                 # total_point_num, group_num = read_point_info_from_cliques_xlsx(
                 #     os.path.join(self.dir_experiment, f'{Config.INPUT}.xlsx'))
 

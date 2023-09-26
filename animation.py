@@ -15,7 +15,7 @@ start_time = 0
 duration = 1800
 fps = 30
 frame_rate = 1 / fps
-total_points = 1729
+total_points = 1727
 
 # t30_d1_g0	t30_d1_g20	t30_d5_g0	t30_d5_g20	t600_d1_g0	t600_d1_g20	t600_d5_g0	t600_d5_g20
 output_name = "testd"

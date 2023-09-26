@@ -373,19 +373,24 @@ def distance_centroid_to_point_plot(data_sets, group_sizes, name):
 
 def time_centroid_to_point_plot(data_sets, group_sizes, speed_models, name):
     # Step 2: Plot the data
-    plt.figure()
+    fig = plt.figure(figsize=(5, 3), layout='constrained')
+    ax = fig.add_subplot()
+    ax.spines['right'].set_visible(False)
+    ax.spines['top'].set_visible(False)
     for i, data_set in enumerate(data_sets):
         plt.plot(group_sizes, data_set, label=f'Speed Model: {speed_models[i]}')
 
     # Configure the chart
     plt.xlabel('Group Size')
-    plt.ylabel('Avg Time To Travel from Group Centroid to Points in Group')
-    plt.title('Avg Time To Travel by Group Size')
+
+    ax.set_title('Avg Time To Travel from Group Centroid to Points in Group', loc='left', zorder=4)
+    # plt.ylabel('Avg Time To Travel from Group Centroid to Points in Group')
+    # plt.title('Avg Time To Travel by Group Size')
     plt.legend()
     plt.xticks(group_sizes)
 
     # Display the plot
-    plt.savefig(f"/Users/shuqinzhu/Desktop/figures/time_centroid_to_point/{name}")
+    plt.savefig(f"/Users/shuqinzhu/Desktop/figures/time_centroid_to_point/{name}", dpi=500)
     plt.close()
 
 
@@ -467,7 +472,7 @@ if __name__ == '__main__':
 
             centroid_dist_list = []
 
-            time_to_travel_center_list = [[], [], [], [], []]
+            time_to_travel_center_list = [[], [], [], []]
 
             for i, K in enumerate([3, 5, 10, 20]):
 
@@ -490,7 +495,7 @@ if __name__ == '__main__':
                 avg_centroid_dist = sum(centroid_dist) / len(centroid_dist)
                 centroid_dist_list.append(centroid_dist)
 
-                for i, speed_model in enumerate([1, 3, 5, 10, 20]):
+                for i, speed_model in enumerate([3, 10, 30, 60]):
                     time_to_travel_center_list[i].append(
                         calculate_travel_time(speed_model, speed_model, speed_model, avg_centroid_dist))
 
@@ -569,7 +574,7 @@ if __name__ == '__main__':
 
             dispatcher_to_center_compare.append(avg_dispatcher_to_center_list)
 
-            time_centroid_to_point_plot(time_to_travel_center_list, [3, 5, 10, 20], [1, 3, 5, 10, 20],
+            time_centroid_to_point_plot(time_to_travel_center_list, [3, 5, 10, 20], [3, 10, 30, 60],
                                         f"{shape}_{group_name}_time_to_travel.png")
 
         compare_dispatcher_to_centroid_plot(dispatcher_to_center_compare, [3, 5, 10, 20],

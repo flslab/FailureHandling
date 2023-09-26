@@ -11,11 +11,11 @@ from PIL import Image
 
 ticks_gap = 20
 
-start_time = 0
-duration = 1800
+start_time = 900
+duration = 60
 fps = 30
 frame_rate = 1 / fps
-total_points = 1729
+total_points = 760
 
 # t30_d1_g0	t30_d1_g20	t30_d5_g0	t30_d5_g20	t600_d1_g0	t600_d1_g20	t600_d5_g0	t600_d5_g20
 output_name = "testd"
@@ -43,8 +43,20 @@ def set_axis_2d(ax, length, width, title):
     ax.set_title(title)
 
 
-def set_text(tx, t, missing_flss):
-    tx.set(text=f"Elapsed time: {int(t)} seconds\nNumber of missing FLSs: {missing_flss}")
+def update_title(ax, title, missing_flss):
+    ax.set_title(f"{title}\nNumber of missing FLSs: {missing_flss}", y=.9)
+
+
+def set_text_K0(tx, t, missing_flss):
+    tx.set(text=f"Number of missing FLSs: {missing_flss}")
+
+
+def set_text_K3(tx, t, missing_flss):
+    tx.set(text=f"Number of missing FLSs: {missing_flss}")
+
+
+def set_text_time(tx, t):
+    tx.set(text=f"Elapsed time: {int(t)} seconds")
 
 
 def draw_figure():
@@ -52,16 +64,16 @@ def draw_figure():
     fig_width = 1920 * px
     fig_height = 1080 * px
     fig = plt.figure(figsize=(fig_width, fig_height))
-    spec = fig.add_gridspec(3, 6, left=0.04, right=0.96, top=0.92, bottom=0.08)
+    spec = fig.add_gridspec(2, 9, left=0.04, right=0.96, top=0.92, bottom=0.08)
     ax = fig.add_subplot(spec[0:2, 0:3], projection='3d', proj_type='ortho')
     ax1 = fig.add_subplot(spec[0:2, 3:6], projection='3d', proj_type='ortho')
+    ax2 = fig.add_subplot(spec[0:2, 6:9], projection='3d', proj_type='ortho')
 
-    ax2 = fig.add_subplot(spec[2, 0:2])
-    ax3 = fig.add_subplot(spec[2, 2:4])
-    ax4 = fig.add_subplot(spec[2, 4:6])
-    tx = fig.text(0.05, 0.88, s="", fontsize=16)
-    line1 = ax.scatter([], [], [])
-    return fig, ax, ax1, ax2, ax3, ax4, tx
+    tx_K0 = fig.text(0.15, 0.88, s="", fontsize=16)
+    tx_K3 = fig.text(0.05, 0.88, s="", fontsize=16)
+
+    tx_time = fig.text(0.43, 0.88, s="", fontsize=16)
+    return fig, ax, ax1, ax2, tx_K0, tx_K3, tx_time
 
 
 def read_point_cloud(input_path):
@@ -87,75 +99,94 @@ def read_point_cloud(input_path):
     return filtered_events, length, width, height
 
 
-def init(ax, ax1, ax2, ax3, ax4):
+def init(ax, ax1, ax2):
     ax.xaxis.set_pane_color((1.0, 1.0, 1.0, 1.0))
     ax.yaxis.set_pane_color((1.0, 1.0, 1.0, 1.0))
     ax.zaxis.set_pane_color((0, 0, 0, 0.025))
-    ax.view_init(elev=14, azim=136, roll=0)
+    ax.view_init(elev=14, azim=-136, roll=0)
+
     ax1.xaxis.set_pane_color((1.0, 1.0, 1.0, 1.0))
     ax1.yaxis.set_pane_color((1.0, 1.0, 1.0, 1.0))
     ax1.zaxis.set_pane_color((0, 0, 0, 0.025))
     ax1.view_init(elev=14, azim=-136, roll=0)
+
+    ax2.xaxis.set_pane_color((1.0, 1.0, 1.0, 1.0))
+    ax2.yaxis.set_pane_color((1.0, 1.0, 1.0, 1.0))
+    ax2.zaxis.set_pane_color((0, 0, 0, 0.025))
+    ax2.view_init(elev=14, azim=-136, roll=0)
     # return line1,
 
 
 def update(frame):
-    t = start_time + frame * frame_rate
-    while len(filtered_events):
+    t_K0 = start_time + frame * frame_rate
+    t_K3 = start_time + frame * frame_rate
+    while len(filtered_events_K0):
         # print(t)
-        event_time = filtered_events[0][0]
-        if event_time <= t:
-            event = filtered_events.pop(0)
+        event_time = filtered_events_K0[0][0]
+        if event_time <= t_K0:
+            event = filtered_events_K0.pop(0)
             event_type = event[1]
             fls_id = event[-1]
             if event_type == TimelineEvents.ILLUMINATE or event_type == TimelineEvents.ILLUMINATE_STANDBY:
-                points[fls_id] = event[2]
+                points_K0[fls_id] = event[2]
             else:
-                if fls_id in points:
-                    points.pop(fls_id)
+                if fls_id in points_K0:
+                    points_K0.pop(fls_id)
         else:
-            t += frame_rate
+            t_K0 += frame_rate
             break
-    coords = points.values()
+    coords_K0 = points_K0.values()
     ax.clear()
-    xs = [c[0] for c in coords]
-    ys = [c[1] for c in coords]
-    zs = [c[2] for c in coords]
+    xs = [c[0] for c in coords_K0]
+    ys = [c[1] for c in coords_K0]
+    zs = [c[2] for c in coords_K0]
 
     ax.clear()
     ln = ax.scatter(xs, ys, zs, c='purple', s=2, alpha=1)
-    set_axis(ax, length, width, height)
+    set_axis(ax, length, width, height, "No Standby")
 
+    update_title(ax, "No Standby", total_points - len(coords_K0))
+    # set_text_K0(tx_K0, t, total_points - len(coords_K0))
     ax1.clear()
 
     x_list = [coord[0] for coord in gtl]
     y_list = [coord[1] for coord in gtl]
     z_list = [coord[2] for coord in gtl]
+
     ln1 = ax1.scatter(x_list, y_list, z_list, c='blue', s=2, alpha=1)
     set_axis(ax1, length, width, height, "Ground Truth")
 
+    while len(filtered_events_K3):
+        # print(t)
+        event_time = filtered_events_K3[0][0]
+        if event_time <= t_K3:
+            event = filtered_events_K3.pop(0)
+            event_type = event[1]
+            fls_id = event[-1]
+            if event_type == TimelineEvents.ILLUMINATE or event_type == TimelineEvents.ILLUMINATE_STANDBY:
+                points_K3[fls_id] = event[2]
+            else:
+                if fls_id in points_K3:
+                    points_K3.pop(fls_id)
+        else:
+            t_K3 += frame_rate
+            break
+    coords_K3 = points_K3.values()
     ax2.clear()
-    if name.startswith('skateboard'):
-        ln2 = ax2.scatter(ys, xs, c='purple', s=2, alpha=1)
-        set_axis_2d(ax2, width, length, "Top")
+    xs = [c[0] for c in coords_K3]
+    ys = [c[1] for c in coords_K3]
+    zs = [c[2] for c in coords_K3]
 
-    else:
-        ln2 = ax2.scatter(xs, ys, c='purple', s=2, alpha=1)
-        set_axis_2d(ax2, length, width, "Top")
+    ax2.clear()
+    ln2 = ax2.scatter(xs, ys, zs, c='purple', s=2, alpha=1)
+    set_axis(ax2, length, width, height, "G=3")
 
-    ax3.clear()
-    ln3 = ax3.scatter(xs, zs, c='purple', s=2, alpha=1)
-    set_axis_2d(ax3, length, height, "Front")
+    update_title(ax2, "G=3", total_points - len(coords_K3))
+    # set_text_K3(tx_K3, t, total_points - len(coords_K3))
 
-    ax4.clear()
-    ln4 = ax4.scatter(ys, zs, c='purple', s=2, alpha=1)
-    set_axis_2d(ax4, width, height, "Side")
+    set_text_time(tx_time, t_K0)
 
-    ln = ax.scatter(xs, ys, zs, c='purple', s=2, alpha=1)
-    set_axis(ax, length, width, height)
-    set_text(tx, t, total_points - len(coords))
-
-    return [ln, ln1, ln2, ln3, ln4]
+    return [ln, ln1, ln2]
 
 
 def show_last_frame(events, t=30):
@@ -313,27 +344,30 @@ if __name__ == '__main__':
     for c in combinations:
         # exp_name = f"K{c[0]}/{shape}_D{c[1]}_R{c[2]}_T{c[3]}_S{c[4]}_P{c[5]}"
         # input_path = f"{exp_dir}/{exp_name}/timeline.json"
-        file_names = ["skateboard_K0_D1_R3000_T60_S66_PTrue"]
-        for name in file_names:
-            txt_file_path = f"/Users/shuqinzhu/Desktop/video/skateboard.txt"
-            gtl = read_coordinates(txt_file_path)
-            print(f"Number of Points: {len(gtl)}")
+        file_names = ["CMP_K0_S66_dragon", "CMP_K3_S66_dragon"]
+        txt_file_path = f"/Users/shuqinzhu/Desktop/video/dragon.txt"
+        gtl = read_coordinates(txt_file_path)
+        print(f"Number of Points: {len(gtl)}")
 
-            total_points = len(gtl)
+        total_points = len(gtl)
 
-            input_path = f"/Users/shuqinzhu/Desktop/video/{name}_timeline.json"
-            filtered_events, length, width, height = read_point_cloud(input_path)
-            fig, ax, ax1, ax2, ax3, ax4, tx = draw_figure()
-            points = dict()
-            ani = FuncAnimation(
-                fig, partial(update, ),
-                frames=fps * duration,
-                init_func=partial(init, ax, ax1, ax2, ax3, ax4))
-            #
-            # plt.show()
-            writer = FFMpegWriter(fps=fps)
-            # ani.save(f"{exp_dir}/{exp_name}.mp4", writer=writer)
-            ani.save(f"/Users/shuqinzhu/Desktop/video/{name}.mp4", writer=writer)
+        input_path_K0 = f"/Users/shuqinzhu/Desktop/video/{file_names[0]}.json"
+        filtered_events_K0, length, width, height = read_point_cloud(input_path_K0)
+
+        input_path_K3 = f"/Users/shuqinzhu/Desktop/video/{file_names[1]}.json"
+        filtered_events_K3, length, width, height = read_point_cloud(input_path_K3)
+        fig, ax, ax1, ax2, tx_K0, tx_K3, tx_time = draw_figure()
+        points_K0 = dict()
+        points_K3 = dict()
+        ani = FuncAnimation(
+            fig, partial(update, ),
+            frames=fps * duration,
+            init_func=partial(init, ax, ax1, ax2))
+        #
+        # plt.show()
+        writer = FFMpegWriter(fps=fps)
+        # ani.save(f"{exp_dir}/{exp_name}.mp4", writer=writer)
+        ani.save(f"/Users/shuqinzhu/Desktop/video/CMP_S66_dragon.mp4", writer=writer)
 
     # for folder in ["K0", "K3", "K5", "K10", "K20"]:
     #     for filename in ["priCANF", "prikmeans"]:

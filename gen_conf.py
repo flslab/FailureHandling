@@ -66,7 +66,7 @@ general_props = [
         "keys": ["K", "INPUT", "SHAPE"],
         "values": [
 
-            {"K": "0", "INPUT": "'skateboard_G3'", "SHAPE": "'skateboard'"},
+            # {"K": "0", "INPUT": "'skateboard_G3'", "SHAPE": "'skateboard'"},
             {"K": "3", "INPUT": "'skateboard_G3'", "SHAPE": "'skateboard'"},
             {"K": "5", "INPUT": "'skateboard_G5'", "SHAPE": "'skateboard'"},
             {"K": "10", "INPUT": "'skateboard_G10'", "SHAPE": "'skateboard'"},

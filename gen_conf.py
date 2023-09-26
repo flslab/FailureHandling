@@ -40,7 +40,7 @@ def_general_conf = {
     "STANDBY_TEST_CONFIG": "[('RADIUS', 10), ('DEPLOY_DIST', 10), ('FAILURE_TIMEOUT_GAP', 10), ('CHECK_TIME_RANGE', 60 * 0.5, 60 * 1)]",
     "DISPATCHER_ASSIGN_POLICY": "'ShortestDistance'",
     "PRIORITIZE_ILLUMINATING_FLS": "True",
-    "CEDED_POLICY": "0",
+    "CEDED_POLICY": "1",
     "NAME": "'exp'"
 
 }

@@ -56,29 +56,29 @@ general_props = [
     #         #  "CEDED_POLICY": "0", "DISPLAY_CELL_SIZE": "0.1619", "NAME": "'100_pri'"},
     #     ]
     # },
-    {
+    # {
         # "keys": ["DISPATCH_RATE"],
         # "values": ["3000"],
         # "values": ["10", "20", "100"]
         # "values": ["5", "10"]
-    },
+    # },
     {
         "keys": ["K", "INPUT", "SHAPE", "DISPATCH_RATE"],
         "values": [
 
-            {"K": "0", "INPUT": "'skateboard_G3'", "SHAPE": "'skateboard'", "DISPATCH_RATE": "30"},
+            # {"K": "0", "INPUT": "'skateboard_G3'", "SHAPE": "'skateboard'", "DISPATCH_RATE": "30"},
             {"K": "3", "INPUT": "'skateboard_G3'", "SHAPE": "'skateboard'", "DISPATCH_RATE": "30"},
             {"K": "5", "INPUT": "'skateboard_G5'", "SHAPE": "'skateboard'", "DISPATCH_RATE": "30"},
             {"K": "10", "INPUT": "'skateboard_G10'", "SHAPE": "'skateboard'", "DISPATCH_RATE": "30"},
             {"K": "20", "INPUT": "'skateboard_G20'", "SHAPE": "'skateboard'", "DISPATCH_RATE": "30"},
 
-            {"K": "0", "INPUT": "'skateboard_K3'", "SHAPE": "'skateboard'", "DISPATCH_RATE": "30"},
+            # {"K": "0", "INPUT": "'skateboard_K3'", "SHAPE": "'skateboard'", "DISPATCH_RATE": "30"},
             {"K": "3", "INPUT": "'skateboard_K3'", "SHAPE": "'skateboard'", "DISPATCH_RATE": "30"},
             {"K": "5", "INPUT": "'skateboard_K5'", "SHAPE": "'skateboard'", "DISPATCH_RATE": "30"},
             {"K": "10", "INPUT": "'skateboard_K10'", "SHAPE": "'skateboard'", "DISPATCH_RATE": "30"},
             {"K": "20", "INPUT": "'skateboard_K20'", "SHAPE": "'skateboard'", "DISPATCH_RATE": "30"},
 
-            {"K": "0", "INPUT": "'skateboard_K3'", "SHAPE": "'skateboard'", "DISPATCH_RATE": "3000"},
+            # {"K": "0", "INPUT": "'skateboard_K3'", "SHAPE": "'skateboard'", "DISPATCH_RATE": "3000"},
             {"K": "3", "INPUT": "'skateboard_K3'", "SHAPE": "'skateboard'", "DISPATCH_RATE": "3000"},
             {"K": "5", "INPUT": "'skateboard_K5'", "SHAPE": "'skateboard'", "DISPATCH_RATE": "3000"},
             {"K": "10", "INPUT": "'skateboard_K10'", "SHAPE": "'skateboard'", "DISPATCH_RATE": "3000"},
@@ -99,7 +99,7 @@ general_props = [
     },
     {
         "keys": ["DISPATCHERS"],
-        "values": ["3"],
+        "values": ["1"],
         # "values": ["1", "3"]
     },
     {
@@ -138,8 +138,8 @@ general_props = [
     # # {
     {
         "keys": ["DISPATCHER_ASSIGN_POLICY"],
-        "values": ["'ShortestDistance'", "'PoD'", "'RR'", "'Random'", "'HybridSDPoD'"]
-        # "values": ["'ShortestDistance'"]
+        # "values": ["'ShortestDistance'", "'PoD'", "'RR'", "'Random'", "'HybridSDPoD'"]
+        "values": ["'ShortestDistance'"]
     },
     # {
     #     "keys": ["SANITY_TEST", "DISPATCHERS"],

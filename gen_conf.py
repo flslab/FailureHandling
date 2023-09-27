@@ -64,15 +64,15 @@ general_props = [
     },
     {
         "keys": ["FAILURE_MODEL"],
-        "values": ["1"],
+        "values": ["0", "1"],
         # "values": ["10", "50", "100"]
         # "values": ["5", "10"]
     },
     {
         "keys": ["K", "INPUT"],
         "values": [
-            # {"K": "0", "INPUT": "'skateboard_K3'"},
-            {"K": "3", "INPUT": "'skateboard_K3'"},
+            {"K": "0", "INPUT": "'skateboard_K3'"},
+            # {"K": "3", "INPUT": "'skateboard_K3'"},
             # {"K": "5", "INPUT": "'skateboard_K5'"},
             # {"K": "10", "INPUT": "'skateboard_K10'"},
             # {"K": "15", "INPUT": "'skateboard_K15'"},
@@ -88,7 +88,7 @@ general_props = [
         "keys": ["FAILURE_TIMEOUT"],
         # "values": ["30", "60"]
         # "values": ["30"]
-        "values": ["1800", "3600"]
+        "values": ["30", "60", "120", "300"]
     },
     {
         "keys": ["MAX_SPEED", "ACCELERATION", "DECELERATION"],
@@ -103,7 +103,7 @@ general_props = [
     {
         "keys": ["DISPATCHER_ASSIGN_POLICY"],
         # "values": ["'ShortestDistance'", "'PoD'", "'RR'", "'Random'"]
-        "values": ["'PoD'"]
+        "values": ["'ShortestDistance'"]
     },
     # {
     #     "keys": ["SANITY_TEST", "DISPATCHERS"],

@@ -7,7 +7,7 @@
 #USERNAME="hamedamz"
 
 idx=1
-num_of_total_servers=13
-N=12
-HOSTNAME="dragon.nova-PG0.wisc.cloudlab.us"
+num_of_total_servers=11
+N=10
+HOSTNAME="hamedamz-169557.nova-PG0.clemson.cloudlab.us"
 USERNAME="hamedamz"

@@ -57,27 +57,38 @@ general_props = [
     #     ]
     # },
     {
-        "keys": ["DISPATCH_RATE"],
-        "values": ["10"],
+        # "keys": ["DISPATCH_RATE"],
+        # "values": ["3000"],
         # "values": ["10", "20", "100"]
         # "values": ["5", "10"]
     },
     {
-        "keys": ["K", "INPUT", "SHAPE"],
+        "keys": ["K", "INPUT", "SHAPE", "DISPATCH_RATE"],
         "values": [
 
-            # {"K": "0", "INPUT": "'skateboard_G3'", "SHAPE": "'skateboard'"},
-            # {"K": "3", "INPUT": "'skateboard_G3'", "SHAPE": "'skateboard'"},
-            # {"K": "5", "INPUT": "'skateboard_G5'", "SHAPE": "'skateboard'"},
-            # {"K": "10", "INPUT": "'skateboard_G10'", "SHAPE": "'skateboard'"},
-            # {"K": "15", "INPUT": "'skateboard_G15'", "SHAPE": "'skateboard'"},
-            # {"K": "20", "INPUT": "'skateboard_G20'", "SHAPE": "'skateboard'"},
-            {"K": "0", "INPUT": "'dragon_G3'", "SHAPE": "'dragon'"},
-            {"K": "3", "INPUT": "'dragon_K3'", "SHAPE": "'dragon'"},
-            {"K": "5", "INPUT": "'dragon_K5'", "SHAPE": "'dragon'"},
-            {"K": "10", "INPUT": "'dragon_K10'", "SHAPE": "'dragon'"},
-            {"K": "15", "INPUT": "'dragon_G15'", "SHAPE": "'dragon'"},
-            {"K": "20", "INPUT": "'dragon_K20'", "SHAPE": "'dragon'"},
+            {"K": "0", "INPUT": "'skateboard_G3'", "SHAPE": "'skateboard'", "DISPATCH_RATE": "30"},
+            {"K": "3", "INPUT": "'skateboard_G3'", "SHAPE": "'skateboard'", "DISPATCH_RATE": "30"},
+            {"K": "5", "INPUT": "'skateboard_G5'", "SHAPE": "'skateboard'", "DISPATCH_RATE": "30"},
+            {"K": "10", "INPUT": "'skateboard_G10'", "SHAPE": "'skateboard'", "DISPATCH_RATE": "30"},
+            {"K": "20", "INPUT": "'skateboard_G20'", "SHAPE": "'skateboard'", "DISPATCH_RATE": "30"},
+
+            {"K": "0", "INPUT": "'skateboard_K3'", "SHAPE": "'skateboard'", "DISPATCH_RATE": "30"},
+            {"K": "3", "INPUT": "'skateboard_K3'", "SHAPE": "'skateboard'", "DISPATCH_RATE": "30"},
+            {"K": "5", "INPUT": "'skateboard_K5'", "SHAPE": "'skateboard'", "DISPATCH_RATE": "30"},
+            {"K": "10", "INPUT": "'skateboard_K10'", "SHAPE": "'skateboard'", "DISPATCH_RATE": "30"},
+            {"K": "20", "INPUT": "'skateboard_K20'", "SHAPE": "'skateboard'", "DISPATCH_RATE": "30"},
+
+            {"K": "0", "INPUT": "'skateboard_K3'", "SHAPE": "'skateboard'", "DISPATCH_RATE": "3000"},
+            {"K": "3", "INPUT": "'skateboard_K3'", "SHAPE": "'skateboard'", "DISPATCH_RATE": "3000"},
+            {"K": "5", "INPUT": "'skateboard_K5'", "SHAPE": "'skateboard'", "DISPATCH_RATE": "3000"},
+            {"K": "10", "INPUT": "'skateboard_K10'", "SHAPE": "'skateboard'", "DISPATCH_RATE": "3000"},
+            {"K": "20", "INPUT": "'skateboard_K20'", "SHAPE": "'skateboard'", "DISPATCH_RATE": "3000"},
+            # {"K": "0", "INPUT": "'dragon_G3'", "SHAPE": "'dragon'"},
+            # {"K": "3", "INPUT": "'dragon_K3'", "SHAPE": "'dragon'"},
+            # {"K": "5", "INPUT": "'dragon_K5'", "SHAPE": "'dragon'"},
+            # {"K": "10", "INPUT": "'dragon_K10'", "SHAPE": "'dragon'"},
+            # {"K": "15", "INPUT": "'dragon_G15'", "SHAPE": "'dragon'"},
+            # {"K": "20", "INPUT": "'dragon_K20'", "SHAPE": "'dragon'"},
             # {"K": "0", "INPUT": "'chess_G3'", "SHAPE": "'chess'"},
             # {"K": "3", "INPUT": "'chess_G3'", "SHAPE": "'chess'"},
             # {"K": "5", "INPUT": "'chess_G5'", "SHAPE": "'chess'"},

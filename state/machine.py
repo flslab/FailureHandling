@@ -47,13 +47,6 @@ class StateMachine:
             self.broadcast(Message(MessageTypes.ASSIGN_STANDBY).to_swarm(self.context))
 
     def move(self, dur, dest, arrival_event, dist):
-        if self.move_thread is not None:
-            self.move_thread.cancel()
-            self.move_thread = None
-            self.is_mid_flight = True
-            self.update_movement()
-            logger.debug(f"PREEMPT MOVEMENT fid={self.context.fid}, mid_flight={self.is_mid_flight}")
-
         # print(f"MOVE dist={dist} fid={self.context.fid}")
         self.move_thread = threading.Timer(dur, self.change_move_state,
                                            (MessageTypes.MOVE, (dest, arrival_event, dist)))
@@ -113,8 +106,16 @@ class StateMachine:
             logger.debug(f"STANDBY ASSIGNED {self.context} standby={self.context.standby_id}")
 
     def replace_failed_fls(self, msg):
+
+        if self.move_thread is not None:
+            self.move_thread.cancel()
+            self.move_thread = None
+            self.is_mid_flight = True
+            self.update_movement()
+            logger.debug(f"PREEMPT MOVEMENT fid={self.context.fid}, mid_flight={self.is_mid_flight}")
+
         self.context.is_standby = False
-        v = msg.gtl - self.context.gtl
+        v = msg.gtl - self.context.el
         self.context.gtl = msg.gtl
 
         dist = np.linalg.norm(v)
@@ -240,4 +241,4 @@ class StateMachine:
         self.context.el = self.context.vm.get_location(time.time())
         # print(f"fid={self.context.fid} {np.linalg.norm(prev_pos - self.context.el)}")
         self.context.dist_traveled += np.linalg.norm(self.context.vm.x0 - self.context.el)
-        logger.debug(f"DISTANCE TRAVELED {np.linalg.norm(self.context.vm.x0 - self.context.el)} fid={self.context.fid}")
+        logger.debug(f"MOVE CHANGE Dist: {np.linalg.norm(self.context.vm.x0 - self.context.el)} fid={self.context.fid} NewPos: {self.context.el}")

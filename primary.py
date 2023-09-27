@@ -179,7 +179,6 @@ class PrimaryNode:
         if not os.path.exists(self.dir_figure):
             os.makedirs(self.dir_figure, exist_ok=True)
 
-
     def delete_previous_json_files(self, path):
         try:
             # Iterate over all files in the folder
@@ -303,7 +302,6 @@ class PrimaryNode:
             for group in self.groups:
                 centers.append([sum(coord) / len(coord) for coord in zip(*group)])
 
-
             for coord in single_members:
 
                 closest_index = 0
@@ -315,7 +313,6 @@ class PrimaryNode:
                         closest_distance = distance
                         closest_index = i
                 self.groups[closest_index] = np.append(self.groups[closest_index], coord, axis=0)
-
 
     def _assign_dispatcher(self, properties):
         return self.dispatch_policy.assign(dispatchers=self.dispatchers, **properties)
@@ -396,7 +393,7 @@ class PrimaryNode:
                     "radio_range": self.group_radio_range[group_id],
                     "is_standby": True, "group_id": group_id,
                 }
-                self._deploy_fls(fls, Config.SANITY_TEST == 2)
+                self._deploy_fls(fls, Config.SANITY_TEST == 4)
                 self.num_initial_standbys += 1
 
         logger.info(f"Assigned {self.pid} FLSs to dispatchers")
@@ -615,10 +612,14 @@ class PrimaryNode:
             elif Config.DEBUG:
                 total_point_num = len(self.groups) * len(self.groups[0])
             else:
+
                 # IMPORTANT !!!!!
-                # total_point_num = 760
-                total_point_num, group_num = read_point_info_from_cliques_xlsx(
-                    os.path.join(self.dir_experiment, f'{Config.INPUT}.xlsx'))
+                if Config.SHAPE == "dragon":
+                    total_point_num = 760
+                elif Config.SHAPE == "skateboard":
+                    total_point_num = 1727
+                # total_point_num, group_num = read_point_info_from_cliques_xlsx(
+                #     os.path.join(self.dir_experiment, f'{Config.INPUT}.xlsx'))
 
                 if Config.K == 0:
                     group_num = 0

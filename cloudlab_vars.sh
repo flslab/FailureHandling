@@ -9,5 +9,5 @@
 idx=1
 num_of_total_servers=11
 N=10
-HOSTNAME="hamedamz-169557.nova-PG0.clemson.cloudlab.us"
+HOSTNAME="hamedamz-169579.nova-PG0.clemson.cloudlab.us"
 USERNAME="hamedamz"

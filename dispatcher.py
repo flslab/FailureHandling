@@ -1,3 +1,4 @@
+import inspect
 import queue
 import threading
 import time
@@ -33,7 +34,8 @@ class Dispatcher(threading.Thread):
                 try:
                     send_message()
                 except BrokenPipeError:
-                    continue
+                    logger.INFO(f"BrokenPipeError: {inspect.signature(send_message).parameters}")
+                    exit(1)
 
             if fls_type == 0:
                 # if the message is for creating an illuminating FLS

@@ -10,6 +10,7 @@ class MessageTypes(Enum):
     ASSIGN_STANDBY = 11
     STANDBY_FAILED = 14
     MOVE = 12
+    ERROR = -1
 
     def get_cat(self):
         pass

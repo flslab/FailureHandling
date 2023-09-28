@@ -121,7 +121,6 @@ class PrimaryNode:
         self.group_radio_range = {}
         self.pid = 0
         self.dispatch_policy = eval(Config.DISPATCHER_ASSIGN_POLICY + "Policy()")
-        # self.dispatch_policy = PoDPolicy()
         self.num_handled_failures = 0
         self.num_initial_illum_flss = 0
         self.num_initial_standbys = 0
@@ -133,6 +132,7 @@ class PrimaryNode:
         self.init_num = 0
         self.single_indexes = []
         self.cpu_util = []
+        self.deployed_num = 0
 
     def _create_server_socket(self):
         # Experimental artifact to gather theoretical stats for scientific publications.
@@ -325,6 +325,12 @@ class PrimaryNode:
         return self.dispatch_policy.assign(dispatchers=self.dispatchers, **properties)
 
     def _deploy_fls(self, properties, deploy_at_destination=False, initial_fls=False):
+
+        # Check if the FLS deployed has a duplicated ID:
+        if properties["fid"] != (self.deployed_num + 1):
+            logger.INFO("<============= FLS Deployed with duplicated ID ==============>")
+            exit(1)
+
         nid = properties["fid"] % self.N
         dispatcher = self._assign_dispatcher(properties)
         if deploy_at_destination:
@@ -349,6 +355,7 @@ class PrimaryNode:
         dispatcher.q.put((fls_type, timestamp, lambda: self._send_msg_to_node(nid, properties)))
 
         dispatcher.num_dispatched += 1
+        self.deployed_num += 1
 
     def _dispatch_initial_formation(self):
         logger.info("Assigning FLSs to dispatchers")
@@ -414,15 +421,22 @@ class PrimaryNode:
 
         self.stop_thread.start()
 
-        # while time.time() - self.start_time <= Config.DURATION:
+        timeout_counter = 0
         while not self.stop_flag:
             self.cpu_util.append((time.time(), psutil.cpu_percent()))
             try:
                 msg, _ = self.failure_handler_socket.receive()
                 if not msg or msg is None:
+                    logger.INFO(f"Empty MESSAGE: {msg}")
                     continue
             except socket.timeout:
+                logger.INFO(f"Secondary Nodes No Response: {timeout_counter}")
+                timeout_counter += 1
                 continue
+
+            if msg.type == MessageTypes.ERROR:
+                logger.INFO(f"SECONDARY NODE ERROR: fid={msg.fid}")
+                exit(1)
 
             if msg.dest_fid == 0:
                 if msg.type == MessageTypes.REPLICA_REQUEST_HUB:

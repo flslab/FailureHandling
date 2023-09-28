@@ -69,9 +69,14 @@ class StateMachine:
         self.cancel_timers()
 
         stop_time = self.context.handler_stop_time - self.context.network_stop_time
-        write_json(self.context.fid, self.context.metrics.get_final_report_(stop_time, self.context.dist_traveled),
-                   self.metrics.results_directory,
-                   False)
+
+        try:
+            write_json(self.context.fid, self.context.metrics.get_final_report_(stop_time, self.context.dist_traveled),
+                       self.metrics.results_directory,
+                       False)
+        except Exception as e:
+            logger.INFO(f"FLS Log Failed: fid={self.context.fid} INFO:{e}")
+            self.send_to_server(Message(MessageTypes.ERROR))
 
     def fail(self, msg):
         if self.is_terminating:

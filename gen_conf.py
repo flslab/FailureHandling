@@ -46,90 +46,67 @@ def_general_conf = {
 }
 
 general_props = [
-    # {
-    #     "keys": ["SHAPE", "K", "INPUT", "DISPATCHERS", "DISPATCH_RATE", "FAILURE_TIMEOUT"],
-    #     "values": [
-    #
-    #         {"SHAPE": "'skateboard'", "K": "0", "INPUT": "'skateboard_G3'", "DISPATCHERS": "1", "DISPATCH_RATE": "3000",
-    #          "FAILURE_TIMEOUT": "300"},
-    #         {"SHAPE": "'skateboard'", "K": "3", "INPUT": "'skateboard_G3'", "DISPATCHERS": "1", "DISPATCH_RATE": "3000",
-    #          "FAILURE_TIMEOUT": "300"},
-    #         {"SHAPE": "'skateboard'", "K": "20", "INPUT": "'skateboard_G20'", "DISPATCHERS": "1", "DISPATCH_RATE": "3000",
-    #          "FAILURE_TIMEOUT": "300"},
-    #         {"SHAPE": "'skateboard'", "K": "0", "INPUT": "'skateboard_G3'", "DISPATCHERS": "1", "DISPATCH_RATE": "3000",
-    #          "FAILURE_TIMEOUT": "120"},
-    #         {"SHAPE": "'skateboard'", "K": "3", "INPUT": "'skateboard_G3'", "DISPATCHERS": "1", "DISPATCH_RATE": "3000",
-    #          "FAILURE_TIMEOUT": "120"},
-    #         {"SHAPE": "'skateboard'", "K": "20", "INPUT": "'skateboard_G20'", "DISPATCHERS": "1", "DISPATCH_RATE": "3000",
-    #          "FAILURE_TIMEOUT": "120"},
-    #
-    #         {"SHAPE": "'skateboard'", "K": "0", "INPUT": "'skateboard_G3'", "DISPATCHERS": "3", "DISPATCH_RATE": "1000",
-    #          "FAILURE_TIMEOUT": "60"},
-    #         {"SHAPE": "'skateboard'", "K": "3", "INPUT": "'skateboard_G3'", "DISPATCHERS": "3", "DISPATCH_RATE": "1000",
-    #          "FAILURE_TIMEOUT": "60"},
-    #         {"SHAPE": "'skateboard'", "K": "20", "INPUT": "'skateboard_G20'", "DISPATCHERS": "3", "DISPATCH_RATE": "1000",
-    #          "FAILURE_TIMEOUT": "60"},
-    #         {"SHAPE": "'skateboard'", "K": "0", "INPUT": "'skateboard_G3'", "DISPATCHERS": "4", "DISPATCH_RATE": "1000",
-    #          "FAILURE_TIMEOUT": "60"},
-    #         {"SHAPE": "'skateboard'", "K": "3", "INPUT": "'skateboard_G3'", "DISPATCHERS": "4", "DISPATCH_RATE": "1000",
-    #          "FAILURE_TIMEOUT": "60"},
-    #         {"SHAPE": "'skateboard'", "K": "20", "INPUT": "'skateboard_G20'", "DISPATCHERS": "4", "DISPATCH_RATE": "1000",
-    #          "FAILURE_TIMEOUT": "60"},
-    #     ]
-    # },
     {
-        "keys": ["DISPATCH_RATE"],
-        "values": ["20"],
-        # "values": ["10", "20", "100"]
-        # "values": ["5", "10"]
-    },
-    {
-        "keys": ["K", "INPUT", "SHAPE"],
+        "keys": ["SHAPE", "K", "INPUT", "DISPATCHERS", "DISPATCH_RATE", "FAILURE_TIMEOUT"],
         "values": [
 
-            {"K": "0", "INPUT": "'skateboard_G3'", "SHAPE": "'skateboard'"},
-            {"K": "3", "INPUT": "'skateboard_G3'", "SHAPE": "'skateboard'"},
-            {"K": "5", "INPUT": "'skateboard_G5'", "SHAPE": "'skateboard'"},
-            {"K": "10", "INPUT": "'skateboard_G10'", "SHAPE": "'skateboard'"},
-            {"K": "15", "INPUT": "'skateboard_G15'", "SHAPE": "'skateboard'"},
-            {"K": "20", "INPUT": "'skateboard_G20'", "SHAPE": "'skateboard'"},
+            {"SHAPE": "'skateboard'", "K": "0", "INPUT": "'skateboard_G3'", "DISPATCHERS": "1", "DISPATCH_RATE": "3000",
+             "FAILURE_TIMEOUT": "300"},
+            {"SHAPE": "'skateboard'", "K": "3", "INPUT": "'skateboard_G3'", "DISPATCHERS": "1", "DISPATCH_RATE": "3000",
+             "FAILURE_TIMEOUT": "300"},
+            {"SHAPE": "'skateboard'", "K": "20", "INPUT": "'skateboard_G20'", "DISPATCHERS": "1", "DISPATCH_RATE": "3000",
+             "FAILURE_TIMEOUT": "300"},
+            {"SHAPE": "'skateboard'", "K": "0", "INPUT": "'skateboard_G3'", "DISPATCHERS": "1", "DISPATCH_RATE": "3000",
+             "FAILURE_TIMEOUT": "120"},
+            {"SHAPE": "'skateboard'", "K": "3", "INPUT": "'skateboard_G3'", "DISPATCHERS": "1", "DISPATCH_RATE": "3000",
+             "FAILURE_TIMEOUT": "120"},
+            {"SHAPE": "'skateboard'", "K": "20", "INPUT": "'skateboard_G20'", "DISPATCHERS": "1", "DISPATCH_RATE": "3000",
+             "FAILURE_TIMEOUT": "120"},
 
-            # {"K": "0", "INPUT": "'skateboard_K3'", "SHAPE": "'skateboard'"},
-            # {"K": "3", "INPUT": "'skateboard_K3'", "SHAPE": "'skateboard'"},
-            # {"K": "5", "INPUT": "'skateboard_K5'", "SHAPE": "'skateboard'"},
-            # {"K": "10", "INPUT": "'skateboard_K10'", "SHAPE": "'skateboard'"},
-            # {"K": "20", "INPUT": "'skateboard_K20'", "SHAPE": "'skateboard'"},
-
-            # {"K": "0", "INPUT": "'skateboard_K3'", "SHAPE": "'skateboard'"},
-            # {"K": "3", "INPUT": "'skateboard_K3'", "SHAPE": "'skateboard'"},
-            # {"K": "5", "INPUT": "'skateboard_K5'", "SHAPE": "'skateboard'"},
-            # {"K": "10", "INPUT": "'skateboard_K10'", "SHAPE": "'skateboard'"},
-            # {"K": "20", "INPUT": "'skateboard_K20'", "SHAPE": "'skateboard'"},
-            # {"K": "0", "INPUT": "'dragon_G3'", "SHAPE": "'dragon'"},
-            # {"K": "3", "INPUT": "'dragon_K3'", "SHAPE": "'dragon'"},
-            # {"K": "5", "INPUT": "'dragon_K5'", "SHAPE": "'dragon'"},
-            # {"K": "10", "INPUT": "'dragon_K10'", "SHAPE": "'dragon'"},
-            # {"K": "15", "INPUT": "'dragon_G15'", "SHAPE": "'dragon'"},
-            # {"K": "20", "INPUT": "'dragon_K20'", "SHAPE": "'dragon'"},
-            # {"K": "0", "INPUT": "'chess_G3'", "SHAPE": "'chess'"},
-            # {"K": "3", "INPUT": "'chess_G3'", "SHAPE": "'chess'"},
-            # {"K": "5", "INPUT": "'chess_G5'", "SHAPE": "'chess'"},
-            # {"K": "10", "INPUT": "'chess_G10'", "SHAPE": "'chess'"},
-            # {"K": "15", "INPUT": "'chess_G15'", "SHAPE": "'chess'"},
-            # {"K": "20", "INPUT": "'chess_G20'", "SHAPE": "'chess'"}
+            {"SHAPE": "'skateboard'", "K": "0", "INPUT": "'skateboard_G3'", "DISPATCHERS": "3", "DISPATCH_RATE": "1000",
+             "FAILURE_TIMEOUT": "60"},
+            {"SHAPE": "'skateboard'", "K": "3", "INPUT": "'skateboard_G3'", "DISPATCHERS": "3", "DISPATCH_RATE": "1000",
+             "FAILURE_TIMEOUT": "60"},
+            {"SHAPE": "'skateboard'", "K": "20", "INPUT": "'skateboard_G20'", "DISPATCHERS": "3", "DISPATCH_RATE": "1000",
+             "FAILURE_TIMEOUT": "60"},
+            {"SHAPE": "'skateboard'", "K": "0", "INPUT": "'skateboard_G3'", "DISPATCHERS": "4", "DISPATCH_RATE": "1000",
+             "FAILURE_TIMEOUT": "60"},
+            {"SHAPE": "'skateboard'", "K": "3", "INPUT": "'skateboard_G3'", "DISPATCHERS": "4", "DISPATCH_RATE": "1000",
+             "FAILURE_TIMEOUT": "60"},
+            {"SHAPE": "'skateboard'", "K": "20", "INPUT": "'skateboard_G20'", "DISPATCHERS": "4", "DISPATCH_RATE": "1000",
+             "FAILURE_TIMEOUT": "60"},
         ]
     },
-    {
-        "keys": ["DISPATCHERS"],
-        "values": ["3"],
-        # "values": ["1", "3"]
-    },
-    {
-        "keys": ["FAILURE_TIMEOUT"],
-        # "values": ["30", "60", "120", "300"]
-        "values": ["60"]
-        # "values": ["1", "3", "6", "30", "60", "120", "600"]
-    },
+    # {
+    #     "keys": ["DISPATCH_RATE"],
+    #     "values": ["20"],
+    #     # "values": ["10", "20", "100"]
+    #     # "values": ["5", "10"]
+    # },
+    # {
+    #     "keys": ["K", "INPUT", "SHAPE"],
+    #     "values": [
+    #
+    #         {"K": "0", "INPUT": "'skateboard_G3'", "SHAPE": "'skateboard'"},
+    #         {"K": "3", "INPUT": "'skateboard_G3'", "SHAPE": "'skateboard'"},
+    #         {"K": "5", "INPUT": "'skateboard_G5'", "SHAPE": "'skateboard'"},
+    #         {"K": "10", "INPUT": "'skateboard_G10'", "SHAPE": "'skateboard'"},
+    #         {"K": "15", "INPUT": "'skateboard_G15'", "SHAPE": "'skateboard'"},
+    #         {"K": "20", "INPUT": "'skateboard_G20'", "SHAPE": "'skateboard'"},
+    #
+    #     ]
+    # },
+    # {
+    #     "keys": ["DISPATCHERS"],
+    #     "values": ["3"],
+    #     # "values": ["1", "3"]
+    # },
+    # {
+    #     "keys": ["FAILURE_TIMEOUT"],
+    #     # "values": ["30", "60", "120", "300"]
+    #     "values": ["60"]
+    #     # "values": ["1", "3", "6", "30", "60", "120", "600"]
+    # },
     {
         "keys": ["MAX_SPEED", "ACCELERATION", "DECELERATION"],
         "values": [
@@ -160,8 +137,8 @@ general_props = [
     # # {
     {
         "keys": ["DISPATCHER_ASSIGN_POLICY"],
-        "values": ["'ShortestDistance'", "'PoD'", "'RR'", "'Random'", "'HybridSDPoD'"]
-        # "values": ["'ShortestDistance'"]
+        # "values": ["'ShortestDistance'", "'PoD'", "'RR'", "'Random'", "'HybridSDPoD'"]
+        "values": ["'ShortestDistance'"]
     },
     # {
     #     "keys": ["SANITY_TEST", "DISPATCHERS"],

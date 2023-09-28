@@ -67,10 +67,10 @@ general_props = [
         "values": [
 
             # {"K": "0", "INPUT": "'skateboard_G3'", "SHAPE": "'skateboard'", "DISPATCH_RATE": "30"},
-            {"K": "3", "INPUT": "'skateboard_G3'", "SHAPE": "'skateboard'", "DISPATCH_RATE": "30"},
-            {"K": "5", "INPUT": "'skateboard_G5'", "SHAPE": "'skateboard'", "DISPATCH_RATE": "30"},
-            {"K": "10", "INPUT": "'skateboard_G10'", "SHAPE": "'skateboard'", "DISPATCH_RATE": "30"},
-            {"K": "20", "INPUT": "'skateboard_G20'", "SHAPE": "'skateboard'", "DISPATCH_RATE": "30"},
+            # {"K": "3", "INPUT": "'skateboard_G3'", "SHAPE": "'skateboard'", "DISPATCH_RATE": "30"},
+            # {"K": "5", "INPUT": "'skateboard_G5'", "SHAPE": "'skateboard'", "DISPATCH_RATE": "30"},
+            # {"K": "10", "INPUT": "'skateboard_G10'", "SHAPE": "'skateboard'", "DISPATCH_RATE": "30"},
+            # {"K": "20", "INPUT": "'skateboard_G20'", "SHAPE": "'skateboard'", "DISPATCH_RATE": "30"},
 
             # {"K": "0", "INPUT": "'skateboard_K3'", "SHAPE": "'skateboard'", "DISPATCH_RATE": "30"},
             {"K": "3", "INPUT": "'skateboard_K3'", "SHAPE": "'skateboard'", "DISPATCH_RATE": "30"},

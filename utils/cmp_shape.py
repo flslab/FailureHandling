@@ -386,7 +386,7 @@ def time_centroid_to_point_plot(data_sets, group_sizes, speed_models, name):
     ax.set_title('Avg Time To Travel from Group Centroid to Points in Group', loc='left', zorder=4)
     # plt.ylabel('Avg Time To Travel from Group Centroid to Points in Group')
     # plt.title('Avg Time To Travel by Group Size')
-    plt.legend(bbox_to_anchor=(0.9, 0.9),loc='upper right')
+    plt.legend(bbox_to_anchor=(1, 0.89),loc='upper right')
     plt.xticks(group_sizes)
 
     # Display the plot

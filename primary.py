@@ -204,8 +204,15 @@ class PrimaryNode:
             else:
                 self.dispatchers_coords = np.array([[l / 2, w / 2, 0]])
         elif Config.DISPATCHERS == 3:
-            self.dispatchers_coords = np.array([[l / 2, w / 2, 0], [l, w, 0], [0, 0, 0]])
-            # self.dispatchers_coords = np.array([[l / 2, w / 2, 0], [l / 2, w / 2, 0],[l / 2, w / 2, 0]])
+            if Config.SHAPE == "skateboard":
+                self.dispatchers_coords = np.array([[8.5, 22, 0], [19, 50.6, 0], [29, 76, 0]])
+            else:
+                self.dispatchers_coords = np.array([[l / 2, w / 2, 0], [l, w, 0], [0, 0, 0]])
+        elif Config.DISPATCHERS == 4:
+            if Config.SHAPE == "skateboard":
+                self.dispatchers_coords = np.array([[8.5, 22, 0], [8.5, 76, 0], [29, 22, 0], [29, 76, 0]])
+            else:
+                self.dispatchers_coords = np.array([[l / 4, w / 4, 0], [l * 3 / 4, w / 4, 0], [l / 4, w * 3 / 4, 0], [l * 3 / 4, w * 3 / 4, 0]])
         elif Config.DISPATCHERS == 5:
             self.dispatchers_coords = np.array([[l / 2, w / 2, 0], [l, 0, 0], [0, w, 0], [l, w, 0], [0, 0, 0]])
 

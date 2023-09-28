@@ -554,7 +554,15 @@ def get_dispatcher_coords(center=None):
         else:
             dispatcher_coords = [[l / 2, w / 2, 0]]
     elif Config.DISPATCHERS == 3:
-        dispatcher_coords = [[l / 2, w / 2, 0], [l, w, 0], [0, 0, 0]]
+        if Config.SHAPE == "skateboard":
+            dispatcher_coords = [[8.5, 22, 0], [19, 50.6, 0], [29, 76, 0]]
+        else:
+            dispatcher_coords = [[l / 2, w / 2, 0], [l, w, 0], [0, 0, 0]]
+    elif Config.DISPATCHERS == 4:
+        if Config.SHAPE == "skateboard":
+            dispatcher_coords = [[8.5, 22, 0], [8.5, 76, 0], [29, 22, 0], [29, 76, 0]]
+        else:
+            dispatcher_coords = [[l / 4, w / 4, 0], [l * 3 / 4, w / 4, 0], [l / 4, w * 3 / 4, 0], [l * 3 / 4, w * 3 / 4, 0]]
 
     elif Config.DISPATCHERS == 5:
         dispatcher_coords = [[l / 2, w / 2, 0], [l, 0, 0], [0, w, 0], [l, w, 0], [0, 0, 0]]

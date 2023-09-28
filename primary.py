@@ -693,59 +693,59 @@ class PrimaryNode:
         self.stop_thread = threading.Timer(Config.DURATION, self.stop_experiment)
 
 
-def rewrite_reports():
-    for c in range(0, 48):
-        eval('exec(f"from experiments import config{c}")')
-
-        CONFIG = eval(f"config{c}").Config
-        Config = CONFIG
-
-        if len(CONFIG.FILE_NAME_KEYS):
-            result_config = join_config_properties(CONFIG, CONFIG.FILE_NAME_KEYS)
-        else:
-            result_config = name
-        result_name = f"{Config.SHAPE}_{result_config}"
-        print(result_name)
-
-        if len(CONFIG.DIR_KEYS):
-            group_config = join_config_properties(CONFIG, CONFIG.DIR_KEYS)
-        else:
-            group_config = ""
-
-        dir_experiment = os.path.join(Config.RESULTS_PATH, Config.SHAPE, group_config)
-        dir_meta = os.path.join(dir_experiment, result_name)
-
-        utils.write_configs(dir_meta, 0)
-        utils.create_csv_from_timeline(dir_meta)
-
-        utils.combine_csvs(dir_meta, dir_experiment, "reli_" + result_name)
-
-        folder_name = f"{CONFIG.DIR_KEYS[0]}{CONFIG.K}"
-
-        target_file_path = '~/Desktop/report/' + folder_name
-
-        if Config.RESET_AFTER_INITIAL_DEPLOY:
-            if Config.SANITY_TEST == 1:
-                total_point_num = Config.SANITY_TEST_CONFIG[0][1]
-                group_num = 0
-
-            elif Config.SANITY_TEST == 2:
-                total_point_num = 0
-                group_num = 0
-
-            elif Config.SANITY_TEST == 3:
-                total_point_num = Config.K
-                group_num = 1
-
-            else:
-                total_point_num, group_num = read_point_info_from_cliques_xlsx(
-                    os.path.join(dir_experiment, f'{CONFIG.INPUT}.xlsx'))
-
-            time_range = get_time_range(os.path.join(dir_meta, 'charts.json'), total_point_num + group_num)
-        else:
-            time_range = [0, Config.DURATION + 1]
-
-        write_final_report(dir_meta, target_file_path, result_name, group_num, time_range)
+# def rewrite_reports():
+#     for c in range(0, 48):
+#         eval('exec(f"from experiments import config{c}")')
+#
+#         CONFIG = eval(f"config{c}").Config
+#         Config = CONFIG
+#
+#         if len(CONFIG.FILE_NAME_KEYS):
+#             result_config = join_config_properties(CONFIG, CONFIG.FILE_NAME_KEYS)
+#         else:
+#             result_config = name
+#         result_name = f"{Config.SHAPE}_{result_config}"
+#         print(result_name)
+#
+#         if len(CONFIG.DIR_KEYS):
+#             group_config = join_config_properties(CONFIG, CONFIG.DIR_KEYS)
+#         else:
+#             group_config = ""
+#
+#         dir_experiment = os.path.join(Config.RESULTS_PATH, Config.SHAPE, group_config)
+#         dir_meta = os.path.join(dir_experiment, result_name)
+#
+#         utils.write_configs(dir_meta, 0)
+#         utils.create_csv_from_timeline(dir_meta)
+#
+#         utils.combine_csvs(dir_meta, dir_experiment, "reli_" + result_name)
+#
+#         folder_name = f"{CONFIG.DIR_KEYS[0]}{CONFIG.K}"
+#
+#         target_file_path = '~/Desktop/report/' + folder_name
+#
+#         if Config.RESET_AFTER_INITIAL_DEPLOY:
+#             if Config.SANITY_TEST == 1:
+#                 total_point_num = Config.SANITY_TEST_CONFIG[0][1]
+#                 group_num = 0
+#
+#             elif Config.SANITY_TEST == 2:
+#                 total_point_num = 0
+#                 group_num = 0
+#
+#             elif Config.SANITY_TEST == 3:
+#                 total_point_num = Config.K
+#                 group_num = 1
+#
+#             else:
+#                 total_point_num, group_num = read_point_info_from_cliques_xlsx(
+#                     os.path.join(dir_experiment, f'{CONFIG.INPUT}.xlsx'))
+#
+#             time_range = get_time_range(os.path.join(dir_meta, 'charts.json'), total_point_num + group_num)
+#         else:
+#             time_range = [0, Config.DURATION + 1]
+#
+#         write_final_report(dir_meta, target_file_path, result_name, group_num, time_range)
 
 
 if __name__ == '__main__':

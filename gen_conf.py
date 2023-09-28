@@ -71,8 +71,8 @@ general_props = [
     {
         "keys": ["K", "INPUT"],
         "values": [
-            {"K": "0", "INPUT": "'skateboard_K3'"},
-            # {"K": "3", "INPUT": "'skateboard_K3'"},
+            # {"K": "0", "INPUT": "'skateboard_K3'"},
+            {"K": "3", "INPUT": "'skateboard_K3'"},
             # {"K": "5", "INPUT": "'skateboard_K5'"},
             # {"K": "10", "INPUT": "'skateboard_K10'"},
             # {"K": "15", "INPUT": "'skateboard_K15'"},
@@ -88,7 +88,7 @@ general_props = [
         "keys": ["FAILURE_TIMEOUT"],
         # "values": ["30", "60"]
         # "values": ["30"]
-        "values": ["30", "60", "120", "300"]
+        "values": ["30", "60", "120", "300", "600"]
     },
     {
         "keys": ["MAX_SPEED", "ACCELERATION", "DECELERATION"],

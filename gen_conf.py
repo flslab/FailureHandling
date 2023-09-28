@@ -23,8 +23,8 @@ def_general_conf = {
     # "RESULTS_PATH": "'/Users/shuqinzhu/Desktop/experiments_aug29.nosync'",
     "DEBUG": "False",
     "FILE_NAME_KEYS": "[('DISPATCHERS', 'D'), ('DISPATCH_RATE', 'R'), ('FAILURE_TIMEOUT', 'T'), ('MAX_SPEED', 'S'),"
-    # "('PRIORITIZE_ILLUMINATING_FLS', 'P')]",
-    "('NAME', 'N')]",
+    "('PRIORITIZE_ILLUMINATING_FLS', 'P')]",
+    # "('NAME', 'N')]",
   # "('DISPATCHER_ASSIGN_POLICY', 'P')]",
     # "]",
     "DIR_KEYS": "['K']",
@@ -79,7 +79,7 @@ general_props = [
     # },
     {
         "keys": ["DISPATCH_RATE"],
-        "values": ["30"],
+        "values": ["1000"],
         # "values": ["10", "20", "100"]
         # "values": ["5", "10"]
     },
@@ -87,18 +87,18 @@ general_props = [
         "keys": ["K", "INPUT", "SHAPE", "NAME"],
         "values": [
 
-            # {"K": "0", "INPUT": "'skateboard_G3'", "SHAPE": "'skateboard'", "NAME": "'kmeans'"},
-            {"K": "3", "INPUT": "'skateboard_G3'", "SHAPE": "'skateboard'", "NAME": "'kmeans'"},
-            {"K": "5", "INPUT": "'skateboard_G5'", "SHAPE": "'skateboard'", "NAME": "'kmeans'"},
-            {"K": "10", "INPUT": "'skateboard_G10'", "SHAPE": "'skateboard'", "NAME": "'kmeans'"},
+            {"K": "0", "INPUT": "'skateboard_G3'", "SHAPE": "'skateboard'", "NAME": "'kmeans'"},
+            # {"K": "3", "INPUT": "'skateboard_G3'", "SHAPE": "'skateboard'", "NAME": "'kmeans'"},
+            # {"K": "5", "INPUT": "'skateboard_G5'", "SHAPE": "'skateboard'", "NAME": "'kmeans'"},
+            # {"K": "10", "INPUT": "'skateboard_G10'", "SHAPE": "'skateboard'", "NAME": "'kmeans'"},
             # {"K": "15", "INPUT": "'skateboard_G15'", "SHAPE": "'skateboard'", "NAME": "'kmeans'"},
-            {"K": "20", "INPUT": "'skateboard_G20'", "SHAPE": "'skateboard'", "NAME": "'kmeans'"},
+            # {"K": "20", "INPUT": "'skateboard_G20'", "SHAPE": "'skateboard'", "NAME": "'kmeans'"},
 
         ]
     },
     {
         "keys": ["DISPATCHERS"],
-        "values": ["1"],
+        "values": ["3"],
         # "values": ["1", "3"]
     },
     {

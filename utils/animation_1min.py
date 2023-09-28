@@ -117,7 +117,7 @@ def init(ax, ax1, ax2):
     # return line1,
 
 
-def update(frame):
+def update(frame, titles):
     t_K0 = start_time + frame * frame_rate
     t_K3 = start_time + frame * frame_rate
     while len(filtered_events_K0):
@@ -143,9 +143,9 @@ def update(frame):
 
     ax.clear()
     ln = ax.scatter(xs, ys, zs, c='purple', s=2, alpha=1)
-    set_axis(ax, length, width, height, "No Standby")
+    set_axis(ax, length, width, height)
 
-    update_title(ax, "No Standby", total_points - len(coords_K0))
+    update_title(ax, titles[0], total_points - len(coords_K0))
     # set_text_K0(tx_K0, t, total_points - len(coords_K0))
     ax1.clear()
 
@@ -179,9 +179,8 @@ def update(frame):
 
     ax2.clear()
     ln2 = ax2.scatter(xs, ys, zs, c='purple', s=2, alpha=1)
-    set_axis(ax2, length, width, height, "G=3")
-
-    update_title(ax2, "G=3", total_points - len(coords_K3))
+    set_axis(ax2, length, width, height)
+    update_title(ax2, titles[1], total_points - len(coords_K3))
     # set_text_K3(tx_K3, t, total_points - len(coords_K3))
 
     set_text_time(tx_time, t_K0)
@@ -278,117 +277,34 @@ def read_coordinates(file_path):
 
 
 if __name__ == '__main__':
-    # mpl.use('macosx')
-    #
-    # filtered_events, length, width, height = read_point_cloud(input_path)
-    # fig, ax, tx = draw_figure()
-    # points = dict()
-    # ani = FuncAnimation(
-    #     fig, partial(update,),
-    #     frames=30 * duration,
-    #     init_func=partial(init, ax))
-    # #
-    # # plt.show()
-    # writer = FFMpegWriter(fps=fps)
-    # ani.save(f"results/{output_name}.mp4", writer=writer)
-    # exit()
-    configs = [
-        {
-            "keys": ["K"],
-            "values": ["0"]
-        },
-        {
-            "keys": ["D"],
-            "values": ["1"]
-        },
-        {
-            "keys": ["R"],
-            "values": ["3000"]
-        },
-        {
-            "keys": ["T"],
-            "values": ["60"]
-        },
-        {
-            "keys": ["S"],
-            "values": ["6"]
-        },
-        {
-            "keys": ["P"],
-            "values": ["True"]
-        }
-    ]
+    shape = "skateboard"
 
-    props_values = [p["values"] for p in configs]
-    combinations = list(itertools.product(*props_values))
-    # print(combinations)
+    file_name_list = [["skateboard_G0_R3000_T60", "skateboard_G0_R3000_T300"]]
 
-    shape = 'skateboard'
-    exp_dir = f"/Users/shuqinzhu/Desktop/{shape}"
+    titles_list = [["Time To Fail: 60", "Time To Fail: 300"]]
+    video_name_list = ["skateboard_G0_R3000_T{60,300}"]
 
-    # for c in combinations:
-    #     exp_name = f"K{c[0]}/{shape}_D{c[1]}_R{c[2]}_T{c[3]}_S{c[4]}_P{c[5]}"
-    #     print(exp_name)
-    #     input_path = f"{exp_dir}/{exp_name}/timeline.json"
-    #     filtered_events, length, width, height = read_point_cloud(input_path)
-    #     fig, ax, _ = draw_figure()
-    #     init(ax)
-    #     xs, ys, zs = show_last_frame(filtered_events, t=1799)
-    #     ax.scatter(xs, ys, zs, c='blue', s=2, alpha=1)
-    #     set_axis(ax, length, width, height)
-    #     plt.show()
-    #     # plt.savefig(f"{exp_dir}/{exp_name}.png")
-    #     plt.close()
-    #     # break
-    # exit()
-    for c in combinations:
-        # exp_name = f"K{c[0]}/{shape}_D{c[1]}_R{c[2]}_T{c[3]}_S{c[4]}_P{c[5]}"
-        # input_path = f"{exp_dir}/{exp_name}/timeline.json"
-        file_names = ["CMP_K0_S66_dragon", "CMP_K3_S66_dragon"]
-        txt_file_path = f"/Users/shuqinzhu/Desktop/video/dragon.txt"
+    for i, file_names in enumerate(file_name_list):
+        txt_file_path = f"/Users/shuqinzhu/Desktop/video/pointclouds/{shape}.txt"
         gtl = read_coordinates(txt_file_path)
         print(f"Number of Points: {len(gtl)}")
 
         total_points = len(gtl)
 
-        input_path_K0 = f"/Users/shuqinzhu/Desktop/video/{file_names[0]}.json"
+        input_path_K0 = f"/Users/shuqinzhu/Desktop/video/timelines/{file_names[0]}.json"
         filtered_events_K0, length, width, height = read_point_cloud(input_path_K0)
 
-        input_path_K3 = f"/Users/shuqinzhu/Desktop/video/{file_names[1]}.json"
+        input_path_K3 = f"/Users/shuqinzhu/Desktop/video/timelines/{file_names[1]}.json"
         filtered_events_K3, length, width, height = read_point_cloud(input_path_K3)
         fig, ax, ax1, ax2, tx_K0, tx_K3, tx_time = draw_figure()
         points_K0 = dict()
         points_K3 = dict()
         ani = FuncAnimation(
-            fig, partial(update, ),
+            fig, partial(update, titles=titles_list[i]),
             frames=fps * duration,
             init_func=partial(init, ax, ax1, ax2))
         #
         # plt.show()
         writer = FFMpegWriter(fps=fps)
         # ani.save(f"{exp_dir}/{exp_name}.mp4", writer=writer)
-        ani.save(f"/Users/shuqinzhu/Desktop/video/CMP_S66_dragon.mp4", writer=writer)
-
-    # for folder in ["K0", "K3", "K5", "K10", "K20"]:
-    #     for filename in ["priCANF", "prikmeans"]:
-    #         input_path = f"/Users/shuqinzhu/Desktop/raw_results/skateboard/{folder}/skateboard_D1_R30_T60_S6_N{filename}/timeline.json"
-    #         # input_path = f"/Users/shuqinzhu/Desktop/timeline.json"
-    #         filtered_events, length, width, height = read_point_cloud(input_path)
-    #         fig, ax, _ = draw_figure()
-    #         init(ax)
-    #         xs, ys, zs = show_last_frame(filtered_events, t=800)
-    #         ax.scatter(xs, ys, zs, c='blue', s=2, alpha=1)
-    #         set_axis(ax, length, width, height)
-    #         # ax.view_init(elev=90, azim=-90)
-    #         # plt.show()
-    #         # plt.savefig(f"/Users/shuqinzhu/Desktop/K3_toy_inf.png")
-    #         # image_path = "/Users/shuqinzhu/Desktop/K3_toy_inf.png"
-    #         # output_path = "/Users/shuqinzhu/Desktop/K3_toy_inf.png"
-    #         # trim_values = [375, 200, 300, 120]  # Replace with the number of pixels to trim from each side (left, top, right, bottom)
-    #         # trim_png(image_path, output_path, trim_values)
-    #         #
-    #         plt.savefig(f"/Users/shuqinzhu/Desktop/exp_figure/skateboard/{folder}_{filename}.png")
-    #         image_path = f"/Users/shuqinzhu/Desktop/exp_figure/skateboard/{folder}_{filename}.png"  # Replace with the path to your PNG file
-    #         output_path = f"/Users/shuqinzhu/Desktop/exp_figure/skateboard/{folder}_{filename}.png"  # Replace with the path to save the trimmed image
-    #         trim_values = [375, 221, 335, 159]  # Replace with the number of pixels to trim from each side (left, top, right, bottom)
-    #         trim_png(image_path, output_path, trim_values)
+        ani.save(f"/Users/shuqinzhu/Desktop/video/videos/{video_name_list[i]}.mp4", writer=writer)

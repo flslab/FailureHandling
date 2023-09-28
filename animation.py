@@ -315,13 +315,13 @@ if __name__ == '__main__':
         # input_path = f"{exp_dir}/{exp_name}/timeline.json"
         file_names = ["skateboard_K3_D1_R3000_T60_S66_PTrue"]
         for name in file_names:
-            txt_file_path = f"/Users/shuqinzhu/Desktop/video/skateboard.txt"
+            txt_file_path = f"/Users/shuqinzhu/Desktop/video/pointclouds/skateboard.txt"
             gtl = read_coordinates(txt_file_path)
             print(f"Number of Points: {len(gtl)}")
 
             total_points = len(gtl)
 
-            input_path = f"/Users/shuqinzhu/Desktop/video/{name}_timeline.json"
+            input_path = f"/Users/shuqinzhu/Desktop/video/timelines/{name}_timeline.json"
             filtered_events, length, width, height = read_point_cloud(input_path)
             fig, ax, ax1, ax2, ax3, ax4, tx = draw_figure()
             points = dict()
@@ -333,7 +333,7 @@ if __name__ == '__main__':
             # plt.show()
             writer = FFMpegWriter(fps=fps)
             # ani.save(f"{exp_dir}/{exp_name}.mp4", writer=writer)
-            ani.save(f"/Users/shuqinzhu/Desktop/video/{name}.mp4", writer=writer)
+            ani.save(f"/Users/shuqinzhu/Desktop/video/videos/{name}.mp4", writer=writer)
 
     # for folder in ["K0", "K3", "K5", "K10", "K20"]:
     #     for filename in ["priCANF", "prikmeans"]:

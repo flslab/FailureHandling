@@ -88,7 +88,7 @@ general_props = [
         "keys": ["FAILURE_TIMEOUT"],
         # "values": ["30", "60"]
         # "values": ["30"]
-        "values": ["30", "60", "120", "300", "600"]
+        "values": ["30", "60", "120", "300", "600", "1800", "3600"]
     },
     {
         "keys": ["MAX_SPEED", "ACCELERATION", "DECELERATION"],

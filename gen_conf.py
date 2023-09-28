@@ -24,8 +24,8 @@ def_general_conf = {
     "DEBUG": "False",
     "FILE_NAME_KEYS": "[('DISPATCHERS', 'D'), ('DISPATCH_RATE', 'R'), ('FAILURE_TIMEOUT', 'T'), ('MAX_SPEED', 'S'),"
     # "('PRIORITIZE_ILLUMINATING_FLS', 'P')]",
-    # "('NAME', 'N')]",
-                      "('DISPATCHER_ASSIGN_POLICY', 'P')]",
+    "('NAME', 'N')]",
+  # "('DISPATCHER_ASSIGN_POLICY', 'P')]",
     # "]",
     "DIR_KEYS": "['K']",
     "SERVER_TIMEOUT": "120",
@@ -41,7 +41,7 @@ def_general_conf = {
     "DISPATCHER_ASSIGN_POLICY": "'ShortestDistance'",
     "PRIORITIZE_ILLUMINATING_FLS": "True",
     "CEDED_POLICY": "1",
-    "NAME": "'exp'"
+    "NAME": "'kmeans'"
 
 }
 
@@ -79,26 +79,26 @@ general_props = [
     # },
     {
         "keys": ["DISPATCH_RATE"],
-        "values": ["20"],
+        "values": ["30"],
         # "values": ["10", "20", "100"]
         # "values": ["5", "10"]
     },
     {
-        "keys": ["K", "INPUT", "SHAPE"],
+        "keys": ["K", "INPUT", "SHAPE", "NAME"],
         "values": [
 
-            {"K": "0", "INPUT": "'skateboard_G3'", "SHAPE": "'skateboard'"},
-            {"K": "3", "INPUT": "'skateboard_G3'", "SHAPE": "'skateboard'"},
-            {"K": "5", "INPUT": "'skateboard_G5'", "SHAPE": "'skateboard'"},
-            {"K": "10", "INPUT": "'skateboard_G10'", "SHAPE": "'skateboard'"},
-            {"K": "15", "INPUT": "'skateboard_G15'", "SHAPE": "'skateboard'"},
-            {"K": "20", "INPUT": "'skateboard_G20'", "SHAPE": "'skateboard'"},
+            # {"K": "0", "INPUT": "'skateboard_G3'", "SHAPE": "'skateboard'", "NAME": "'kmeans'"},
+            {"K": "3", "INPUT": "'skateboard_G3'", "SHAPE": "'skateboard'", "NAME": "'kmeans'"},
+            {"K": "5", "INPUT": "'skateboard_G5'", "SHAPE": "'skateboard'", "NAME": "'kmeans'"},
+            {"K": "10", "INPUT": "'skateboard_G10'", "SHAPE": "'skateboard'", "NAME": "'kmeans'"},
+            # {"K": "15", "INPUT": "'skateboard_G15'", "SHAPE": "'skateboard'", "NAME": "'kmeans'"},
+            {"K": "20", "INPUT": "'skateboard_G20'", "SHAPE": "'skateboard'", "NAME": "'kmeans'"},
 
         ]
     },
     {
         "keys": ["DISPATCHERS"],
-        "values": ["3"],
+        "values": ["1"],
         # "values": ["1", "3"]
     },
     {
@@ -137,8 +137,8 @@ general_props = [
     # # {
     {
         "keys": ["DISPATCHER_ASSIGN_POLICY"],
-        "values": ["'ShortestDistance'", "'PoD'", "'RR'", "'Random'", "'HybridSDPoD'"]
-        # "values": ["'ShortestDistance'"]
+        # "values": ["'ShortestDistance'", "'PoD'", "'RR'", "'Random'", "'HybridSDPoD'"]
+        "values": ["'ShortestDistance'"]
     },
     # {
     #     "keys": ["SANITY_TEST", "DISPATCHERS"],

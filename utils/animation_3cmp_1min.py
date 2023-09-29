@@ -231,8 +231,9 @@ def read_coordinates(file_path):
 if __name__ == '__main__':
     titles = ["No Standby", "G=3", "G=20"]
     shape = "skateboard"
-    file_names = ["skateboard_G0_R3000_T300_S6", "skateboard_G3_R3000_T300_S6", "skateboard_G20_R3000_T300_S6"]
-    video_name = "skateboard_G{0,3,20}_R3000_T300_S6"
+    start_time = 1800
+    file_names = ["skateboard_G0_R3000_T900_S66", "skateboard_G3_R3000_T900_S66", "skateboard_G20_R3000_T900_S66"]
+    video_name = "skateboard_G{0,3,20}_R3000_T900_S66"
 
     txt_file_path = f"/Users/shuqinzhu/Desktop/video/pointclouds/{shape}.txt"
     gtl = read_coordinates(txt_file_path)

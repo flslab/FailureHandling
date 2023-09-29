@@ -23,9 +23,9 @@ def_general_conf = {
     # "RESULTS_PATH": "'/Users/shuqinzhu/Desktop/experiments_aug29.nosync'",
     "DEBUG": "False",
     "FILE_NAME_KEYS": "[('DISPATCHERS', 'D'), ('DISPATCH_RATE', 'R'), ('FAILURE_TIMEOUT', 'T'), ('MAX_SPEED', 'S'),"
-    # "('PRIORITIZE_ILLUMINATING_FLS', 'P')]",
+    "('PRIORITIZE_ILLUMINATING_FLS', 'P')]",
     # "('NAME', 'N')]",
-                      "('DISPATCHER_ASSIGN_POLICY', 'P')]",
+    #                   "('DISPATCHER_ASSIGN_POLICY', 'P')]",
     # "]",
     "DIR_KEYS": "['K']",
     "SERVER_TIMEOUT": "120",
@@ -47,17 +47,20 @@ def_general_conf = {
 
 general_props = [
     {
-        "keys": ["SHAPE", "K", "INPUT", "DISPATCHERS", "DISPATCH_RATE", "FAILURE_TIMEOUT"],
+        "keys": ["SHAPE", "K", "INPUT", "DISPATCHERS", "DISPATCH_RATE", "FAILURE_TIMEOUT", "PRIORITIZE_ILLUMINATING_FLS"],
         "values": [
-            {"SHAPE": "'skateboard'", "K": "0", "INPUT": "'skateboard_G3'", "DISPATCHERS": "1", "DISPATCH_RATE": "30",
-             "FAILURE_TIMEOUT": "60"},
+            {"SHAPE": "'skateboard'", "K": "3", "INPUT": "'skateboard_G3'", "DISPATCHERS": "1", "DISPATCH_RATE": "35",
+             "FAILURE_TIMEOUT": "60", "PRIORITIZE_ILLUMINATING_FLS": "True"},
 
-            {"SHAPE": "'skateboard'", "K": "0", "INPUT": "'skateboard_G3'", "DISPATCHERS": "1", "DISPATCH_RATE": "3000",
-             "FAILURE_TIMEOUT": "900"},
-            {"SHAPE": "'skateboard'", "K": "3", "INPUT": "'skateboard_G3'", "DISPATCHERS": "1", "DISPATCH_RATE": "3000",
-             "FAILURE_TIMEOUT": "900"},
-            {"SHAPE": "'skateboard'", "K": "20", "INPUT": "'skateboard_G20'", "DISPATCHERS": "1", "DISPATCH_RATE": "3000",
-             "FAILURE_TIMEOUT": "900"},
+            {"SHAPE": "'skateboard'", "K": "3", "INPUT": "'skateboard_G3'", "DISPATCHERS": "1", "DISPATCH_RATE": "35",
+             "FAILURE_TIMEOUT": "60", "PRIORITIZE_ILLUMINATING_FLS": "False"},
+
+            {"SHAPE": "'dragon'", "K": "3", "INPUT": "'dragon_G3'", "DISPATCHERS": "1", "DISPATCH_RATE": "10",
+             "FAILURE_TIMEOUT": "60", "PRIORITIZE_ILLUMINATING_FLS": "True"},
+
+            {"SHAPE": "'dragon'", "K": "3", "INPUT": "'dragon_G3'", "DISPATCHERS": "1", "DISPATCH_RATE": "10",
+             "FAILURE_TIMEOUT": "60", "PRIORITIZE_ILLUMINATING_FLS": "False"},
+
             # {"SHAPE": "'skateboard'", "K": "0", "INPUT": "'skateboard_G3'", "DISPATCHERS": "1", "DISPATCH_RATE": "3000",
             #  "FAILURE_TIMEOUT": "120"},
             # {"SHAPE": "'skateboard'", "K": "3", "INPUT": "'skateboard_G3'", "DISPATCHERS": "1", "DISPATCH_RATE": "3000",
@@ -132,10 +135,10 @@ general_props = [
     #     ]
     # },
 
-    {
-        "keys": ["PRIORITIZE_ILLUMINATING_FLS"],
-        "values": ["True"]
-    },
+    # {
+    #     "keys": ["PRIORITIZE_ILLUMINATING_FLS"],
+    #     "values": ["True"]
+    # },
     # # {
     {
         "keys": ["DISPATCHER_ASSIGN_POLICY"],

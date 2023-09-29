@@ -12,17 +12,17 @@ from PIL import Image
 ticks_gap = 20
 
 start_time = 0
-duration = 1800
+duration = 180
 fps = 30
 frame_rate = 1 / fps
-total_points = 1727
+total_points = 11888
 
 # t30_d1_g0	t30_d1_g20	t30_d5_g0	t30_d5_g20	t600_d1_g0	t600_d1_g20	t600_d5_g0	t600_d5_g20
 output_name = "testd"
 input_path = f"/Users/hamed/Desktop/{output_name}/timeline.json"
 
 
-def set_axis(ax, length, width, height, title=""):
+def set_axis(ax, length, width, height):
     ax.axes.set_xlim3d(left=0, right=length)
     ax.axes.set_ylim3d(bottom=0, top=width)
     ax.axes.set_zlim3d(bottom=0, top=height)
@@ -31,16 +31,6 @@ def set_axis(ax, length, width, height, title=""):
     ax.set_xticks(range(0, length + 1, ticks_gap))
     ax.set_yticks(range(0, width + 1, ticks_gap))
     ax.set_zticks(range(0, height + 1, ticks_gap))
-    ax.set_title(title, y=.9)
-
-
-def set_axis_2d(ax, length, width, title):
-    ax.axes.set_xlim(0, length)
-    ax.axes.set_ylim(0, width)
-    ax.set_aspect('equal')
-    ax.grid(False)
-    ax.axis('off')
-    ax.set_title(title)
 
 
 def set_text(tx, t, missing_flss):
@@ -49,19 +39,13 @@ def set_text(tx, t, missing_flss):
 
 def draw_figure():
     px = 1 / plt.rcParams['figure.dpi']
-    fig_width = 1920 * px
-    fig_height = 1080 * px
+    fig_width = 1280 * px
+    fig_height = 720 * px
     fig = plt.figure(figsize=(fig_width, fig_height))
-    spec = fig.add_gridspec(3, 6, left=0.04, right=0.96, top=0.92, bottom=0.08)
-    ax = fig.add_subplot(spec[0:2, 0:3], projection='3d', proj_type='ortho')
-    ax1 = fig.add_subplot(spec[0:2, 3:6], projection='3d', proj_type='ortho')
-
-    ax2 = fig.add_subplot(spec[2, 0:2])
-    ax3 = fig.add_subplot(spec[2, 2:4])
-    ax4 = fig.add_subplot(spec[2, 4:6])
-    tx = fig.text(0.05, 0.88, s="", fontsize=16)
+    ax = fig.add_subplot(projection='3d')
+    tx = fig.text(0.1, 0.8, s="", fontsize=16)
     line1 = ax.scatter([], [], [])
-    return fig, ax, ax1, ax2, ax3, ax4, tx
+    return fig, ax, tx
 
 
 def read_point_cloud(input_path):
@@ -87,15 +71,11 @@ def read_point_cloud(input_path):
     return filtered_events, length, width, height
 
 
-def init(ax, ax1, ax2, ax3, ax4):
+def init(ax):
     ax.xaxis.set_pane_color((1.0, 1.0, 1.0, 1.0))
     ax.yaxis.set_pane_color((1.0, 1.0, 1.0, 1.0))
     ax.zaxis.set_pane_color((0, 0, 0, 0.025))
     ax.view_init(elev=14, azim=136, roll=0)
-    ax1.xaxis.set_pane_color((1.0, 1.0, 1.0, 1.0))
-    ax1.yaxis.set_pane_color((1.0, 1.0, 1.0, 1.0))
-    ax1.zaxis.set_pane_color((0, 0, 0, 0.025))
-    ax1.view_init(elev=14, azim=-136, roll=0)
     # return line1,
 
 
@@ -111,8 +91,7 @@ def update(frame):
             if event_type == TimelineEvents.ILLUMINATE or event_type == TimelineEvents.ILLUMINATE_STANDBY:
                 points[fls_id] = event[2]
             else:
-                if fls_id in points:
-                    points.pop(fls_id)
+                points.pop(fls_id)
         else:
             t += frame_rate
             break
@@ -121,41 +100,10 @@ def update(frame):
     xs = [c[0] for c in coords]
     ys = [c[1] for c in coords]
     zs = [c[2] for c in coords]
-
-    ax.clear()
-    ln = ax.scatter(xs, ys, zs, c='purple', s=2, alpha=1)
-    set_axis(ax, length, width, height)
-
-    ax1.clear()
-
-    x_list = [coord[0] for coord in gtl]
-    y_list = [coord[1] for coord in gtl]
-    z_list = [coord[2] for coord in gtl]
-    ln1 = ax1.scatter(x_list, y_list, z_list, c='blue', s=2, alpha=1)
-    set_axis(ax1, length, width, height, "Ground Truth")
-
-    ax2.clear()
-    if name.startswith('skateboard'):
-        ln2 = ax2.scatter(ys, xs, c='purple', s=2, alpha=1)
-        set_axis_2d(ax2, width, length, "Top")
-
-    else:
-        ln2 = ax2.scatter(xs, ys, c='purple', s=2, alpha=1)
-        set_axis_2d(ax2, length, width, "Top")
-
-    ax3.clear()
-    ln3 = ax3.scatter(xs, zs, c='purple', s=2, alpha=1)
-    set_axis_2d(ax3, length, height, "Front")
-
-    ax4.clear()
-    ln4 = ax4.scatter(ys, zs, c='purple', s=2, alpha=1)
-    set_axis_2d(ax4, width, height, "Side")
-
-    ln = ax.scatter(xs, ys, zs, c='purple', s=2, alpha=1)
+    ln = ax.scatter(xs, ys, zs, c='blue', s=2, alpha=1)
     set_axis(ax, length, width, height)
     set_text(tx, t, total_points - len(coords))
-
-    return [ln, ln1, ln2, ln3, ln4]
+    return ln,
 
 
 def show_last_frame(events, t=30):
@@ -226,25 +174,6 @@ def trim_png(image_path, output_path, trim_values):
         print(f"An unexpected error occurred: {e}")
 
 
-def read_coordinates(file_path):
-    coordinates = []
-    try:
-        with open(file_path, 'r') as file:
-            for line in file:
-                # Split the line by spaces and convert each part to a float
-                coord = [float(x) for x in line.strip().split(' ')]
-                if len(coord) == 3:  # Ensure that there are exactly 3 coordinates
-                    coordinates.append(coord)
-                else:
-                    print(f"Invalid coordinate data on line: {line.strip()}")
-        return coordinates
-    except FileNotFoundError:
-        print(f"The file at path {file_path} does not exist.")
-        return None
-    except Exception as e:
-        print(f"An error occurred 5: {e}")
-        return None
-
 
 if __name__ == '__main__':
     # mpl.use('macosx')
@@ -264,39 +193,30 @@ if __name__ == '__main__':
     configs = [
         {
             "keys": ["K"],
-            "values": ["0"]
+            "values": ["0", "3"]
         },
         {
             "keys": ["D"],
-            "values": ["1"]
+            "values": ["5"]
         },
         {
             "keys": ["R"],
-            "values": ["3000"]
+            "values": ["1", "inf"]
         },
         {
             "keys": ["T"],
-            "values": ["60"]
-        },
-        {
-            "keys": ["S"],
-            "values": ["6"]
-        },
-        {
-            "keys": ["P"],
-            "values": ["True"]
+            "values": ["30", "120"]
         }
     ]
 
-    props_values = [p["values"] for p in configs]
-    combinations = list(itertools.product(*props_values))
-    # print(combinations)
-
-    shape = 'skateboard'
-    exp_dir = f"/Users/shuqinzhu/Desktop/{shape}"
-
+    # props_values = [p["values"] for p in configs]
+    # combinations = list(itertools.product(*props_values))
+    # # print(combinations)
+    #
+    # exp_dir = "/Users/hamed/Desktop/chess_30_min"
+    #
     # for c in combinations:
-    #     exp_name = f"K{c[0]}/{shape}_D{c[1]}_R{c[2]}_T{c[3]}_S{c[4]}_P{c[5]}"
+    #     exp_name = f"chess_K{c[0]}_D{c[1]}_R{c[2]}_T{c[3]}"
     #     print(exp_name)
     #     input_path = f"{exp_dir}/{exp_name}/timeline.json"
     #     filtered_events, length, width, height = read_point_cloud(input_path)
@@ -310,51 +230,42 @@ if __name__ == '__main__':
     #     plt.close()
     #     # break
     # exit()
-    for c in combinations:
-        # exp_name = f"K{c[0]}/{shape}_D{c[1]}_R{c[2]}_T{c[3]}_S{c[4]}_P{c[5]}"
-        # input_path = f"{exp_dir}/{exp_name}/timeline.json"
-        file_names = ["skateboard_K3_D1_R3000_T60_S66_PTrue"]
-        for name in file_names:
-            txt_file_path = f"/Users/shuqinzhu/Desktop/video/pointclouds/skateboard.txt"
-            gtl = read_coordinates(txt_file_path)
-            print(f"Number of Points: {len(gtl)}")
+    # for c in combinations:
+    #     exp_name = f"chess_K{c[0]}_D{c[1]}_R{c[2]}_T{c[3]}"
+    #     input_path = f"{exp_dir}/{exp_name}/timeline.json"
+    #     filtered_events, length, width, height = read_point_cloud(input_path)
+    #     fig, ax, tx = draw_figure()
+    #     points = dict()
+    #     ani = FuncAnimation(
+    #         fig, partial(update,),
+    #         frames=30 * duration,
+    #         init_func=partial(init, ax))
+    #     #
+    #     # plt.show()
+    #     writer = FFMpegWriter(fps=fps)
+    #     ani.save(f"{exp_dir}/{exp_name}.mp4", writer=writer)
 
-            total_points = len(gtl)
 
-            input_path = f"/Users/shuqinzhu/Desktop/video/timelines/{name}_timeline.json"
+    for folder in ["K3"]:
+        for filename in ["kmeans"]:
+            input_path = f"/Users/shuqinzhu/Desktop/Results.nosync/skateboard_kmeansVSCANF/{folder}/skateboard_D1_R30_T60_S6_N{filename}/timeline.json"
+            # input_path = f"/Users/shuqinzhu/Desktop/timeline.json"
             filtered_events, length, width, height = read_point_cloud(input_path)
-            fig, ax, ax1, ax2, ax3, ax4, tx = draw_figure()
-            points = dict()
-            ani = FuncAnimation(
-                fig, partial(update, ),
-                frames=fps * duration,
-                init_func=partial(init, ax, ax1, ax2, ax3, ax4))
-            #
+            fig, ax, _ = draw_figure()
+            init(ax)
+            xs, ys, zs = show_last_frame(filtered_events, t=800)
+            ax.scatter(xs, ys, zs, c='blue', s=2, alpha=1)
+            set_axis(ax, length, width, height)
+            # ax.view_init(elev=90, azim=-90)
             # plt.show()
-            writer = FFMpegWriter(fps=fps)
-            # ani.save(f"{exp_dir}/{exp_name}.mp4", writer=writer)
-            ani.save(f"/Users/shuqinzhu/Desktop/video/videos/{name}.mp4", writer=writer)
-
-    # for folder in ["K0", "K3", "K5", "K10", "K20"]:
-    #     for filename in ["priCANF", "prikmeans"]:
-    #         input_path = f"/Users/shuqinzhu/Desktop/raw_results/skateboard/{folder}/skateboard_D1_R30_T60_S6_N{filename}/timeline.json"
-    #         # input_path = f"/Users/shuqinzhu/Desktop/timeline.json"
-    #         filtered_events, length, width, height = read_point_cloud(input_path)
-    #         fig, ax, _ = draw_figure()
-    #         init(ax)
-    #         xs, ys, zs = show_last_frame(filtered_events, t=800)
-    #         ax.scatter(xs, ys, zs, c='blue', s=2, alpha=1)
-    #         set_axis(ax, length, width, height)
-    #         # ax.view_init(elev=90, azim=-90)
-    #         # plt.show()
-    #         # plt.savefig(f"/Users/shuqinzhu/Desktop/K3_toy_inf.png")
-    #         # image_path = "/Users/shuqinzhu/Desktop/K3_toy_inf.png"
-    #         # output_path = "/Users/shuqinzhu/Desktop/K3_toy_inf.png"
-    #         # trim_values = [375, 200, 300, 120]  # Replace with the number of pixels to trim from each side (left, top, right, bottom)
-    #         # trim_png(image_path, output_path, trim_values)
-    #         #
-    #         plt.savefig(f"/Users/shuqinzhu/Desktop/exp_figure/skateboard/{folder}_{filename}.png")
-    #         image_path = f"/Users/shuqinzhu/Desktop/exp_figure/skateboard/{folder}_{filename}.png"  # Replace with the path to your PNG file
-    #         output_path = f"/Users/shuqinzhu/Desktop/exp_figure/skateboard/{folder}_{filename}.png"  # Replace with the path to save the trimmed image
-    #         trim_values = [375, 221, 335, 159]  # Replace with the number of pixels to trim from each side (left, top, right, bottom)
-    #         trim_png(image_path, output_path, trim_values)
+            # plt.savefig(f"/Users/shuqinzhu/Desktop/K3_toy_inf.png")
+            # image_path = "/Users/shuqinzhu/Desktop/K3_toy_inf.png"
+            # output_path = "/Users/shuqinzhu/Desktop/K3_toy_inf.png"
+            # trim_values = [375, 200, 300, 120]  # Replace with the number of pixels to trim from each side (left, top, right, bottom)
+            # trim_png(image_path, output_path, trim_values)
+            #
+            plt.savefig(f"/Users/shuqinzhu/Desktop/exp_figure/skateboard/{folder}_{filename}.png")
+            image_path = f"/Users/shuqinzhu/Desktop/exp_figure/skateboard/{folder}_{filename}.png"  # Replace with the path to your PNG file
+            output_path = f"/Users/shuqinzhu/Desktop/exp_figure/skateboard/{folder}_{filename}.png"  # Replace with the path to save the trimmed image
+            # trim_values = [375, 221, 335, 159]  # Replace with the number of pixels to trim from each side (left, top, right, bottom)
+            # trim_png(image_path, output_path, trim_values)

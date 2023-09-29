@@ -75,7 +75,7 @@ class StateMachine:
                        self.metrics.results_directory,
                        False)
         except Exception as e:
-            logger.INFO(f"FLS Log Failed: fid={self.context.fid} INFO:{e}")
+            logger.error(f"FLS Log Failed: fid={self.context.fid} INFO:{e}")
             self.send_to_server(Message(MessageTypes.ERROR))
 
     def fail(self, msg):

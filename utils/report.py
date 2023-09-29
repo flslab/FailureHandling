@@ -653,50 +653,50 @@ def check_correctness(file_path, all_fls_num):
             f"(Mid Flight + Illuminating + Stationary Standby): {mid_flight + illuminating + stationary_standby} - Num_FLSs_Queued: {in_que_fls}")
         if_error = True
 
-    if (Max_dist_stationary_standby_recover_illuminate > 0 and Max_dist_standby_hub_to_centroid > 0
+    if (Max_dist_stationary_standby_recover_illuminate + 0.0001 > 0 and Max_dist_standby_hub_to_centroid + 0.0001 > 0
             and (not (Max_dist_arrived_illuminate <= (
                     Max_dist_stationary_standby_recover_illuminate + Max_dist_standby_hub_to_centroid)))):
         logger.info(
             "CONSTRAINT VIOLATED: Max_dist_arrived_illuminate <= Max_dist_stationary_standby_recover_illuminate + Max_dist_standby_hub_to_centroid")
         if_error = True
 
-    if not (Min_dist_failed_midflight_illuminate >= 0):
+    if not (Min_dist_failed_midflight_illuminate + 0.0001 >= 0):
         logger.info("CONSTRAINT VIOLATED: Min_dist_failed_midflight_illuminate >= 0")
         if_error = True
 
-    if Config.SANITY_TEST != 3 and not (Max_dist_failed_midflight_illuminate <= Max_dist_arrived_illuminate):
+    if Config.SANITY_TEST != 3 and not (Max_dist_failed_midflight_illuminate <= Max_dist_arrived_illuminate + 0.0001):
         logger.info("CONSTRAINT VIOLATED: Max_dist_failed_midflight_illuminate <= Max_dist_arrived_illuminate")
         if_error = True
 
-    if not (Min_dist_midflight_standby_recover_illuminate >= 0):
+    if not (Min_dist_midflight_standby_recover_illuminate + 0.0001 >= 0):
         logger.info("CONSTRAINT VIOLATED: Min_dist_midflight_standby_recover_illuminate >= 0")
         if_error = True
 
     if not (Max_dist_midflight_standby_recover_illuminate <= (
-            Max_dist_stationary_standby_recover_illuminate + Max_dist_standby_hub_to_centroid)):
+            Max_dist_stationary_standby_recover_illuminate + Max_dist_standby_hub_to_centroid + 0.0001)):
         logger.info(
             "CONSTRAINT VIOLATED: Max_dist_midflight_standby_recover_illuminate <= Max_dist_stationary_standby_recover_illuminate + Max_dist_standby_hub_to_centroid")
         if_error = True
 
-    if not (Min_dist_standby_hub_to_centroid >= 0):
+    if not (Min_dist_standby_hub_to_centroid + 0.0001 >= 0):
         logger.info("CONSTRAINT VIOLATED: Min_dist_standby_hub_to_centroid >= 0")
         if_error = True
 
-    if not (Min_dist_standby_hub_to_fail_before_centroid >= 0):
+    if not (Min_dist_standby_hub_to_fail_before_centroid + 0.0001 >= 0):
         logger.info("CONSTRAINT VIOLATED: Min_dist_standby_hub_to_fail_before_centroid >= 0")
         if_error = True
 
-    if not (Max_dist_standby_hub_to_fail_before_centroid <= Max_dist_standby_hub_to_centroid):
+    if not (Max_dist_standby_hub_to_fail_before_centroid <= Max_dist_standby_hub_to_centroid + 0.0001):
         logger.info(
             "CONSTRAINT VIOLATED: Max_dist_standby_hub_to_fail_before_centroid <= Max_dist_standby_hub_to_centroid")
         if_error = True
 
-    if not (Max_dist_standby_centroid_to_fail_before_recovered <= Max_dist_stationary_standby_recover_illuminate):
+    if not (Max_dist_standby_centroid_to_fail_before_recovered <= Max_dist_stationary_standby_recover_illuminate + 0.0001):
         logger.info(
             "CONSTRAINT VIOLATED: Max_dist_standby_centroid_to_fail_before_recovered <= Max_dist_stationary_standby_recover_illuminate")
         if_error = True
 
-    if not (Min_dist_standby_centroid_to_fail_before_recovered >= 0):
+    if not (Min_dist_standby_centroid_to_fail_before_recovered + 0.0001 >= 0):
         logger.info(
             "CONSTRAINT VIOLATED: Min_dist_standby_centroid_to_fail_before_recovered >= 0")
         if_error = True

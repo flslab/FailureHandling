@@ -189,7 +189,7 @@ class PrimaryNode:
                     os.remove(path)
             logger.info("All files under the folder have been deleted.")
         except Exception as e:
-            logger.info(f"Error occurred: {e}")
+            logger.error(f"Error occurred: {e}")
 
     def _define_dispatcher_coords(self):
         l = 98
@@ -328,7 +328,7 @@ class PrimaryNode:
 
         # Check if the FLS deployed has a duplicated ID:
         if properties["fid"] != (self.deployed_num + 1):
-            logger.INFO("<============= FLS Deployed with duplicated ID ==============>")
+            logger.error("<============= FLS Deployed with duplicated ID ==============>")
             exit(1)
 
         nid = properties["fid"] % self.N
@@ -427,15 +427,15 @@ class PrimaryNode:
             try:
                 msg, _ = self.failure_handler_socket.receive()
                 if not msg or msg is None:
-                    logger.INFO(f"Empty MESSAGE: {msg}")
+                    logger.warning(f"Empty MESSAGE: {msg}")
                     continue
             except socket.timeout:
-                logger.INFO(f"Secondary Nodes No Response: {timeout_counter}")
+                logger.info(f"Secondary Nodes No Response: {timeout_counter}")
                 timeout_counter += 1
                 continue
 
             if msg.type == MessageTypes.ERROR:
-                logger.INFO(f"SECONDARY NODE ERROR: fid={msg.fid}")
+                logger.error(f"SECONDARY NODE ERROR: fid={msg.fid}")
                 exit(1)
 
             if msg.dest_fid == 0:

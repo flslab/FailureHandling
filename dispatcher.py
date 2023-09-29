@@ -34,7 +34,7 @@ class Dispatcher(threading.Thread):
                 try:
                     send_message()
                 except BrokenPipeError:
-                    logger.INFO(f"BrokenPipeError: {inspect.signature(send_message).parameters}")
+                    logger.error(f"BrokenPipeError: {inspect.signature(send_message).parameters}")
                     exit(1)
 
             if fls_type == 0:

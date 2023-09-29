@@ -278,11 +278,11 @@ def read_coordinates(file_path):
 
 if __name__ == '__main__':
     shape = "skateboard"
+    start_time = 1800
 
-    file_name_list = [["skateboard_G0_R3000_T60", "skateboard_G0_R3000_T300"]]
-
-    titles_list = [["Time To Fail: 60", "Time To Fail: 300"]]
-    video_name_list = ["skateboard_G0_R3000_T{60,300}"]
+    file_name_list = [["skateboard_G0_R3000_T900_S66", "skateboard_G3_R3000_T900_S66"]]
+    titles_list = [["No Standby", "G=3"]]
+    video_name_list = ["skateboard_G{0,3}_R3000_T900_S66"]
 
     for i, file_names in enumerate(file_name_list):
         txt_file_path = f"/Users/shuqinzhu/Desktop/video/pointclouds/{shape}.txt"

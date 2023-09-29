@@ -5,7 +5,7 @@ sleep 10
 
 # for j in {0..5}
 # do
-for i in {0..13}
+for i in {0..7}
 do
 
    sleep 2

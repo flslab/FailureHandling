@@ -16,7 +16,7 @@ def_general_conf = {
     "MAX_SPEED": "3",
     "DISPLAY_CELL_SIZE": "0.05",
     "BUSY_WAITING": "False",
-    "DURATION": "60 * 30",
+    "DURATION": "60 * 60",
     "K": "3",
     "SHAPE": "'chess'",
     "RESULTS_PATH": "'/proj/nova-PG0/shuqin/results/'",
@@ -49,17 +49,22 @@ general_props = [
     {
         "keys": ["SHAPE", "K", "INPUT", "DISPATCHERS", "DISPATCH_RATE", "FAILURE_TIMEOUT", "PRIORITIZE_ILLUMINATING_FLS"],
         "values": [
-            {"SHAPE": "'skateboard'", "K": "3", "INPUT": "'skateboard_G3'", "DISPATCHERS": "1", "DISPATCH_RATE": "35",
-             "FAILURE_TIMEOUT": "60", "PRIORITIZE_ILLUMINATING_FLS": "True"},
+            # {"SHAPE": "'skateboard'", "K": "3", "INPUT": "'skateboard_G3'", "DISPATCHERS": "1", "DISPATCH_RATE": "35",
+            #  "FAILURE_TIMEOUT": "60", "PRIORITIZE_ILLUMINATING_FLS": "True"},
+            #
+            # {"SHAPE": "'skateboard'", "K": "3", "INPUT": "'skateboard_G3'", "DISPATCHERS": "1", "DISPATCH_RATE": "35",
+            #  "FAILURE_TIMEOUT": "60", "PRIORITIZE_ILLUMINATING_FLS": "False"},
+            {"SHAPE": "'dragon'", "K": "0", "INPUT": "'dragon_G3'", "DISPATCHERS": "1", "DISPATCH_RATE": "3000",
+             "FAILURE_TIMEOUT": "900", "PRIORITIZE_ILLUMINATING_FLS": "True"},
 
-            {"SHAPE": "'skateboard'", "K": "3", "INPUT": "'skateboard_G3'", "DISPATCHERS": "1", "DISPATCH_RATE": "35",
-             "FAILURE_TIMEOUT": "60", "PRIORITIZE_ILLUMINATING_FLS": "False"},
+            {"SHAPE": "'dragon'", "K": "3", "INPUT": "'dragon_G3'", "DISPATCHERS": "1", "DISPATCH_RATE": "3000",
+             "FAILURE_TIMEOUT": "900", "PRIORITIZE_ILLUMINATING_FLS": "True"},
 
-            {"SHAPE": "'dragon'", "K": "3", "INPUT": "'dragon_G3'", "DISPATCHERS": "1", "DISPATCH_RATE": "10",
-             "FAILURE_TIMEOUT": "60", "PRIORITIZE_ILLUMINATING_FLS": "True"},
+            {"SHAPE": "'dragon'", "K": "20", "INPUT": "'dragon_G20'", "DISPATCHERS": "1", "DISPATCH_RATE": "3000",
+             "FAILURE_TIMEOUT": "900", "PRIORITIZE_ILLUMINATING_FLS": "True"},
 
-            {"SHAPE": "'dragon'", "K": "3", "INPUT": "'dragon_G3'", "DISPATCHERS": "1", "DISPATCH_RATE": "10",
-             "FAILURE_TIMEOUT": "60", "PRIORITIZE_ILLUMINATING_FLS": "False"},
+            # {"SHAPE": "'dragon'", "K": "3", "INPUT": "'dragon_G3'", "DISPATCHERS": "1", "DISPATCH_RATE": "10",
+            #  "FAILURE_TIMEOUT": "60", "PRIORITIZE_ILLUMINATING_FLS": "False"},
 
             # {"SHAPE": "'skateboard'", "K": "0", "INPUT": "'skateboard_G3'", "DISPATCHERS": "1", "DISPATCH_RATE": "3000",
             #  "FAILURE_TIMEOUT": "120"},

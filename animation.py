@@ -176,79 +176,9 @@ def trim_png(image_path, output_path, trim_values):
 
 
 if __name__ == '__main__':
-    # mpl.use('macosx')
-    #
-    # filtered_events, length, width, height = read_point_cloud(input_path)
-    # fig, ax, tx = draw_figure()
-    # points = dict()
-    # ani = FuncAnimation(
-    #     fig, partial(update,),
-    #     frames=30 * duration,
-    #     init_func=partial(init, ax))
-    # #
-    # # plt.show()
-    # writer = FFMpegWriter(fps=fps)
-    # ani.save(f"results/{output_name}.mp4", writer=writer)
-    # exit()
-    configs = [
-        {
-            "keys": ["K"],
-            "values": ["0", "3"]
-        },
-        {
-            "keys": ["D"],
-            "values": ["5"]
-        },
-        {
-            "keys": ["R"],
-            "values": ["1", "inf"]
-        },
-        {
-            "keys": ["T"],
-            "values": ["30", "120"]
-        }
-    ]
-
-    # props_values = [p["values"] for p in configs]
-    # combinations = list(itertools.product(*props_values))
-    # # print(combinations)
-    #
-    # exp_dir = "/Users/hamed/Desktop/chess_30_min"
-    #
-    # for c in combinations:
-    #     exp_name = f"chess_K{c[0]}_D{c[1]}_R{c[2]}_T{c[3]}"
-    #     print(exp_name)
-    #     input_path = f"{exp_dir}/{exp_name}/timeline.json"
-    #     filtered_events, length, width, height = read_point_cloud(input_path)
-    #     fig, ax, _ = draw_figure()
-    #     init(ax)
-    #     xs, ys, zs = show_last_frame(filtered_events, t=1799)
-    #     ax.scatter(xs, ys, zs, c='blue', s=2, alpha=1)
-    #     set_axis(ax, length, width, height)
-    #     plt.show()
-    #     # plt.savefig(f"{exp_dir}/{exp_name}.png")
-    #     plt.close()
-    #     # break
-    # exit()
-    # for c in combinations:
-    #     exp_name = f"chess_K{c[0]}_D{c[1]}_R{c[2]}_T{c[3]}"
-    #     input_path = f"{exp_dir}/{exp_name}/timeline.json"
-    #     filtered_events, length, width, height = read_point_cloud(input_path)
-    #     fig, ax, tx = draw_figure()
-    #     points = dict()
-    #     ani = FuncAnimation(
-    #         fig, partial(update,),
-    #         frames=30 * duration,
-    #         init_func=partial(init, ax))
-    #     #
-    #     # plt.show()
-    #     writer = FFMpegWriter(fps=fps)
-    #     ani.save(f"{exp_dir}/{exp_name}.mp4", writer=writer)
-
-
     for folder in ["K3"]:
-        for filename in ["kmeans"]:
-            input_path = f"/Users/shuqinzhu/Desktop/Results.nosync/skateboard_kmeansVSCANF/{folder}/skateboard_D1_R30_T60_S6_N{filename}/timeline.json"
+        for filename in ["True", "False"]:
+            input_path = f"/Users/shuqinzhu/Desktop/Results.nosync/skateboard_prioVSnoprio/{folder}/skateboard_D1_R35_T60_S6_P{filename}/timeline.json"
             # input_path = f"/Users/shuqinzhu/Desktop/timeline.json"
             filtered_events, length, width, height = read_point_cloud(input_path)
             fig, ax, _ = draw_figure()
@@ -264,8 +194,8 @@ if __name__ == '__main__':
             # trim_values = [375, 200, 300, 120]  # Replace with the number of pixels to trim from each side (left, top, right, bottom)
             # trim_png(image_path, output_path, trim_values)
             #
-            plt.savefig(f"/Users/shuqinzhu/Desktop/exp_figure/skateboard/{folder}_{filename}.png")
+            plt.savefig(f"/Users/shuqinzhu/Desktop/exp_figure/skateboard/{folder}_{filename}.png", dpi=500)
             image_path = f"/Users/shuqinzhu/Desktop/exp_figure/skateboard/{folder}_{filename}.png"  # Replace with the path to your PNG file
             output_path = f"/Users/shuqinzhu/Desktop/exp_figure/skateboard/{folder}_{filename}.png"  # Replace with the path to save the trimmed image
-            # trim_values = [375, 221, 335, 159]  # Replace with the number of pixels to trim from each side (left, top, right, bottom)
-            # trim_png(image_path, output_path, trim_values)
+            trim_values = [1855, 1141, 1684, 815]  # Replace with the number of pixels to trim from each side (left, top, right, bottom)
+            trim_png(image_path, output_path, trim_values)

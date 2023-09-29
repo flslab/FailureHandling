@@ -430,7 +430,7 @@ class PrimaryNode:
                     logger.warning(f"Empty MESSAGE: {msg}")
                     continue
             except socket.timeout:
-                logger.info(f"Secondary Nodes No Response: {timeout_counter}")
+                logger.debug(f"Secondary Nodes No Response: {timeout_counter}")
                 timeout_counter += 1
                 continue
 

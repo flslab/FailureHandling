@@ -16,7 +16,7 @@ def_general_conf = {
     "MAX_SPEED": "3",
     "DISPLAY_CELL_SIZE": "0.05",
     "BUSY_WAITING": "False",
-    "DURATION": "60 * 30",
+    "DURATION": "60 * 60",
     "K": "3",
     "SHAPE": "'chess'",
     "RESULTS_PATH": "'/proj/nova-PG0/shuqin/results/'",
@@ -79,7 +79,7 @@ general_props = [
     # },
     {
         "keys": ["DISPATCH_RATE"],
-        "values": ["20"],
+        "values": ["3000"],
         # "values": ["10", "20", "100"]
         # "values": ["5", "10"]
     },
@@ -87,32 +87,32 @@ general_props = [
         "keys": ["K", "INPUT", "SHAPE", "NAME"],
         "values": [
 
-            # {"K": "0", "INPUT": "'skateboard_G3'", "SHAPE": "'skateboard'", "NAME": "'kmeans'"},
+            {"K": "0", "INPUT": "'skateboard_G3'", "SHAPE": "'skateboard'", "NAME": "'kmeans'"},
             {"K": "3", "INPUT": "'skateboard_G3'", "SHAPE": "'skateboard'", "NAME": "'kmeans'"},
-            # {"K": "5", "INPUT": "'skateboard_G5'", "SHAPE": "'skateboard'", "NAME": "'kmeans'"},
-            # {"K": "10", "INPUT": "'skateboard_G10'", "SHAPE": "'skateboard'", "NAME": "'kmeans'"},
-            # {"K": "15", "INPUT": "'skateboard_G15'", "SHAPE": "'skateboard'", "NAME": "'kmeans'"},
-            # {"K": "20", "INPUT": "'skateboard_G20'", "SHAPE": "'skateboard'", "NAME": "'kmeans'"},
+            {"K": "5", "INPUT": "'skateboard_G5'", "SHAPE": "'skateboard'", "NAME": "'kmeans'"},
+            {"K": "10", "INPUT": "'skateboard_G10'", "SHAPE": "'skateboard'", "NAME": "'kmeans'"},
+            {"K": "15", "INPUT": "'skateboard_G15'", "SHAPE": "'skateboard'", "NAME": "'kmeans'"},
+            {"K": "20", "INPUT": "'skateboard_G20'", "SHAPE": "'skateboard'", "NAME": "'kmeans'"},
 
         ]
     },
     {
         "keys": ["DISPATCHERS"],
-        "values": ["3"],
+        "values": ["1"],
         # "values": ["1", "3"]
     },
     {
         "keys": ["FAILURE_TIMEOUT"],
         # "values": ["30", "60", "120", "300"]
-        "values": ["60"]
+        "values": ["900"]
         # "values": ["1", "3", "6", "30", "60", "120", "600"]
     },
     {
         "keys": ["MAX_SPEED", "ACCELERATION", "DECELERATION"],
         "values": [
-            {"MAX_SPEED": "6.11", "ACCELERATION": "6.11", "DECELERATION": "6.11"},
+            # {"MAX_SPEED": "6.11", "ACCELERATION": "6.11", "DECELERATION": "6.11"},
             # {"MAX_SPEED": "30", "ACCELERATION": "30", "DECELERATION": "30"},
-            # {"MAX_SPEED": "66.67", "ACCELERATION": "66.67", "DECELERATION": "66.67"},
+            {"MAX_SPEED": "66.67", "ACCELERATION": "66.67", "DECELERATION": "66.67"},
         ]
     },
 

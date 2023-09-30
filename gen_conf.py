@@ -16,7 +16,7 @@ def_general_conf = {
     "MAX_SPEED": "3",
     "DISPLAY_CELL_SIZE": "0.05",
     "BUSY_WAITING": "False",
-    "DURATION": "60 * 30",
+    "DURATION": "60 * 60",
     "K": "3",
     "SHAPE": "'chess'",
     "RESULTS_PATH": "'/proj/nova-PG0/shuqin/results/'",
@@ -94,7 +94,7 @@ general_props = [
     {
         "keys": ["FAILURE_TIMEOUT"],
         # "values": ["30", "60", "120", "300"]
-        "values": ["60", "900"]
+        "values": ["900"]
         # "values": ["1", "3", "6", "30", "60", "120", "600"]
     },
     {

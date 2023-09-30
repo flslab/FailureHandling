@@ -639,6 +639,8 @@ class PrimaryNode:
                     total_point_num = 760
                 elif Config.SHAPE == "skateboard":
                     total_point_num = 1727
+                elif Config.SHAPE == "hat":
+                    total_point_num = 1562
                 # total_point_num, group_num = read_point_info_from_cliques_xlsx(
                 #     os.path.join(self.dir_experiment, f'{Config.INPUT}.xlsx'))
 

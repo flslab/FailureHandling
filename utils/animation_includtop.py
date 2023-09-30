@@ -64,16 +64,19 @@ def draw_figure():
     fig_width = 1920 * px
     fig_height = 1080 * px
     fig = plt.figure(figsize=(fig_width, fig_height))
-    spec = fig.add_gridspec(2, 9, left=0.04, right=0.96, top=0.92, bottom=0.08)
+    spec = fig.add_gridspec(4, 9, left=0.04, right=0.96, top=0.92, bottom=0.08)
     ax = fig.add_subplot(spec[0:2, 0:3], projection='3d', proj_type='ortho')
     ax1 = fig.add_subplot(spec[0:2, 3:6], projection='3d', proj_type='ortho')
     ax2 = fig.add_subplot(spec[0:2, 6:9], projection='3d', proj_type='ortho')
+
+    ax3 = fig.add_subplot(spec[2:4, 0:3], projection='3d', proj_type='ortho')
+    ax4 = fig.add_subplot(spec[2:4, 6:9], projection='3d', proj_type='ortho')
 
     tx_K0 = fig.text(0.15, 0.88, s="", fontsize=16)
     tx_K3 = fig.text(0.05, 0.88, s="", fontsize=16)
 
     tx_time = fig.text(0.43, 0.88, s="", fontsize=16)
-    return fig, ax, ax1, ax2, tx_K0, tx_K3, tx_time
+    return fig, ax, ax1, ax2, ax3, ax4, tx_K0, tx_K3, tx_time
 
 
 def read_point_cloud(input_path):
@@ -99,7 +102,7 @@ def read_point_cloud(input_path):
     return filtered_events, length, width, height
 
 
-def init(ax, ax1, ax2):
+def init(ax, ax1, ax2, ax3, ax4):
     ax.xaxis.set_pane_color((1.0, 1.0, 1.0, 1.0))
     ax.yaxis.set_pane_color((1.0, 1.0, 1.0, 1.0))
     ax.zaxis.set_pane_color((0, 0, 0, 0.025))
@@ -115,7 +118,15 @@ def init(ax, ax1, ax2):
     ax2.zaxis.set_pane_color((0, 0, 0, 0.025))
     ax2.view_init(elev=14, azim=-136, roll=0)
     # return line1,
+    ax3.xaxis.set_pane_color((1.0, 1.0, 1.0, 1.0))
+    ax3.yaxis.set_pane_color((1.0, 1.0, 1.0, 1.0))
+    ax3.zaxis.set_pane_color((1.0, 1.0, 1.0, 1.0))
+    ax3.view_init(elev=-90, azim=-90, roll=0)
 
+    ax4.xaxis.set_pane_color((1.0, 1.0, 1.0, 1.0))
+    ax4.yaxis.set_pane_color((1.0, 1.0, 1.0, 1.0))
+    ax4.zaxis.set_pane_color((1.0, 1.0, 1.0, 1.0))
+    ax4.view_init(elev=-90, azim=-90, roll=0)
 
 def update(frame, titles):
     t_K0 = start_time + frame * frame_rate
@@ -146,7 +157,16 @@ def update(frame, titles):
     set_axis(ax, length, width, height)
 
     update_title(ax, titles[0], total_points - len(coords_K0))
-    # set_text_K0(tx_K0, t, total_points - len(coords_K0))
+
+    ax3.clear()
+    if shape.startswith('skateboard'):
+        ln3 = ax3.scatter(ys, xs, c='purple', s=2, alpha=1)
+        set_axis_2d(ax3, width, length, f"{titles_list[0][0]}\nTop")
+
+    else:
+        ln3 = ax3.scatter(xs, ys, c='purple', s=2, alpha=1)
+        set_axis_2d(ax3, length, width, f"{titles_list[0][1]}\nTop")
+
     ax1.clear()
 
     x_list = [coord[0] for coord in gtl]
@@ -181,7 +201,16 @@ def update(frame, titles):
     ln2 = ax2.scatter(xs, ys, zs, c='purple', s=2, alpha=1)
     set_axis(ax2, length, width, height)
     update_title(ax2, titles[1], total_points - len(coords_K3))
-    # set_text_K3(tx_K3, t, total_points - len(coords_K3))
+
+    ax4.clear()
+    if shape.startswith('skateboard'):
+        ln4 = ax4.scatter(ys, xs, c='purple', s=2, alpha=1)
+        set_axis_2d(ax4, width, length, "Top")
+
+    else:
+        ln4 = ax4.scatter(xs, ys, c='purple', s=2, alpha=1)
+        set_axis_2d(ax4, length, width, "Top")
+
 
     set_text_time(tx_time, t_K0)
 
@@ -296,13 +325,13 @@ if __name__ == '__main__':
 
         input_path_K3 = f"/Users/shuqinzhu/Desktop/video/timelines/{file_names[1]}.json"
         filtered_events_K3, length, width, height = read_point_cloud(input_path_K3)
-        fig, ax, ax1, ax2, tx_K0, tx_K3, tx_time = draw_figure()
+        fig, ax, ax1, ax2, ax3, ax4, tx_K0, tx_K3, tx_time = draw_figure()
         points_K0 = dict()
         points_K3 = dict()
         ani = FuncAnimation(
             fig, partial(update, titles=titles_list[i]),
             frames=fps * duration,
-            init_func=partial(init, ax, ax1, ax2))
+            init_func=partial(init, ax, ax1, ax2, ax3, ax4))
         #
         # plt.show()
         writer = FFMpegWriter(fps=fps)

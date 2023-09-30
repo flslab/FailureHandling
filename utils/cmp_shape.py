@@ -377,8 +377,11 @@ def time_centroid_to_point_plot(data_sets, group_sizes, speed_models, name):
     ax = fig.add_subplot()
     ax.spines['right'].set_visible(False)
     ax.spines['top'].set_visible(False)
+
+    markers = ["o", "v", "s", "x"]
+
     for i, data_set in enumerate(data_sets):
-        plt.plot(group_sizes, data_set, label=f'Speed Model: {speed_models[i]}')
+        plt.plot(group_sizes, data_set, marker=markers[i],  label=f'Speed Model: {speed_models[i]}')
 
     # Configure the chart
     plt.xlabel('Group Size')

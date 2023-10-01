@@ -266,6 +266,8 @@ def get_report_metrics_no_group(dir_meta, time_range):
         metrics[0] = metrics[0]/initial_illum_num if initial_illum_num>0 else 0
         metrics[1] = metrics[1]/initial_illum_num if initial_illum_num>0 else 0
 
+        logger.info(f"QoI After Rest: {metrics[1]}")
+
         for metric_name in ['mid_flight', 'illuminating', 'standby']:
             if data[metric_name]['t'][0] > time_range[1]:
                 metrics.append(data[metric_name]['y'][0])

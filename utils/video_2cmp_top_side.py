@@ -158,7 +158,7 @@ def update(frame, titles):
     zs = [c[2] for c in coords_K0]
 
     ax.clear()
-    ln = ax.scatter(xs, ys, zs, c='white', s=2, alpha=1)
+    ln = ax.scatter(xs, ys, np.array(zs)-100, c='white', s=2, alpha=1)
     set_axis(ax, length, width, height)
 
     update_title(ax, titles[0], total_points - len(coords_K0))
@@ -168,7 +168,7 @@ def update(frame, titles):
     set_axis_2d(ax3, f"{titles[0]}: Top")
 
     ax5.clear()
-    ln5 = ax5.scatter(np.array(ys) - 30, np.array(zs) + 10, c='white', s=2, alpha=1)
+    ln5 = ax5.scatter(np.array(ys) - 30, np.array(zs) - 90, c='white', s=2, alpha=1)
     set_axis_2d(ax5, f"{titles[0]}: Side")
 
     while len(filtered_events_K3):
@@ -193,7 +193,7 @@ def update(frame, titles):
     zs = [c[2] for c in coords_K3]
 
     ax2.clear()
-    ln2 = ax2.scatter(xs, ys, zs, c='white', s=2, alpha=1)
+    ln2 = ax2.scatter(xs, ys, np.array(zs)-100, c='white', s=2, alpha=1)
     set_axis(ax2, length, width, height)
     update_title(ax2, titles[1], total_points - len(coords_K3))
 
@@ -202,7 +202,7 @@ def update(frame, titles):
     set_axis_2d(ax4, f"{titles[1]} Top")
 
     ax6.clear()
-    ln6 = ax6.scatter(np.array(ys) - 30, np.array(zs) + 10, c='white', s=2, alpha=1)
+    ln6 = ax6.scatter(np.array(ys) - 30, np.array(zs) - 90, c='white', s=2, alpha=1)
     set_axis_2d(ax6, f"{titles[1]} Side")
 
     plt.xlim(min(xs), max(xs))
@@ -307,11 +307,11 @@ def read_coordinates(file_path):
 
 if __name__ == '__main__':
     shape = "skateboard"
-    start_time = 1800
+    start_time = 540
 
-    file_name_list = [[f"{shape}_G0_R3000_T900_S6", f"{shape}_G3_R3000_T900_S6"]]
+    file_name_list = [[f"{shape}_G0_R80_T300_S0", f"{shape}_G3_R80_T300_S0"]]
     titles_list = [["No Standby", "G=3"]]
-    video_name_list = ["skateboard_G{0,3}_R3000_T900_S6"]
+    video_name_list = ["skateboard_G{0,3}_R80_T300_S0"]
 
     for i, file_names in enumerate(file_name_list):
         txt_file_path = f"/Users/shuqinzhu/Desktop/video/pointclouds/{shape}.txt"

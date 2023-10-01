@@ -213,7 +213,7 @@ def read_cliques_xlsx(path):
 
     for c in df["7 coordinates"]:
         coord_list = np.array(eval(c))
-        coord_list[:, 2] += 50
+        coord_list[:, 2] += 10
         group_list.append(coord_list)
 
     return group_list, [max(eval(d)) + 1 if eval(d) != [] else 1 for d in df["6 dist between each pair"]]

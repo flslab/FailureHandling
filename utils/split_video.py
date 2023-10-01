@@ -1,7 +1,7 @@
 from moviepy.editor import VideoFileClip
 import numpy as np
 
-name = "skateboard_G{0,3}_R3000_T900_S6"
+name = "skateboard_G{0,3}_R80_T300_S0"
 # Load the video file
 clip = VideoFileClip(f"/Users/shuqinzhu/Desktop/video/videos/{name}.mp4")
 

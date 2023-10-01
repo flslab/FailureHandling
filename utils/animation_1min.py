@@ -142,7 +142,7 @@ def update(frame, titles):
     zs = [c[2] for c in coords_K0]
 
     ax.clear()
-    ln = ax.scatter(xs, ys, zs, c='purple', s=2, alpha=1)
+    ln = ax.scatter(xs, ys, zs, c='blue', s=2, alpha=1)
     set_axis(ax, length, width, height)
 
     update_title(ax, titles[0], total_points - len(coords_K0))
@@ -178,7 +178,7 @@ def update(frame, titles):
     zs = [c[2] for c in coords_K3]
 
     ax2.clear()
-    ln2 = ax2.scatter(xs, ys, zs, c='purple', s=2, alpha=1)
+    ln2 = ax2.scatter(xs, ys, zs, c='blue', s=2, alpha=1)
     set_axis(ax2, length, width, height)
     update_title(ax2, titles[1], total_points - len(coords_K3))
     # set_text_K3(tx_K3, t, total_points - len(coords_K3))

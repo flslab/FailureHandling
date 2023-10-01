@@ -507,7 +507,7 @@ if __name__ == '__main__':
                 #                               dist * disp_cell_size if dist > 0 else disp_cell_size) for dist in dists]
 
                 mttr = [calculate_travel_time(max_speed, max_acceleration, max_deceleration,
-                                              dist * disp_cell_size if dist > 0 else disp_cell_size) for dist in dists]
+                                              dist * disp_cell_size if dist != 1 else 0) for dist in dists]
 
                 print(f"Lenth: {len(mttr)}")
 

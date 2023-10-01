@@ -176,8 +176,8 @@ def trim_png(image_path, output_path, trim_values):
 
 
 if __name__ == '__main__':
-    for folder in ["K3", "K0"]:
-        for filename in ["True"]:
+    for folder in ["K3"]:
+        for filename in ["False"]:
             input_path = f"/Users/shuqinzhu/Desktop/1/{folder}/skateboard_D1_R80_T300_S0_P{filename}/timeline.json"
             # input_path = f"/Users/shuqinzhu/Desktop/timeline.json"
             filtered_events, length, width, height = read_point_cloud(input_path)

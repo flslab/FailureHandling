@@ -12,7 +12,7 @@ from PIL import Image
 
 ticks_gap = 20
 
-start_time = 900
+start_time = 1800
 duration = 60
 fps = 30
 frame_rate = 1 / fps
@@ -41,7 +41,7 @@ def set_axis_2d(ax, title):
     ax.set_aspect('equal')
     ax.grid(False)
     ax.axis('off')
-    ax.set_title(title, y=0, fontsize=20, color='white')
+    ax.set_title(title, y=-1, fontsize=20, color='white')
 
 
 def update_title(ax, title, missing_flss):
@@ -75,7 +75,7 @@ def draw_figure():
     tx_left = fig.text(0.22, 0.5, s="", fontsize=20, color='white')
     tx_right = fig.text(0.7, 0.5, s="", fontsize=20, color='white')
 
-    tx_title = fig.text(0.252, 0.03, s="The Hat with 1562 points, $\lambda$=900, Speed=6.11 m/sec", fontsize=28, color='white')
+    tx_title = fig.text(0.235, 0.03, s=f"The {shape} with {total_points} points, $\lambda$=900, Speed=6.11 m/sec", fontsize=28, color='white')
     return fig, ax, ax2, ax3, ax4, ax5, ax6, tx_K0, tx_K3, tx_left, tx_right, tx_title
 
 
@@ -164,11 +164,11 @@ def update(frame, titles):
     update_title(ax, titles[0], total_points - len(coords_K0))
 
     ax3.clear()
-    ln3 = ax3.scatter(xs, ys, c='white', s=2, alpha=1)
+    ln3 = ax3.scatter(np.array(xs), ys, c='white', s=2, alpha=1)
     set_axis_2d(ax3, f"{titles[0]}: Top")
 
     ax5.clear()
-    ln5 = ax5.scatter(ys, np.array(zs) + 10, c='white', s=2, alpha=1)
+    ln5 = ax5.scatter(np.array(ys) - 30, np.array(zs) + 10, c='white', s=2, alpha=1)
     set_axis_2d(ax5, f"{titles[0]}: Side")
 
     while len(filtered_events_K3):
@@ -202,7 +202,7 @@ def update(frame, titles):
     set_axis_2d(ax4, f"{titles[1]} Top")
 
     ax6.clear()
-    ln6 = ax6.scatter(ys, np.array(zs) + 10, c='white', s=2, alpha=1)
+    ln6 = ax6.scatter(np.array(ys) - 30, np.array(zs) + 10, c='white', s=2, alpha=1)
     set_axis_2d(ax6, f"{titles[1]} Side")
 
     plt.xlim(min(xs), max(xs))
@@ -306,12 +306,12 @@ def read_coordinates(file_path):
 
 
 if __name__ == '__main__':
-    shape = "hat"
-    start_time = 900
+    shape = "skateboard"
+    start_time = 1800
 
-    file_name_list = [["hat_G0_R3000_T900_S6", "hat_G3_R3000_T900_S6"]]
+    file_name_list = [[f"{shape}_G0_R3000_T900_S6", f"{shape}_G3_R3000_T900_S6"]]
     titles_list = [["No Standby", "G=3"]]
-    video_name_list = ["hat_G{0,3}_R3000_T900_S6"]
+    video_name_list = ["skateboard_G{0,3}_R3000_T900_S6"]
 
     for i, file_names in enumerate(file_name_list):
         txt_file_path = f"/Users/shuqinzhu/Desktop/video/pointclouds/{shape}.txt"

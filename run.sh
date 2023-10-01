@@ -1,5 +1,5 @@
 #!/bin/bash
-for i in {0..1}
+for i in {0..0}
 do
    cp "./experiments/config$i.py" config.py
    sleep 1

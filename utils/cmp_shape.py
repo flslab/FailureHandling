@@ -360,7 +360,7 @@ def distance_centroid_to_point_plot(data_sets, group_sizes, name):
 
     ax.spines['right'].set_visible(False)
     ax.spines['top'].set_visible(False)
-    ax.set_title('Group Centroid To Points Distance', loc='left')
+    ax.set_title('Distance (Display Cells)', loc='left')
 
     # ax.yaxis.set_major_formatter(ScalarFormatter(useMathText=False))
     # ax.get_xaxis().set_major_locator(plt.MaxNLocator(integer=True))
@@ -384,9 +384,9 @@ def time_centroid_to_point_plot(data_sets, group_sizes, speed_models, name):
         plt.plot(group_sizes, data_set, marker=markers[i],  label=f'Speed Model: {speed_models[i]}')
 
     # Configure the chart
-    plt.xlabel('Group Size')
+    plt.xlabel('Group Size (G)', loc='right')
 
-    ax.set_title('Avg Time To Travel from Group Centroid to Points in Group', loc='left', zorder=4)
+    ax.set_title('MTID (Seconds)', loc='left', zorder=4)
     # plt.ylabel('Avg Time To Travel from Group Centroid to Points in Group')
     # plt.title('Avg Time To Travel by Group Size')
     plt.legend(bbox_to_anchor=(1, 0.89),loc='upper right')

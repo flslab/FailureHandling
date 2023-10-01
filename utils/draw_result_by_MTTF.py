@@ -67,16 +67,16 @@ ax.spines['top'].set_visible(False)
 # Set x-axis to only show values in group_sizes list
 plt.xticks(mttf_list)
 
-ax.set_title('Mean Time to Illuminate after a Failure(MTIF)', loc='left', zorder=1)
+ax.set_title('MTID (Seconds)', loc='left', zorder=1)
 
 # ax.set_ylabel('Mean Time to Illuminate after a Failure(MTIF)', loc='top', rotation=0, labelpad=-225)
 ax.set_xlabel('Maximum Time To Live (λ)', loc='right')
 ax.set_xlim(left=0)
 
 yticks = plt.yticks()[0]
+yticks = yticks[2:-2]
 yticks = sorted(list(yticks) + [min(min(mttr_list)), max(max(mttr_list))])
 # Set the updated y-ticks
-yticks = yticks[2:]
 plt.yticks(yticks)
 
 ax.set_ylim(0, max(max(mttr_list))+2)
@@ -113,7 +113,7 @@ ax.spines['top'].set_visible(False)
 # Set x-axis to only show values in group_sizes list
 plt.xticks(mttf_list)
 
-ax.set_title('Queuing Delay (Second)', loc='left', zorder=4)
+ax.set_title('Queuing Delay (Seconds)', loc='left', zorder=4)
 # ax.set_ylabel('Queuing Delay (Second)', loc='top', rotation=0, labelpad=-121)
 
 ax.set_xlabel('Maximum Time To Live (λ)', loc='right')

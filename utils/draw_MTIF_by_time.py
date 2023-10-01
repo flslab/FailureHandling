@@ -41,7 +41,7 @@ for shape in shapes:
             plt.plot(time, mtif, label=labels[i], color=colors[i])
 
         # Customize the plot
-        plt.xlabel('Time (Minutes)', loc='right')
+        plt.xlabel('Time (Minute)', loc='right')
 
         ax.spines['right'].set_visible(False)
         ax.spines['top'].set_visible(False)

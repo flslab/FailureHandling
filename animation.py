@@ -178,14 +178,14 @@ def trim_png(image_path, output_path, trim_values):
 if __name__ == '__main__':
     for folder in ["K3", "K0"]:
         for filename in ["True"]:
-            input_path = f"/Users/shuqinzhu/Desktop/1/{folder}/skateboard_D1_R80_T120_S0_P{filename}/timeline.json"
+            input_path = f"/Users/shuqinzhu/Desktop/1/{folder}/skateboard_D1_R80_T150_S0_P{filename}/timeline.json"
             # input_path = f"/Users/shuqinzhu/Desktop/timeline.json"
             filtered_events, length, width, height = read_point_cloud(input_path)
             fig, ax, _ = draw_figure()
             init(ax)
             xs, ys, zs = show_last_frame(filtered_events, t=800)
             ax.scatter(xs, ys, zs, c='blue', s=2, alpha=1)
-            set_axis(ax, length, width, height)
+            set_axis(ax, xs, ys, zs)
             # ax.view_init(elev=90, azim=-90)
             # plt.show()
             # plt.savefig(f"/Users/shuqinzhu/Desktop/K3_toy_inf.png")

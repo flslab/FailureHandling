@@ -351,7 +351,7 @@ class PrimaryNode:
             print(e)
             fls_type = 1
 
-        properties["gtl"] = properties["gtl"] + 30
+        properties["gtl"] = properties["gtl"]
 
         timestamp = time.time()
         dispatcher.q.put((fls_type, timestamp, lambda: self._send_msg_to_node(nid, properties)))

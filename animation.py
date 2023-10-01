@@ -176,9 +176,9 @@ def trim_png(image_path, output_path, trim_values):
 
 
 if __name__ == '__main__':
-    for folder in ["K3"]:
-        for filename in ["True", "False"]:
-            input_path = f"/Users/shuqinzhu/Desktop/Results.nosync/skateboard_prioVSnoprio/{folder}/skateboard_D1_R35_T60_S6_P{filename}/timeline.json"
+    for folder in ["K3", "K0"]:
+        for filename in ["True"]:
+            input_path = f"/Users/shuqinzhu/Desktop/1/{folder}/skateboard_D1_R80_T60_S6_P{filename}/timeline.json"
             # input_path = f"/Users/shuqinzhu/Desktop/timeline.json"
             filtered_events, length, width, height = read_point_cloud(input_path)
             fig, ax, _ = draw_figure()
@@ -197,5 +197,5 @@ if __name__ == '__main__':
             plt.savefig(f"/Users/shuqinzhu/Desktop/exp_figure/skateboard/{folder}_{filename}.png", dpi=500)
             image_path = f"/Users/shuqinzhu/Desktop/exp_figure/skateboard/{folder}_{filename}.png"  # Replace with the path to your PNG file
             output_path = f"/Users/shuqinzhu/Desktop/exp_figure/skateboard/{folder}_{filename}.png"  # Replace with the path to save the trimmed image
-            trim_values = [1855, 1141, 1684, 815]  # Replace with the number of pixels to trim from each side (left, top, right, bottom)
-            trim_png(image_path, output_path, trim_values)
+            # trim_values = [1855, 1141, 1684, 815]  # Replace with the number of pixels to trim from each side (left, top, right, bottom)
+            # trim_png(image_path, output_path, trim_values)

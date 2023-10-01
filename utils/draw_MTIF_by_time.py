@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 
 # List of Excel file names
 # shapes = ["dragon", "skateboard"]
-shapes = ["skateboard"]
+shapes = ["hat"]
 speed = "66"
 
 # data_names = ["50th percentile", "95th percentile", "99th percentile"]
@@ -43,13 +43,13 @@ for shape in shapes:
         ax.spines['right'].set_visible(False)
         ax.spines['top'].set_visible(False)
 
-        ax.set_title('MTIF (Seconds)', loc='left', zorder=4)
+        ax.set_title('MTID (Seconds)', loc='left', zorder=4)
         # plt.legend()
-        plt.text(30, 0.35, 'No Standby', color=colors[0], fontweight='bold', zorder=3)
-        plt.text(30, 0.06, 'G=3', color="#B47100", fontweight='bold', zorder=3)
+        plt.text(30, 0.34, 'No Standby', color=colors[0], fontweight='bold', zorder=3)
+        plt.text(30, 0.06, 'G=3', color=colors[1], fontweight='bold', zorder=3)
         plt.text(30, 0.1, 'G=20', color=colors[2], fontweight='bold', zorder=3)
 
         # Show the plot
-        # plt.show(dpi=500)
-        plt.savefig(f"{path}figure/{shape}_{data_name[0:2]}_S{speed}", dpi=500)
+        plt.show(dpi=500)
+        # plt.savefig(f"{path}figure/{shape}_{data_name[0:2]}_S{speed}", dpi=500)
         plt.close()

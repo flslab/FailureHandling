@@ -5,7 +5,7 @@ import pandas as pd
 
 # shapes = ["dragon", "skateboard"]
 shapes = ["hat"]
-speed = "6"
+speed = "66"
 
 group_size = [0, 3, 20]
 point_nums = {

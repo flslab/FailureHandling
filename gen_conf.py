@@ -84,15 +84,15 @@ general_props = [
             # {"K": "15", "INPUT": "'skateboard_G15'", "SHAPE": "'skateboard'", "FAILURE_TIMEOUT": "900", "DURATION": "60 * 60"},
             # {"K": "20", "INPUT": "'skateboard_G20'", "SHAPE": "'skateboard'", "FAILURE_TIMEOUT": "900", "DURATION": "60 * 60"},
 
-            # {"K": "5", "INPUT": "'dragon_G5'", "SHAPE": "'dragon'", "FAILURE_TIMEOUT": "900", "DURATION": "60 * 60"},
-            # {"K": "10", "INPUT": "'dragon_G10'", "SHAPE": "'dragon'", "FAILURE_TIMEOUT": "900", "DURATION": "60 * 60"},
-            {"K": "15", "INPUT": "'dragon_G15'", "SHAPE": "'dragon'", "FAILURE_TIMEOUT": "900", "DURATION": "60 * 60"},
+            {"K": "5", "INPUT": "'dragon_G5'", "SHAPE": "'dragon'", "FAILURE_TIMEOUT": "900", "DURATION": "60 * 60"},
+            {"K": "10", "INPUT": "'dragon_G10'", "SHAPE": "'dragon'", "FAILURE_TIMEOUT": "900", "DURATION": "60 * 60"},
+            # {"K": "15", "INPUT": "'dragon_G15'", "SHAPE": "'dragon'", "FAILURE_TIMEOUT": "900", "DURATION": "60 * 60"},
 
             # {"K": "0", "INPUT": "'dragon_G3'", "SHAPE": "'dragon'", "FAILURE_TIMEOUT": "60", "DURATION": "60 * 30"},
             # {"K": "3", "INPUT": "'dragon_G3'", "SHAPE": "'dragon'", "FAILURE_TIMEOUT": "60", "DURATION": "60 * 30"},
-            {"K": "5", "INPUT": "'dragon_G5'", "SHAPE": "'dragon'", "FAILURE_TIMEOUT": "60", "DURATION": "60 * 30"},
-            {"K": "10", "INPUT": "'dragon_G10'", "SHAPE": "'dragon'", "FAILURE_TIMEOUT": "60", "DURATION": "60 * 30"},
-            {"K": "15", "INPUT": "'dragon_G15'", "SHAPE": "'dragon'", "FAILURE_TIMEOUT": "60", "DURATION": "60 * 30"},
+            # {"K": "5", "INPUT": "'dragon_G5'", "SHAPE": "'dragon'", "FAILURE_TIMEOUT": "60", "DURATION": "60 * 30"},
+            # {"K": "10", "INPUT": "'dragon_G10'", "SHAPE": "'dragon'", "FAILURE_TIMEOUT": "60", "DURATION": "60 * 30"},
+            # {"K": "15", "INPUT": "'dragon_G15'", "SHAPE": "'dragon'", "FAILURE_TIMEOUT": "60", "DURATION": "60 * 30"},
             # {"K": "20", "INPUT": "'dragon_G20'", "SHAPE": "'dragon'", "FAILURE_TIMEOUT": "60", "DURATION": "60 * 30"},
         ]
     },

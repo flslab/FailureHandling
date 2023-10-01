@@ -13,7 +13,7 @@ from PIL import Image
 ticks_gap = 20
 
 start_time = 900
-duration = 1
+duration = 60
 fps = 30
 frame_rate = 1 / fps
 total_points = 760
@@ -51,7 +51,7 @@ def set_text_time(tx, t):
     tx.set(text=f"Elapsed time: {int(t)} seconds", fontsize=20, color='white')
 
 def set_label(tx, label):
-    tx.set(text=f"{label}", fontsize=28, color='white')
+    tx.set(text=f"{label}", fontsize=30, color='white')
 
 def draw_figure():
     px = 1 / plt.rcParams['figure.dpi']
@@ -74,7 +74,9 @@ def draw_figure():
 
     tx_left = fig.text(0.22, 0.5, s="", fontsize=20, color='white')
     tx_right = fig.text(0.7, 0.5, s="", fontsize=20, color='white')
-    return fig, ax, ax2, ax3, ax4, ax5, ax6, tx_K0, tx_K3, tx_left, tx_right
+
+    tx_title = fig.text(0.252, 0.03, s="The Hat with 1562 points, $\lambda$=900, Speed=6.11 m/sec", fontsize=28, color='white')
+    return fig, ax, ax2, ax3, ax4, ax5, ax6, tx_K0, tx_K3, tx_left, tx_right, tx_title
 
 
 def read_point_cloud(input_path):
@@ -324,7 +326,7 @@ if __name__ == '__main__':
 
         input_path_K3 = f"/Users/shuqinzhu/Desktop/video/timelines/{file_names[1]}.json"
         filtered_events_K3, length, width, height = read_point_cloud(input_path_K3)
-        fig, ax, ax2, ax3, ax4, ax5, ax6, tx_K0, tx_K3, tx_left, tx_right = draw_figure()
+        fig, ax, ax2, ax3, ax4, ax5, ax6, tx_K0, tx_K3, tx_left, tx_right, tx_title = draw_figure()
         points_K0 = dict()
         points_K3 = dict()
         ani = FuncAnimation(

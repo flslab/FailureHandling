@@ -56,7 +56,7 @@ def set_text_K3(tx, t, missing_flss):
 
 
 def set_text_time(tx, t):
-    tx.set(text=f"Elapsed time: {int(t)} seconds")
+    tx.set(text=f"Elapsed time: {int(t)} second")
 
 
 def draw_figure():

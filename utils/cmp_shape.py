@@ -381,15 +381,15 @@ def time_centroid_to_point_plot(data_sets, group_sizes, speed_models, name):
     markers = ["o", "v", "s", "x"]
 
     for i, data_set in enumerate(data_sets):
-        plt.plot(group_sizes, data_set, marker=markers[i],  label=f'Speed Model: {speed_models[i]}')
+        plt.plot(group_sizes, data_set, marker=markers[i], label=f'Speed Model: {speed_models[i]}')
 
     # Configure the chart
     plt.xlabel('Group Size (G)', loc='right')
 
-    ax.set_title('MTID (Seconds)', loc='left', zorder=4)
+    ax.set_title('MTID (Second)', loc='left', zorder=4)
     # plt.ylabel('Avg Time To Travel from Group Centroid to Points in Group')
     # plt.title('Avg Time To Travel by Group Size')
-    plt.legend(bbox_to_anchor=(1, 0.89),loc='upper right')
+    plt.legend(bbox_to_anchor=(1, 0.89), loc='upper right')
     plt.xticks(group_sizes)
 
     # Display the plot
@@ -462,7 +462,6 @@ if __name__ == '__main__':
 
         F = len(unique_coordinates)
 
-
         for i, group_type in enumerate(["K", "G"]):
 
             group_name = group_names[i]
@@ -504,6 +503,9 @@ if __name__ == '__main__':
 
                 dists = process_excel(file_path)
 
+                # mttr = [calculate_travel_time(max_speed, max_acceleration, max_deceleration,
+                #                               dist * disp_cell_size if dist > 0 else disp_cell_size) for dist in dists]
+
                 mttr = [calculate_travel_time(max_speed, max_acceleration, max_deceleration,
                                               dist * disp_cell_size if dist > 0 else disp_cell_size) for dist in dists]
 
@@ -512,7 +514,7 @@ if __name__ == '__main__':
                 mttr_list.append(mttr)
 
                 avg_mttr = calculate_travel_time(max_speed, max_acceleration, max_deceleration,
-                                                 dists[0] * disp_cell_size if dists[0] > 0 else disp_cell_size)
+                                                 dists[0] * disp_cell_size)
                 report = [shape, group_name, str(K), avg_pairwise_dist, avg_centroid_dist]
 
                 group_sizes = get_groupsize_list(file_path)

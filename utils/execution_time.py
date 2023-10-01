@@ -28,7 +28,7 @@ ax.yaxis.set_major_locator(y_locator)
 y_formatter = mpl.ticker.FixedFormatter(["0.001", "0.01", "0.1", "1", "10", "100", "1000"])
 ax.yaxis.set_major_formatter(y_formatter)
 
-ax.set_title('Execution Time (Seconds)', loc='left')
+ax.set_title('Execution Time (Second)', loc='left')
 # ax.set_ylabel('Execution Time (Second)', loc='top', rotation=0, labelpad=-124)
 ax.set_xlabel('Group Size (G)', loc='right', labelpad=-1)
 

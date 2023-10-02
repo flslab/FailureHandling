@@ -162,8 +162,8 @@ class StateMachine:
 
             if Config.FAILURE_MODEL == 0:
                 failure_timeout = random.random() * Config.FAILURE_TIMEOUT
-            # elif Config.FAILURE_MODEL == 1:
-                # failure_timeout = left_half_exponential(Config.FAILURE_TIMEOUT)
+            elif Config.FAILURE_MODEL == 1:
+                failure_timeout = left_half_exponential(Config.FAILURE_TIMEOUT)
         self.timer_failure = threading.Timer(failure_timeout, self.put_state_in_q, (MessageTypes.FAILURE_DETECTED,))
         self.timer_failure.start()
 

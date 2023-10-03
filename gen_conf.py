@@ -123,15 +123,15 @@ general_props = [
     {
         "keys": ["K", "INPUT", "DISPATCHERS", "SHAPE"],
         "values": [
-            {"K": "0", "INPUT": "'skateboard_G3'", "DISPATCHERS": "1", "SHAPE": "'skateboard'"},
-            {"K": "3", "INPUT": "'skateboard_G3'", "DISPATCHERS": "1", "SHAPE": "'skateboard'"},
-            # {"K": "5", "INPUT": "'skateboard_G5'", "DISPATCHERS": "1", "SHAPE": "'skateboard'"},
-            # {"K": "10", "INPUT": "'skateboard_G10'", "DISPATCHERS": "1", "SHAPE": "'skateboard'"},
-            # {"K": "15", "INPUT": "'skateboard_G15'", "DISPATCHERS": "1", "SHAPE": "'skateboard'"},
-            {"K": "20", "INPUT": "'skateboard_G20'", "DISPATCHERS": "1", "SHAPE": "'skateboard'"},
+            # {"K": "0", "INPUT": "'skateboard_G3'", "DISPATCHERS": "1", "SHAPE": "'skateboard'"},
+            # {"K": "3", "INPUT": "'skateboard_G3'", "DISPATCHERS": "1", "SHAPE": "'skateboard'"},
+            # # {"K": "5", "INPUT": "'skateboard_G5'", "DISPATCHERS": "1", "SHAPE": "'skateboard'"},
+            # # {"K": "10", "INPUT": "'skateboard_G10'", "DISPATCHERS": "1", "SHAPE": "'skateboard'"},
+            # # {"K": "15", "INPUT": "'skateboard_G15'", "DISPATCHERS": "1", "SHAPE": "'skateboard'"},
+            # {"K": "20", "INPUT": "'skateboard_G20'", "DISPATCHERS": "1", "SHAPE": "'skateboard'"},
 
-            {"K": "0", "INPUT": "'dragon_G3'", "DISPATCHERS": "1", "SHAPE": "'dragon'"},
-            {"K": "3", "INPUT": "'dragon_G3'", "DISPATCHERS": "1", "SHAPE": "'dragon'"},
+            # {"K": "0", "INPUT": "'dragon_G3'", "DISPATCHERS": "1", "SHAPE": "'dragon'"},
+            # {"K": "3", "INPUT": "'dragon_G3'", "DISPATCHERS": "1", "SHAPE": "'dragon'"},
             # {"K": "5", "INPUT": "'dragon_G5'", "DISPATCHERS": "1", "SHAPE": "'dragon'"},
             # {"K": "10", "INPUT": "'dragon_G10'", "DISPATCHERS": "1", "SHAPE": "'dragon'"},
             # {"K": "15", "INPUT": "'dragon_G15'", "DISPATCHERS": "1", "SHAPE": "'dragon'"},

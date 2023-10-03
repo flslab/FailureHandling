@@ -73,71 +73,92 @@ general_props = [
         # "values": ["10", "20", "100"]
         # "values": ["5", "10"]
     },
-    # {
-    #     "keys": ["K", "INPUT", "SHAPE", "FAILURE_TIMEOUT", "DURATION"],
-    #     "values": [
-    #
-    #         # {"K": "0", "INPUT": "'skateboard_G3'", "SHAPE": "'skateboard'", "FAILURE_TIMEOUT": "300", "DURATION": "60 * 10"},
-    #         {"K": "3", "INPUT": "'skateboard_G3'", "SHAPE": "'skateboard'", "FAILURE_TIMEOUT": "300", "DURATION": "60 * 10"},
-    #         # {"K": "5", "INPUT": "'skateboard_G5'", "SHAPE": "'skateboard'", "FAILURE_TIMEOUT": "900", "DURATION": "60 * 60"},
-    #         # {"K": "10", "INPUT": "'skateboard_G10'", "SHAPE": "'skateboard'", "FAILURE_TIMEOUT": "900", "DURATION": "60 * 60"},
-    #         # {"K": "15", "INPUT": "'skateboard_G15'", "SHAPE": "'skateboard'", "FAILURE_TIMEOUT": "900", "DURATION": "60 * 60"},
-    #         # {"K": "20", "INPUT": "'skateboard_G20'", "SHAPE": "'skateboard'", "FAILURE_TIMEOUT": "900", "DURATION": "60 * 60"},
-    #
-    #         # {"K": "5", "INPUT": "'dragon_G5'", "SHAPE": "'dragon'", "FAILURE_TIMEOUT": "900", "DURATION": "60 * 60"},
-    #         # {"K": "10", "INPUT": "'dragon_G10'", "SHAPE": "'dragon'", "FAILURE_TIMEOUT": "900", "DURATION": "60 * 60"},
-    #         # {"K": "15", "INPUT": "'dragon_G15'", "SHAPE": "'dragon'", "FAILURE_TIMEOUT": "900", "DURATION": "60 * 60"},
-    #
-    #         # {"K": "0", "INPUT": "'dragon_G3'", "SHAPE": "'dragon'", "FAILURE_TIMEOUT": "60", "DURATION": "60 * 30"},
-    #         # {"K": "3", "INPUT": "'dragon_G3'", "SHAPE": "'dragon'", "FAILURE_TIMEOUT": "60", "DURATION": "60 * 30"},
-    #         # {"K": "5", "INPUT": "'dragon_G5'", "SHAPE": "'dragon'", "FAILURE_TIMEOUT": "60", "DURATION": "60 * 30"},
-    #         # {"K": "10", "INPUT": "'dragon_G10'", "SHAPE": "'dragon'", "FAILURE_TIMEOUT": "60", "DURATION": "60 * 30"},
-    #         # {"K": "15", "INPUT": "'dragon_G15'", "SHAPE": "'dragon'", "FAILURE_TIMEOUT": "60", "DURATION": "60 * 30"},
-    #         # {"K": "20", "INPUT": "'dragon_G20'", "SHAPE": "'dragon'", "FAILURE_TIMEOUT": "60", "DURATION": "60 * 30"},
-    #     ]
-    # },
+    {
+        "keys": ["K", "INPUT", "SHAPE", "FAILURE_TIMEOUT", "DURATION"],
+        "values": [
+            {"K": "0", "INPUT": "'skateboard_G3'", "SHAPE": "'skateboard'", "FAILURE_TIMEOUT": "60", "DURATION": "60 * 30"},
+            {"K": "3", "INPUT": "'skateboard_G3'", "SHAPE": "'skateboard'", "FAILURE_TIMEOUT": "60", "DURATION": "60 * 30"},
+            {"K": "20", "INPUT": "'skateboard_G20'", "SHAPE": "'skateboard'", "FAILURE_TIMEOUT": "60", "DURATION": "60 * 30"},
+
+            {"K": "0", "INPUT": "'dragon_G3'", "SHAPE": "'dragon'", "FAILURE_TIMEOUT": "60", "DURATION": "60 * 30"},
+            {"K": "3", "INPUT": "'dragon_G3'", "SHAPE": "'dragon'", "FAILURE_TIMEOUT": "60", "DURATION": "60 * 30"},
+            {"K": "20", "INPUT": "'dragon_G20'", "SHAPE": "'dragon'", "FAILURE_TIMEOUT": "60", "DURATION": "60 * 30"},
+
+            {"K": "0", "INPUT": "'hat_G3'", "SHAPE": "'hat'", "FAILURE_TIMEOUT": "60",
+             "DURATION": "60 * 30"},
+            {"K": "3", "INPUT": "'hat_G3'", "SHAPE": "'hat'", "FAILURE_TIMEOUT": "60",
+             "DURATION": "60 * 30"},
+            {"K": "20", "INPUT": "'hat_G20'", "SHAPE": "'hat'", "FAILURE_TIMEOUT": "60",
+             "DURATION": "60 * 30"},
+
+            {"K": "0", "INPUT": "'skateboard_G3'", "SHAPE": "'skateboard'", "FAILURE_TIMEOUT": "900",
+             "DURATION": "60 * 60"},
+            {"K": "3", "INPUT": "'skateboard_G3'", "SHAPE": "'skateboard'", "FAILURE_TIMEOUT": "900",
+             "DURATION": "60 * 60"},
+            # {"K": "5", "INPUT": "'skateboard_G5'", "SHAPE": "'skateboard'", "FAILURE_TIMEOUT": "900", "DURATION": "60 * 60"},
+            # {"K": "10", "INPUT": "'skateboard_G10'", "SHAPE": "'skateboard'", "FAILURE_TIMEOUT": "900", "DURATION": "60 * 60"},
+            # {"K": "15", "INPUT": "'skateboard_G15'", "SHAPE": "'skateboard'", "FAILURE_TIMEOUT": "900", "DURATION": "60 * 60"},
+            {"K": "20", "INPUT": "'skateboard_G20'", "SHAPE": "'skateboard'", "FAILURE_TIMEOUT": "900",
+             "DURATION": "60 * 60"},
+
+            {"K": "0", "INPUT": "'dragon_G3'", "SHAPE": "'dragon'", "FAILURE_TIMEOUT": "900",
+             "DURATION": "60 * 60"},
+            {"K": "3", "INPUT": "'dragon_G3'", "SHAPE": "'dragon'", "FAILURE_TIMEOUT": "900",
+             "DURATION": "60 * 60"},
+            {"K": "20", "INPUT": "'dragon_G20'", "SHAPE": "'dragon'", "FAILURE_TIMEOUT": "900",
+             "DURATION": "60 * 60"},
+
+            {"K": "0", "INPUT": "'hat_G3'", "SHAPE": "'hat'", "FAILURE_TIMEOUT": "900",
+             "DURATION": "60 * 60"},
+            {"K": "3", "INPUT": "'hat_G3'", "SHAPE": "'hat'", "FAILURE_TIMEOUT": "900",
+             "DURATION": "60 * 60"},
+            {"K": "20", "INPUT": "'hat_G20'", "SHAPE": "'hat'", "FAILURE_TIMEOUT": "900",
+             "DURATION": "60 * 60"},
+
+        ]
+    },
     {
         "keys": ["DISPATCHERS"],
         "values": ["1"],
         # "values": ["1", "3"]
     },
-    {
-        "keys": ["FAILURE_TIMEOUT"],
-        # "values": ["30", "60", "120", "300"]
-        "values": ["60"]
-        # "values": ["1", "3", "6", "30", "60", "120", "600"]
-    },
+    # {
+    #     "keys": ["FAILURE_TIMEOUT"],
+    #     # "values": ["30", "60", "120", "300"]
+    #     "values": ["60"]
+    #     # "values": ["1", "3", "6", "30", "60", "120", "600"]
+    # },
     {
         "keys": ["MAX_SPEED", "ACCELERATION", "DECELERATION"],
         "values": [
             # {"MAX_SPEED": "0.1", "ACCELERATION": "0.1", "DECELERATION": "0.1"},
             {"MAX_SPEED": "6.11", "ACCELERATION": "6.11", "DECELERATION": "6.11"},
             # {"MAX_SPEED": "30", "ACCELERATION": "30", "DECELERATION": "30"},
-            {"MAX_SPEED": "66.67", "ACCELERATION": "66.67", "DECELERATION": "66.67"},
+            # {"MAX_SPEED": "66.67", "ACCELERATION": "66.67", "DECELERATION": "66.67"},
         ]
     },
-    {
-        "keys": ["DURATION"],
-        "values": ["60 * 60"]
-    },
-    {
-        "keys": ["K", "INPUT", "DISPATCHERS", "SHAPE"],
-        "values": [
-            # {"K": "0", "INPUT": "'skateboard_G3'", "DISPATCHERS": "1", "SHAPE": "'skateboard'"},
-            # {"K": "3", "INPUT": "'skateboard_G3'", "DISPATCHERS": "1", "SHAPE": "'skateboard'"},
-            # # {"K": "5", "INPUT": "'skateboard_G5'", "DISPATCHERS": "1", "SHAPE": "'skateboard'"},
-            # # {"K": "10", "INPUT": "'skateboard_G10'", "DISPATCHERS": "1", "SHAPE": "'skateboard'"},
-            # # {"K": "15", "INPUT": "'skateboard_G15'", "DISPATCHERS": "1", "SHAPE": "'skateboard'"},
-            # {"K": "20", "INPUT": "'skateboard_G20'", "DISPATCHERS": "1", "SHAPE": "'skateboard'"},
-
-            # {"K": "0", "INPUT": "'dragon_G3'", "DISPATCHERS": "1", "SHAPE": "'dragon'"},
-            # {"K": "3", "INPUT": "'dragon_G3'", "DISPATCHERS": "1", "SHAPE": "'dragon'"},
-            # {"K": "5", "INPUT": "'dragon_G5'", "DISPATCHERS": "1", "SHAPE": "'dragon'"},
-            # {"K": "10", "INPUT": "'dragon_G10'", "DISPATCHERS": "1", "SHAPE": "'dragon'"},
-            # {"K": "15", "INPUT": "'dragon_G15'", "DISPATCHERS": "1", "SHAPE": "'dragon'"},
-            {"K": "20", "INPUT": "'dragon_G20'", "DISPATCHERS": "1", "SHAPE": "'dragon'"},
-        ]
-    },
+    # {
+    #     "keys": ["DURATION"],
+    #     "values": ["60 * 60"]
+    # },
+    # {
+    #     "keys": ["K", "INPUT", "DISPATCHERS", "SHAPE"],
+    #     "values": [
+    #         # {"K": "0", "INPUT": "'skateboard_G3'", "DISPATCHERS": "1", "SHAPE": "'skateboard'"},
+    #         # {"K": "3", "INPUT": "'skateboard_G3'", "DISPATCHERS": "1", "SHAPE": "'skateboard'"},
+    #         # # {"K": "5", "INPUT": "'skateboard_G5'", "DISPATCHERS": "1", "SHAPE": "'skateboard'"},
+    #         # # {"K": "10", "INPUT": "'skateboard_G10'", "DISPATCHERS": "1", "SHAPE": "'skateboard'"},
+    #         # # {"K": "15", "INPUT": "'skateboard_G15'", "DISPATCHERS": "1", "SHAPE": "'skateboard'"},
+    #         # {"K": "20", "INPUT": "'skateboard_G20'", "DISPATCHERS": "1", "SHAPE": "'skateboard'"},
+    #
+    #         # {"K": "0", "INPUT": "'dragon_G3'", "DISPATCHERS": "1", "SHAPE": "'dragon'"},
+    #         # {"K": "3", "INPUT": "'dragon_G3'", "DISPATCHERS": "1", "SHAPE": "'dragon'"},
+    #         # {"K": "5", "INPUT": "'dragon_G5'", "DISPATCHERS": "1", "SHAPE": "'dragon'"},
+    #         # {"K": "10", "INPUT": "'dragon_G10'", "DISPATCHERS": "1", "SHAPE": "'dragon'"},
+    #         # {"K": "15", "INPUT": "'dragon_G15'", "DISPATCHERS": "1", "SHAPE": "'dragon'"},
+    #         {"K": "20", "INPUT": "'dragon_G20'", "DISPATCHERS": "1", "SHAPE": "'dragon'"},
+    #     ]
+    # },
 
     {
         "keys": ["PRIORITIZE_ILLUMINATING_FLS"],

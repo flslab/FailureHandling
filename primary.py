@@ -354,7 +354,12 @@ class PrimaryNode:
         properties["gtl"] = properties["gtl"]
 
         timestamp = time.time()
-        dispatcher.q.put((fls_type, timestamp, lambda: self._send_msg_to_node(nid, properties)))
+        try:
+            dispatcher.q.put((fls_type, timestamp, lambda: self._send_msg_to_node(nid, properties)))
+
+        except Exception as e:
+            logger.info("Connection reset by peer")
+            dispatcher.q.put((fls_type, timestamp, lambda: self._send_msg_to_node(nid, properties)))
 
         dispatcher.num_dispatched += 1
         self.deployed_num += 1

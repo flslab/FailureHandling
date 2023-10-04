@@ -97,7 +97,7 @@ def visible_cubes(camera, cubes):
             # Check if any point on the line segment is inside the obstructing cube
             t_values = np.linspace(0, 1, 100)  # Adjust the number of points as needed
             line_points = np.outer((1 - t_values), camera) + np.outer(t_values, cube[:3])
-            if any(is_inside_cube(point, cubes[j]) for point in line_points):
+            if any(is_inside_cube(point, cubes[j][0:3]) for point in line_points):
                 is_visible = False
                 break
 
@@ -167,9 +167,9 @@ if __name__ == "__main__":
 
         cam_positions = [
             #top
-            [boundary[0][0] + boundary[1][0]/2, boundary[0][1] + boundary[1][1]/2, boundary[1][2] + 10],
+            [boundary[0][0] + boundary[1][0]/2, boundary[0][1] + boundary[1][1]/2, boundary[1][2] + 50],
             #down
-            [boundary[0][0] + boundary[1][0]/2, boundary[0][1] + boundary[1][1]/2, boundary[0][2] - 10],
+            [boundary[0][0] + boundary[1][0]/2, boundary[0][1] + boundary[1][1]/2, boundary[0][2] - 50],
             #left
             [boundary[1][0] + 10, boundary[0][1] + boundary[1][1]/2, boundary[0][0] + boundary[1][0]/2],
             #right
@@ -181,9 +181,9 @@ if __name__ == "__main__":
 
             ]
 
-        views = ["top", "down", "left", "right", "front", "back"]
+        views = ["top", "bottom", "left", "right", "front", "back"]
         elevations = [90, -90, 0, 0, 0, 0]
-        azimuths = [0, 0, 0, 180, 90, -90]
+        azimuths = [0, 0, -90, 90, 180,  0]
 
         # Create a 3D scatter plot
         fig = plt.figure(figsize=(18, 12))
@@ -200,25 +200,20 @@ if __name__ == "__main__":
         standby = np.array(standby)
 
         for i, view in enumerate(views):
-            ax = fig.add_subplot(2, 3, i + 1, projection='3d')
-            ax.scatter(illum[:, 0], illum[:, 1], illum[:, 2], c='blue', marker='o')
-            # ax.scatter(standby[:, 0], standby[:, 1], standby[:, 2], c='black', marker='o')
+            ax = fig.add_subplot(projection='3d')
+            ax.scatter(standby[:, 0], standby[:, 1], standby[:, 2], c='red', marker='s', linewidths=0.1)
+            ax.scatter(illum[:, 0], illum[:, 1], illum[:, 2], c='blue', marker='s', linewidths=0.1)
             ax.set_xlabel('X Label')
             ax.set_ylabel('Y Label')
             ax.set_zlabel('Z Label')
             ax.view_init(elev=elevations[i], azim=azimuths[i])
             ax.set_title(view.capitalize() + ' View')
             ax.set_aspect('equal')
+            plt.savefig(f'/Users/shuqinzhu/Desktop/exp_figure/view_standby/{shape}_K{K}_{views[i]}.png', dpi=500)
 
-            # Save each view as a separate file
-            plt.savefig(f'/Users/shuqinzhu/Desktop/exp_figure/view_standby/{shape}_K{K}_{view}.png')
+        for i, camera in enumerate(cam_positions):
+            visible = visible_cubes(camera, points)
+            count_0 = visible.count(0)
+            count_1 = visible.count(1)
 
-        # Show the plots
-        plt.show()
-
-        # for i, camera in enumerate(cam_positions):
-        #     visible = visible_cubes(camera, points)
-        #     count_0 = visible.count(0)
-        #     count_1 = visible.count(1)
-        #
-        #     print(f"{shape}, {views[i]} view: Number of Illuminating FLS: {count_0}, Number of Obstructing FLS: {count_1}")
+            print(f"{shape}, {views[i]} view: Number of Illuminating FLS: {count_0}, Number of Obstructing FLS: {count_1}")

@@ -76,13 +76,13 @@ general_props = [
     {
         "keys": ["K", "INPUT", "SHAPE", "FAILURE_TIMEOUT", "DISPATCH_RATE", "DURATION"],
         "values": [
-            {"K": "0", "INPUT": "'skateboard_G3'", "SHAPE": "'skateboard'", "FAILURE_TIMEOUT": "60",
-             "DISPATCH_RATE": "30", "DURATION": "60 * 30"},
-            {"K": "3", "INPUT": "'skateboard_G3'", "SHAPE": "'skateboard'", "FAILURE_TIMEOUT": "60", "DISPATCH_RATE": "30", "DURATION": "60 * 30"},
-            {"K": "20", "INPUT": "'skateboard_G20'", "SHAPE": "'skateboard'", "FAILURE_TIMEOUT": "60", "DISPATCH_RATE": "30", "DURATION": "60 * 30"},
-
-            {"K": "0", "INPUT": "'skateboard_G3'", "SHAPE": "'skateboard'", "FAILURE_TIMEOUT": "60", "DISPATCH_RATE": "3000", "DURATION": "60 * 30"},
-            {"K": "3", "INPUT": "'skateboard_G3'", "SHAPE": "'skateboard'", "FAILURE_TIMEOUT": "60", "DISPATCH_RATE": "3000", "DURATION": "60 * 30"},
+            # {"K": "0", "INPUT": "'skateboard_G3'", "SHAPE": "'skateboard'", "FAILURE_TIMEOUT": "60",
+            #  "DISPATCH_RATE": "30", "DURATION": "60 * 30"},
+            # {"K": "3", "INPUT": "'skateboard_G3'", "SHAPE": "'skateboard'", "FAILURE_TIMEOUT": "60", "DISPATCH_RATE": "30", "DURATION": "60 * 30"},
+            # {"K": "20", "INPUT": "'skateboard_G20'", "SHAPE": "'skateboard'", "FAILURE_TIMEOUT": "60", "DISPATCH_RATE": "30", "DURATION": "60 * 30"},
+            #
+            # {"K": "0", "INPUT": "'skateboard_G3'", "SHAPE": "'skateboard'", "FAILURE_TIMEOUT": "60", "DISPATCH_RATE": "3000", "DURATION": "60 * 30"},
+            # {"K": "3", "INPUT": "'skateboard_G3'", "SHAPE": "'skateboard'", "FAILURE_TIMEOUT": "60", "DISPATCH_RATE": "3000", "DURATION": "60 * 30"},
             {"K": "20", "INPUT": "'skateboard_G20'", "SHAPE": "'skateboard'", "FAILURE_TIMEOUT": "60", "DISPATCH_RATE": "3000", "DURATION": "60 * 30"},
 
             {"K": "0", "INPUT": "'dragon_G3'", "SHAPE": "'dragon'", "FAILURE_TIMEOUT": "60", "DISPATCH_RATE": "3000", "DURATION": "60 * 30"},

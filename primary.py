@@ -236,7 +236,11 @@ class PrimaryNode:
 
     def _send_msg_to_all_nodes(self, msg):
         for nid in range(len(self.client_sockets)):
-            self._send_msg_to_node(nid, msg)
+            try:
+                self._send_msg_to_node(nid, msg)
+            except Exception as e:
+                self._send_msg_to_node(nid, msg)
+                logger.info("Connection Reset, Retry")
 
     def _send_msg_to_node(self, nid, msg):
         send_msg(self.client_sockets[nid], msg)

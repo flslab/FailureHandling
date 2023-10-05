@@ -2,29 +2,35 @@ import json
 import numpy as np
 
 # Replace with the actual file path
-file_path = 'data.json'
+directory = "/Users/shuqinzhu/Desktop/Results.nosync/"
 
-# Read the JSON file
-with open(file_path, 'r') as file:
-    data = json.load(file)
+folder = "skateboard_R3000_T900/"
+group_size = ["K0", "K3", "K5", "K10", "K15", "K20"]
 
-# Extract the 'illuminating' data
-illuminating_data = data.get('illuminating', {})
-timestamps = illuminating_data.get('t', [])
-values = illuminating_data.get('y', [])
+file_name = "skateboard_D1_R3000_T900_S6_PTrue"
 
-# Filter the data based on the time stamps
-filtered_values = [value for timestamp, value in zip(timestamps, values) if 1740 <= timestamp <= 1800]
+for K in group_size:
 
-# Calculate the average value per second
-# Assuming the timestamps are in seconds and are integers
-averages_per_second = []
-for second in range(1740, 1801):
-    values_in_second = [value for timestamp, value in zip(timestamps, values) if (timestamp >= second and timestamp< second + 1)]
-    if values_in_second:
-        averages_per_second.append(np.mean(values_in_second))
+    file_path = f"{directory}{folder}{K}/{file_name}/charts.json"
 
-# Calculate the overall average of the averages per second
-overall_average = np.mean(averages_per_second) if averages_per_second else None
+    # Read the JSON file
+    with open(file_path, 'r') as file:
+        data = json.load(file)
 
-print(f"Overall average: {overall_average}")
+    # Extract the 'illuminating' data
+    illuminating_data = data.get('illuminating', {})
+    timestamps = illuminating_data.get('t', [])
+    values = illuminating_data.get('y', [])
+
+    # Calculate the average value per second
+    # Assuming the timestamps are in seconds and are integers
+    averages_per_second = []
+    for second in range(3540, 3601):
+        values_in_second = [value for timestamp, value in zip(timestamps, values) if (timestamp >= second and timestamp< second + 1)]
+        if values_in_second:
+            averages_per_second.append(np.mean(values_in_second))
+
+    # Calculate the overall average of the averages per second
+    overall_average = np.mean(averages_per_second) if averages_per_second else None
+
+    print(overall_average/1727)

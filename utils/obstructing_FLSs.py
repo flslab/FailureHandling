@@ -73,7 +73,7 @@ def distance(point1, point2):
 
 # Function to check if a point is inside a cube
 def is_inside_cube(point, cube_center):
-    return all(abs(p - c) <= 0.5 for p, c in zip(point, cube_center))
+    return all(abs(p - c) <= 1 for p, c in zip(point, cube_center))
 
 
 # Function to find visible cubes
@@ -85,6 +85,7 @@ def visible_cubes(camera, cubes):
     sorted_indices = np.argsort(distances)
 
     visible = []
+    blocking = 0
     for i in sorted_indices:
         cube = cubes[i]
         is_visible = True
@@ -98,13 +99,16 @@ def visible_cubes(camera, cubes):
             t_values = np.linspace(0, 1, 100)  # Adjust the number of points as needed
             line_points = np.outer((1 - t_values), camera) + np.outer(t_values, cube[:3])
             if any(is_inside_cube(point, cubes[j][0:3]) for point in line_points):
+                if cubes[j][3] == 1 and cube[3] != 1:
+                    if j in visible:
+                        blocking += 1
                 is_visible = False
                 break
 
         if is_visible:
-            visible.append(cube[3])
+            visible.append(i)
 
-    return visible
+    return visible, blocking
 
 
 def check_blocking_nums(shape):
@@ -167,17 +171,17 @@ if __name__ == "__main__":
 
         cam_positions = [
             #top
-            [boundary[0][0] + boundary[1][0]/2, boundary[0][1] + boundary[1][1]/2, boundary[1][2] + 50],
+            [boundary[0][0] + boundary[1][0]/2, boundary[0][1] + boundary[1][1]/2, boundary[1][2] + 100],
             #down
-            [boundary[0][0] + boundary[1][0]/2, boundary[0][1] + boundary[1][1]/2, boundary[0][2] - 50],
+            [boundary[0][0] + boundary[1][0]/2, boundary[0][1] + boundary[1][1]/2, boundary[0][2] - 100],
             #left
-            [boundary[1][0] + 10, boundary[0][1] + boundary[1][1]/2, boundary[0][0] + boundary[1][0]/2],
+            [boundary[1][0] + 100, boundary[0][1] + boundary[1][1]/2, boundary[0][0] + boundary[1][0]/2],
             #right
-            [boundary[0][0] - 10, boundary[0][1] + boundary[1][1] / 2, boundary[0][0] + boundary[1][0]/2],
+            [boundary[0][0] - 100, boundary[0][1] + boundary[1][1] / 2, boundary[0][0] + boundary[1][0]/2],
             #front
-            [boundary[0][0] + boundary[1][0]/2, boundary[0][1] - 10, boundary[0][0] + boundary[1][0] / 2],
+            [boundary[0][0] + boundary[1][0]/2, boundary[0][1] - 100, boundary[0][0] + boundary[1][0] / 2],
             #back
-            [boundary[0][0] + boundary[1][0]/2, boundary[1][1] + 10, boundary[0][0] + boundary[1][0] / 2]
+            [boundary[0][0] + boundary[1][0]/2, boundary[1][1] + 100, boundary[0][0] + boundary[1][0] / 2]
 
             ]
 
@@ -201,19 +205,21 @@ if __name__ == "__main__":
 
         for i, view in enumerate(views):
             ax = fig.add_subplot(projection='3d')
-            ax.scatter(standby[:, 0], standby[:, 1], standby[:, 2], c='red', marker='s', linewidths=0.1)
-            ax.scatter(illum[:, 0], illum[:, 1], illum[:, 2], c='blue', marker='s', linewidths=0.1)
+            ax.scatter(illum[:, 0], illum[:, 1], illum[:, 2], c='blue', marker='s', alpha=1)
+            ax.scatter(standby[:, 0], standby[:, 1], standby[:, 2], c='red', marker='x', alpha=1)
             ax.set_xlabel('X Label')
             ax.set_ylabel('Y Label')
             ax.set_zlabel('Z Label')
             ax.view_init(elev=elevations[i], azim=azimuths[i])
-            ax.set_title(view.capitalize() + ' View')
+            # ax.set_title(view.capitalize() + ' View')
             ax.set_aspect('equal')
             plt.savefig(f'/Users/shuqinzhu/Desktop/exp_figure/view_standby/{shape}_K{K}_{views[i]}.png', dpi=500)
 
         for i, camera in enumerate(cam_positions):
-            visible = visible_cubes(camera, points)
-            count_0 = visible.count(0)
-            count_1 = visible.count(1)
+            visible, blocking = visible_cubes(camera, points)
+            # count_0 = visible[:, 3].count(0)
+            # count_1 = visible[:, 3].count(1)
 
-            print(f"{shape}, {views[i]} view: Number of Illuminating FLS: {count_0}, Number of Obstructing FLS: {count_1}")
+            print(f"{shape}, {views[i]} view: Standby Blocking: {blocking}")
+
+            # print(f"{shape}, {views[i]} view: Number of Illuminating FLS: {count_0}, Number of Obstructing FLS: {count_1}, Standby Blocking: {blocking}")

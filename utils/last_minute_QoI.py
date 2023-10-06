@@ -4,10 +4,12 @@ import numpy as np
 # Replace with the actual file path
 directory = "/Users/shuqinzhu/Desktop/Results.nosync/"
 
-folder = "skateboard_R3000_T900/"
+shape = "skateboard"
+
+folder = f"{shape}_BetaTTL/"
 group_size = ["K0", "K3", "K5", "K10", "K15", "K20"]
 
-file_name = "skateboard_D1_R3000_T900_S6_PTrue"
+file_name = f"{shape}_D1_R3000_T900_S6_PTrue"
 
 for K in group_size:
 
@@ -25,7 +27,7 @@ for K in group_size:
     # Calculate the average value per second
     # Assuming the timestamps are in seconds and are integers
     averages_per_second = []
-    for second in range(3540, 3601):
+    for second in range(2940, 3000):
         values_in_second = [value for timestamp, value in zip(timestamps, values) if (timestamp >= second and timestamp< second + 1)]
         if values_in_second:
             averages_per_second.append(np.mean(values_in_second))

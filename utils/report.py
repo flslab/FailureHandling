@@ -1,5 +1,7 @@
 import json
 from itertools import chain
+
+import numpy as np
 import pandas as pd
 import os
 import csv
@@ -144,6 +146,28 @@ def calculate_mean(csv_path, column_heading):
 
     return sum(values) / len(values)
 
+def get_last_min_QoI(file_path, total_points, end_time):
+    with open(file_path, 'r') as file:
+        data = json.load(file)
+
+    # Extract the 'illuminating' data
+    illuminating_data = data.get('illuminating', {})
+    timestamps = illuminating_data.get('t', [])
+    values = illuminating_data.get('y', [])
+
+    # Calculate the average value per second
+    # Assuming the timestamps are in seconds and are integers
+    averages_per_second = []
+    for second in range(end_time - 60, end_time + 1):
+        values_in_second = [value for timestamp, value in zip(timestamps, values) if (timestamp >= second and timestamp< second + 1)]
+        if values_in_second:
+            averages_per_second.append(np.mean(values_in_second))
+
+    # Calculate the overall average of the averages per second
+    overall_average = np.mean(averages_per_second) if averages_per_second else None
+
+    return overall_average/total_points
+
 
 def get_metrics_by_name(csv_path, start_time, metric_name):
     values = []
@@ -263,10 +287,12 @@ def get_report_metrics_no_group(dir_meta, time_range):
 
         initial_illum_num = metrics[2]
         metrics[1] += metrics[0]
-        metrics[0] = metrics[0]/initial_illum_num if initial_illum_num>0 else 0
-        metrics[1] = metrics[1]/initial_illum_num if initial_illum_num>0 else 0
+        metrics[0] = metrics[0]/initial_illum_num if initial_illum_num > 0 else 0
+        metrics[1] = metrics[1]/initial_illum_num if initial_illum_num > 0 else 0
 
-        logger.info(f"QoI After Rest: {metrics[1]}")
+        metrics.insert(0, get_last_min_QoI(json_file_path, initial_illum_num, Config.DURATION))
+
+        logger.info(f"QoI In Last Min: {metrics[0]}")
 
         for metric_name in ['mid_flight', 'illuminating', 'standby']:
             if data[metric_name]['t'][0] > time_range[1]:
@@ -307,6 +333,7 @@ def write_final_report(csv_file_path, target_file_path, name, group_num, time_ra
     #     return
 
     report_key = [
+        "QoI in Last Minute",
         "QoI Before Reset",
         "QoI After Reset",
         "Dispatched Before Reset",
@@ -324,10 +351,10 @@ def write_final_report(csv_file_path, target_file_path, name, group_num, time_ra
         "Min Dist Traveled",
         "Max Dist Traveled",
         "Median Dist Traveled",
-        "Avg MTTR",
-        "Min MTTR",
-        "Max MTTR",
-        "Median MTTR",
+        "Avg MTID",
+        "Min MTID",
+        "Max MTID",
+        "Median MTID",
         "Deploy Rate Before Reset",
         "Deploy Rate After Reset",
         "Number of Groups",
@@ -339,11 +366,11 @@ def write_final_report(csv_file_path, target_file_path, name, group_num, time_ra
     report_metrics = [metric for metric in report_metrics]
 
     if time_range[0] != 0:
-        report_metrics.append(report_metrics[2] / (time_range[0]))
+        report_metrics.append(report_metrics[3] / (time_range[0]))
     else:
         report_metrics.append(0)
 
-    report_metrics.append(report_metrics[3] / (Config.DURATION - time_range[0]))
+    report_metrics.append(report_metrics[4] / (Config.DURATION - time_range[0]))
 
     report_metrics.append(group_num)
     report = []

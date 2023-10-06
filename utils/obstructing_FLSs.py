@@ -72,8 +72,8 @@ def distance(point1, point2):
 
 
 # Function to check if a point is inside a cube
-def is_inside_cube(point, cube_center):
-    return all(abs(p - c) <= 1 for p, c in zip(point, cube_center))
+def is_inside_cube(point, cube_center, distance):
+    return all(abs(p - c) <= distance for p, c in zip(point, cube_center))
 
 
 # Function to find visible cubes
@@ -85,7 +85,10 @@ def visible_cubes(camera, cubes):
     sorted_indices = np.argsort(distances)
 
     visible = []
-    blocking = 0
+    blocking = []
+    visible_index = []
+    blocking_index = []
+    blocked_by = []
     for i in sorted_indices:
         cube = cubes[i]
         is_visible = True
@@ -98,17 +101,21 @@ def visible_cubes(camera, cubes):
             # Check if any point on the line segment is inside the obstructing cube
             t_values = np.linspace(0, 1, 100)  # Adjust the number of points as needed
             line_points = np.outer((1 - t_values), camera) + np.outer(t_values, cube[:3])
-            if any(is_inside_cube(point, cubes[j][0:3]) for point in line_points):
-                if cubes[j][3] == 1 and cube[3] != 1:
-                    if j in visible:
-                        blocking += 1
+            if any(is_inside_cube(point, cubes[j][0:3], 0.5) for point in line_points):
+                if cubes[j][3] == 1 and cube[3] != 1 and any(is_inside_cube(point, cubes[j][0:3], 0.5) for point in line_points):
+                    if j in visible_index and j not in blocking_index:
+                        blocking.append(cubes[j][0:3])
+                        blocked_by.append(cube[0:3])
+                        blocking_index.append(j)
+
                 is_visible = False
                 break
 
         if is_visible:
-            visible.append(i)
+            visible_index.append(i)
+            visible.append(cube)
 
-    return visible, blocking
+    return visible, blocking, blocked_by, blocking_index
 
 
 def check_blocking_nums(shape):
@@ -166,7 +173,7 @@ if __name__ == "__main__":
 
     # shape = "skateboard"
 
-    for shape in ["skateboard", "hat", "dragon"]:
+    for shape in [ "hat", "dragon"]:
         points, boundary = check_blocking_nums(shape)
 
         cam_positions = [
@@ -205,21 +212,87 @@ if __name__ == "__main__":
 
         for i, view in enumerate(views):
             ax = fig.add_subplot(projection='3d')
-            ax.scatter(illum[:, 0], illum[:, 1], illum[:, 2], c='blue', marker='s', alpha=1)
+            ax.scatter(illum[:, 0], illum[:, 1], illum[:, 2], c='blue', marker='+', alpha=1)
             ax.scatter(standby[:, 0], standby[:, 1], standby[:, 2], c='red', marker='x', alpha=1)
-            ax.set_xlabel('X Label')
-            ax.set_ylabel('Y Label')
-            ax.set_zlabel('Z Label')
+            # ax.set_xlabel('X Label')
+            # ax.set_ylabel('Y Label')
+            # ax.set_zlabel('Z Label')
+            ax.view_init(elev=elevations[i], azim=azimuths[i])
+            # ax.set_title(view.capitalize() + ' View')
+            ax.set_aspect('equal')
+            plt.savefig(f'/Users/shuqinzhu/Desktop/exp_figure/view_standby/{shape}_K{K}_{view}.png', dpi=500)
+
+        for i, camera in enumerate(cam_positions):
+            visible, blocking, blocked_by, blocking_index = visible_cubes(camera, points)
+            # count_0 = visible[:, 3].count(0)
+            # count_1 = visible[:, 3].count(1)
+
+            visible_illum = []
+            visible_standby = []
+            for point in visible:
+                if point[3] == 1:
+                    visible_standby.append(point[0:3])
+                else:
+                    visible_illum.append(point[0:3])
+
+            visible_illum = np.array(visible_illum)
+            np.unique(visible_illum, axis=0)
+
+            visible_standby = np.array(visible_standby)
+            np.unique(visible_standby, axis=0)
+
+            blocking = np.array(blocking)
+            np.unique(blocking, axis=0)
+
+            blocked_by = np.array(blocked_by)
+            np.unique(blocked_by, axis=0)
+            
+
+            ax = fig.add_subplot(projection='3d')
+            ax.scatter(illum[:, 0], illum[:, 1], illum[:, 2], c='blue', marker='+', alpha=1)
+            ax.scatter(standby[:, 0], standby[:, 1], standby[:, 2], c='red', marker='x', alpha=1)
+            # ax.set_xlabel('X Label')
+            # ax.set_ylabel('Y Label')
+            # ax.set_zlabel('Z Label')
             ax.view_init(elev=elevations[i], azim=azimuths[i])
             # ax.set_title(view.capitalize() + ' View')
             ax.set_aspect('equal')
             plt.savefig(f'/Users/shuqinzhu/Desktop/exp_figure/view_standby/{shape}_K{K}_{views[i]}.png', dpi=500)
 
-        for i, camera in enumerate(cam_positions):
-            visible, blocking = visible_cubes(camera, points)
-            # count_0 = visible[:, 3].count(0)
-            # count_1 = visible[:, 3].count(1)
+            ax = fig.add_subplot(projection='3d')
+            ax.scatter(visible_illum[:, 0], visible_illum[:, 1], visible_illum[:, 2], c='blue', marker='+', alpha=1)
+            ax.scatter(visible_standby[:, 0], visible_standby[:, 1], visible_standby[:, 2], c='red', marker='x', alpha=1)
+            ax.view_init(elev=elevations[i], azim=azimuths[i])
+            # ax.set_title(view.capitalize() + ' View')
+            ax.set_aspect('equal')
+            plt.savefig(f'/Users/shuqinzhu/Desktop/exp_figure/view_standby/{shape}_K{K}_{views[i]}_visible.png')
 
-            print(f"{shape}, {views[i]} view: Standby Blocking: {blocking}")
+            ax = fig.add_subplot(projection='3d')
+            ax.scatter(blocking[:, 0], blocking[:, 1], blocking[:, 2], c='red', marker='x', alpha=1)
+            ax.scatter(blocked_by[:, 0], blocked_by[:, 1], blocked_by[:, 2], c='blue', marker='+', alpha=1)
+            ax.view_init(elev=elevations[i], azim=azimuths[i])
+            # ax.set_title(view.capitalize() + ' View')
+            ax.set_aspect('equal')
+            plt.savefig(f'/Users/shuqinzhu/Desktop/exp_figure/view_standby/{shape}_K{K}_{views[i]}_overlap.png')
+
+
+            ax = fig.add_subplot(projection='3d')
+            ax.scatter(blocking[:, 0], blocking[:, 1], blocking[:, 2], c='red', marker='x', alpha=1)
+            ax.view_init(elev=elevations[i], azim=azimuths[i])
+            # ax.set_title(view.capitalize() + ' View')
+            ax.set_aspect('equal')
+            plt.savefig(f'/Users/shuqinzhu/Desktop/exp_figure/view_standby/{shape}_K{K}_{views[i]}_obstructing.png')
+
+            ax = fig.add_subplot(projection='3d')
+            ax.scatter(blocked_by[:, 0], blocked_by[:, 1], blocked_by[:, 2], c='blue', marker='+', alpha=1)
+            ax.view_init(elev=elevations[i], azim=azimuths[i])
+            # ax.set_title(view.capitalize() + ' View')
+            ax.set_aspect('equal')
+            plt.savefig(f'/Users/shuqinzhu/Desktop/exp_figure/view_standby/{shape}_K{K}_{views[i]}_blocked.png')
+
+
+            print(f"{shape}, {views[i]} view: Number of Illuminating FLS: {len(visible_illum)}, Number of Obstructing FLS: {len(visible_standby)}, Standby Blocking: {len(visible_standby)}, Acutal Number: {len(blocking_index)}")
+
+            # print(f"{shape}, {views[i]} view: Standby Blocking: {blocking}")
 
             # print(f"{shape}, {views[i]} view: Number of Illuminating FLS: {count_0}, Number of Obstructing FLS: {count_1}, Standby Blocking: {blocking}")

@@ -83,7 +83,7 @@ general_props = [
             #
             # {"K": "5", "INPUT": "'skateboard_G5'", "SHAPE": "'skateboard'", "FAILURE_TIMEOUT": "60", "DISPATCH_RATE": "3000", "DURATION": "60 * 30"},
             # {"K": "10", "INPUT": "'skateboard_G10'", "SHAPE": "'skateboard'", "FAILURE_TIMEOUT": "60", "DISPATCH_RATE": "3000", "DURATION": "60 * 30"},
-            # {"K": "15", "INPUT": "'skateboard_G15'", "SHAPE": "'skateboard'", "FAILURE_TIMEOUT": "60", "DISPATCH_RATE": "3000", "DURATION": "60 * 30"},
+            {"K": "20", "INPUT": "'skateboard_G20'", "SHAPE": "'skateboard'", "FAILURE_TIMEOUT": "60", "DISPATCH_RATE": "3000", "DURATION": "60 * 30"},
             #
             # {"K": "5", "INPUT": "'dragon_G5'", "SHAPE": "'dragon'", "FAILURE_TIMEOUT": "60", "DISPATCH_RATE": "3000", "DURATION": "60 * 30"},
             # {"K": "10", "INPUT": "'dragon_G10'", "SHAPE": "'dragon'", "FAILURE_TIMEOUT": "60", "DISPATCH_RATE": "3000", "DURATION": "60 * 30"},
@@ -96,29 +96,29 @@ general_props = [
             # {"K": "15", "INPUT": "'hat_G15'", "SHAPE": "'hat'", "FAILURE_TIMEOUT": "60",
             #  "DISPATCH_RATE": "3000", "DURATION": "60 * 30"},
 
-            {"K": "5", "INPUT": "'skateboard_G5'", "SHAPE": "'skateboard'", "FAILURE_TIMEOUT": "900",
-             "DISPATCH_RATE": "3000", "DURATION": "60 * 60"},
-            {"K": "10", "INPUT": "'skateboard_G10'", "SHAPE": "'skateboard'", "FAILURE_TIMEOUT": "900",
-             "DISPATCH_RATE": "3000", "DURATION": "60 * 60"},
+            # {"K": "5", "INPUT": "'skateboard_G5'", "SHAPE": "'skateboard'", "FAILURE_TIMEOUT": "900",
+            #  "DISPATCH_RATE": "3000", "DURATION": "60 * 60"},
+            # {"K": "10", "INPUT": "'skateboard_G10'", "SHAPE": "'skateboard'", "FAILURE_TIMEOUT": "900",
+            #  "DISPATCH_RATE": "3000", "DURATION": "60 * 60"},
             # {"K": "5", "INPUT": "'skateboard_G5'", "SHAPE": "'skateboard'", "FAILURE_TIMEOUT": "900", "DISPATCH_RATE": "3000", "DURATION": "60 * 60"},
             # {"K": "10", "INPUT": "'skateboard_G10'", "SHAPE": "'skateboard'", "FAILURE_TIMEOUT": "900", "DISPATCH_RATE": "3000", "DURATION": "60 * 60"},
             # {"K": "15", "INPUT": "'skateboard_G15'", "SHAPE": "'skateboard'", "FAILURE_TIMEOUT": "900", "DISPATCH_RATE": "3000", "DURATION": "60 * 60"},
-            {"K": "15", "INPUT": "'skateboard_G15'", "SHAPE": "'skateboard'", "FAILURE_TIMEOUT": "900",
-             "DISPATCH_RATE": "3000", "DURATION": "60 * 60"},
+            # {"K": "15", "INPUT": "'skateboard_G15'", "SHAPE": "'skateboard'", "FAILURE_TIMEOUT": "900",
+            #  "DISPATCH_RATE": "3000", "DURATION": "60 * 60"},
 
-            {"K": "5", "INPUT": "'dragon_G5'", "SHAPE": "'dragon'", "FAILURE_TIMEOUT": "900",
-             "DISPATCH_RATE": "3000", "DURATION": "60 * 60"},
-            {"K": "10", "INPUT": "'dragon_G10'", "SHAPE": "'dragon'", "FAILURE_TIMEOUT": "900",
-             "DISPATCH_RATE": "3000", "DURATION": "60 * 60"},
-            {"K": "15", "INPUT": "'dragon_G15'", "SHAPE": "'dragon'", "FAILURE_TIMEOUT": "900",
-             "DISPATCH_RATE": "3000", "DURATION": "60 * 60"},
-
-            {"K": "5", "INPUT": "'hat_G5'", "SHAPE": "'hat'", "FAILURE_TIMEOUT": "900",
-             "DISPATCH_RATE": "3000", "DURATION": "60 * 60"},
-            {"K": "10", "INPUT": "'hat_G10'", "SHAPE": "'hat'", "FAILURE_TIMEOUT": "900",
-             "DISPATCH_RATE": "3000", "DURATION": "60 * 60"},
-            {"K": "15", "INPUT": "'hat_G15'", "SHAPE": "'hat'", "FAILURE_TIMEOUT": "900",
-             "DISPATCH_RATE": "3000", "DURATION": "60 * 60"},
+            # {"K": "5", "INPUT": "'dragon_G5'", "SHAPE": "'dragon'", "FAILURE_TIMEOUT": "900",
+            #  "DISPATCH_RATE": "3000", "DURATION": "60 * 60"},
+            # {"K": "10", "INPUT": "'dragon_G10'", "SHAPE": "'dragon'", "FAILURE_TIMEOUT": "900",
+            #  "DISPATCH_RATE": "3000", "DURATION": "60 * 60"},
+            # {"K": "15", "INPUT": "'dragon_G15'", "SHAPE": "'dragon'", "FAILURE_TIMEOUT": "900",
+            #  "DISPATCH_RATE": "3000", "DURATION": "60 * 60"},
+            #
+            # {"K": "5", "INPUT": "'hat_G5'", "SHAPE": "'hat'", "FAILURE_TIMEOUT": "900",
+            #  "DISPATCH_RATE": "3000", "DURATION": "60 * 60"},
+            # {"K": "10", "INPUT": "'hat_G10'", "SHAPE": "'hat'", "FAILURE_TIMEOUT": "900",
+            #  "DISPATCH_RATE": "3000", "DURATION": "60 * 60"},
+            # {"K": "15", "INPUT": "'hat_G15'", "SHAPE": "'hat'", "FAILURE_TIMEOUT": "900",
+            #  "DISPATCH_RATE": "3000", "DURATION": "60 * 60"},
 
         ]
     },
@@ -137,9 +137,9 @@ general_props = [
         "keys": ["MAX_SPEED", "ACCELERATION", "DECELERATION"],
         "values": [
             # {"MAX_SPEED": "0.1", "ACCELERATION": "0.1", "DECELERATION": "0.1"},
-            {"MAX_SPEED": "6.11", "ACCELERATION": "6.11", "DECELERATION": "6.11"},
+            # {"MAX_SPEED": "6.11", "ACCELERATION": "6.11", "DECELERATION": "6.11"},
             # {"MAX_SPEED": "30", "ACCELERATION": "30", "DECELERATION": "30"},
-            # {"MAX_SPEED": "66.67", "ACCELERATION": "66.67", "DECELERATION": "66.67"},
+            {"MAX_SPEED": "66.67", "ACCELERATION": "66.67", "DECELERATION": "66.67"},
         ]
     },
     # {

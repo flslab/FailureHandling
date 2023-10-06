@@ -76,7 +76,7 @@ general_props = [
     {
         "keys": ["K", "INPUT", "SHAPE", "FAILURE_TIMEOUT", "DISPATCH_RATE", "DURATION"],
         "values": [
-            {"K": "0", "INPUT": "'skateboard_G3'", "SHAPE": "'skateboard'", "FAILURE_TIMEOUT": "900", "DISPATCH_RATE": "3000", "DURATION": "60 * 1"},
+            {"K": "0", "INPUT": "'skateboard_G3'", "SHAPE": "'skateboard'", "FAILURE_TIMEOUT": "900", "DISPATCH_RATE": "3000", "DURATION": "60 * 60"},
             {"K": "3", "INPUT": "'skateboard_G3'", "SHAPE": "'skateboard'", "FAILURE_TIMEOUT": "900", "DISPATCH_RATE": "3000", "DURATION": "60 * 60"},
             {"K": "20", "INPUT": "'skateboard_G20'", "SHAPE": "'skateboard'", "FAILURE_TIMEOUT": "900", "DISPATCH_RATE": "3000", "DURATION": "60 * 60"},
             {"K": "5", "INPUT": "'skateboard_G5'", "SHAPE": "'skateboard'", "FAILURE_TIMEOUT": "900", "DISPATCH_RATE": "3000", "DURATION": "60 * 60"},

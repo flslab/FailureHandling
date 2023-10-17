@@ -93,6 +93,10 @@ def visible_cubes(camera, cubes):
     for i in sorted_indices:
         cube = cubes[i]
         is_visible = True
+        if cubes[i][3] == 1:
+            i += 1
+            continue
+
 
         # Check if the line of sight to the cube is obstructed
         for j in sorted_indices:
@@ -100,15 +104,15 @@ def visible_cubes(camera, cubes):
                 break
 
             # Check if any point on the line segment is inside the obstructing cube
-            t_values = np.linspace(0, 1, 100)  # Adjust the number of points as needed
+            t_values = np.linspace(0, 1, 200)  # Adjust the number of points as needed
             line_points = np.outer((1 - t_values), camera) + np.outer(t_values, cube[:3])
-            if any(is_inside_cube(point, cubes[j][0:3], 0.5) for point in line_points):
+            if any(is_inside_cube(point, cubes[j][0:3], 1) for point in line_points):
                 if cubes[j][3] == 1 and cube[3] != 1 and any(
-                        is_inside_cube(point, cubes[j][0:3], 0.5) for point in line_points):
-                    if j in visible_index and j not in blocking_index:
-                        blocking.append(cubes[j][0:3])
-                        blocked_by.append(cube[0:3])
-                        blocking_index.append(j)
+                        is_inside_cube(point, cubes[j][0:3], 1) for point in line_points):
+                    # if j in visible_index and j not in blocking_index:
+                    blocking.append(cubes[j][0:3])
+                    blocked_by.append(cube[0:3])
+                    blocking_index.append(j)
 
                 is_visible = False
                 break
@@ -158,13 +162,15 @@ def check_blocking_nums(shape):
             while overlap:
                 for dirc in directions:
                     new_coord = coord + dirc
-                    if new_coord.tolist() not in coords:
+
+                    new_coord = new_coord.tolist()
+
+                    if all([not is_inside_cube(new_coord, c, 1) for c in coords]):
                         overlap = False
-                        coord = new_coord.tolist()
+                        coord = np.array(new_coord)
                         break
 
                 if overlap:
-                    print(f"None Stopping")
                     directions = directions * 2
                 break
         coord.append(1)
@@ -301,8 +307,7 @@ if __name__ == "__main__":
             # ax.set_aspect('equal')
             # plt.savefig(f'/Users/shuqinzhu/Desktop/exp_figure/view_standby/{shape}_K{K}_{views[i]}_blocked.png')
 
-            print(
-                f"{shape}, {views[i]} view: Number of Illuminating FLS: {len(visible_illum)}, Number of Obstructing FLS: {len(visible_standby)}, Standby Blocking: {len(visible_standby)}, Acutal Number: {len(blocking_index)}")
+            print(f"{shape}, {views[i]} view: Number of Illuminating FLS: {len(visible_illum)}, Number of Obstructing FLS: {len(visible_standby)}, Standby Blocking: {len(visible_standby)}, Acutal Number: {len(blocking_index)}")
 
             # print(f"{shape}, {views[i]} view: Standby Blocking: {blocking}")
 

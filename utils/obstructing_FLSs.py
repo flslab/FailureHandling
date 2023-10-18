@@ -158,7 +158,7 @@ def check_blocking_nums(shape):
 
     txt_file = f"{shape}.txt"
 
-    groups, a = read_cliques_xlsx(os.path.join(file_folder, input_file))
+    groups, a = read_cliques_xlsx(os.path.join(f"{file_folder}/pointcloud", input_file))
 
     group_standby_coord = get_standby_coords(groups)
 

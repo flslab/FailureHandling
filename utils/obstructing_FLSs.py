@@ -332,11 +332,11 @@ if __name__ == "__main__":
 
     # shape = "skateboard"
     # illum_to_disp_ratio = 3
-    file_folder = "C:/Users/zhusq/Desktop"
-    meta_dir = "C:/Users/zhusq/Desktop"
+    # file_folder = "C:/Users/zhusq/Desktop"
+    # meta_dir = "C:/Users/zhusq/Desktop"
 
-    # file_folder = "/users/Shuqin"
-    # meta_dir = "/users/Shuqin"
+    file_folder = "/users/Shuqin"
+    meta_dir = "/users/Shuqin"
 
 
     treads = []

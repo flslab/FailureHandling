@@ -164,11 +164,8 @@ def check_blocking_nums(shape):
 
     points = read_coordinates(f"{file_folder}/pointcloud/{txt_file}")
 
-    print(len(points))
-
     points = np.array(points)
 
-    print(len(points))
     point_boundary = [
         [min(points[:, 0]), min(points[:, 1]), min(points[:, 2])],
         [max(points[:, 0]), max(points[:, 1]), max(points[:, 2])]
@@ -216,9 +213,9 @@ if __name__ == "__main__":
 
     # shape = "skateboard"
     # illum_to_disp_ratio = 3
-    file_folder = "~"
+    file_folder = "/users/Shuqin"
 
-    meta_dir = "~"
+    meta_dir = "/users/Shuqin"
 
     for illum_to_disp_ratio in [1, 3, 5, 10]:
 

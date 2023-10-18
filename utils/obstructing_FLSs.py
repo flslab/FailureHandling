@@ -80,11 +80,11 @@ def is_inside_cube(point, cube_center, distance):
 
 
 def is_in_disp_cell(coord1, coord2):
-    return is_inside_cube(coord1, coord2, 1 * 1 / illum_to_disp_ratio)
+    return is_inside_cube(coord1, coord2, 1)
 
 
-def is_in_illum_cell(coord1, coord2, portion=1.0):
-    return is_inside_cube(coord1, coord2, 1 * portion)
+def is_in_illum_cell(coord1, coord2, ratio):
+    return is_inside_cube(coord1, coord2, 1 * ratio)
 
 
 # Function to find visible cubes
@@ -120,7 +120,7 @@ def visible_cubes(camera, cubes):
                 break
 
             if cubes[j][3] != 1 and any(
-                    is_in_illum_cell(p, cubes[j][0:3]) for p in line_points):
+                    is_in_illum_cell(p, cubes[j][0:3], illum_to_disp_ratio) for p in line_points):
                 is_visible = False
                 break
 
@@ -147,7 +147,7 @@ def visible_cubes(camera, cubes):
                 if index_j <= index_i or cubes[j][3] == 1:
                     continue
 
-                if any(is_in_illum_cell(p, cubes[j][0:3]) for p in line_points):
+                if any(is_in_illum_cell(p, cubes[j][0:3], illum_to_disp_ratio) for p in line_points):
 
                     blocked_by.append(cubes[j][0:3])
 
@@ -220,104 +220,107 @@ def check_blocking_nums(shape, K, file_folder):
     return points, point_boundary, check_times
 
 
-def calculate_obstructing(file_folder, meta_dir, illum_to_disp_ratio, K):
+def calculate_obstructing(file_folder, meta_dir, illum_to_disp_ratio):
     result = [
         ["Shape", "K", "Ratio", "View", "Visible_Illum", "Obstructing FLS", "Min Times Checked", "Mean Times Checked",
          "Max Times Checked"]]
-    output_path = f"{meta_dir}/obstructing/R{illum_to_disp_ratio}/K{K}"
+    report_path = f"{meta_dir}/obstructing/R{illum_to_disp_ratio}"
 
-    for shape in ["skateboard", "hat", "dragon"]:
-        # for shape in ["skateboard", "dragon"]:
-        points, boundary, check_times = check_blocking_nums(shape, K, file_folder)
+    for K in [3, 20]:
+        output_path = f"{meta_dir}/obstructing/R{illum_to_disp_ratio}/K{K}"
 
-        cam_positions = [
-            # top
-            [boundary[0][0] / 2 + boundary[1][0] / 2, boundary[0][1] / 2 + boundary[1][1] / 2,
-             boundary[1][2] + 100],
-            # down
-            [boundary[0][0] / 2 + boundary[1][0] / 2, boundary[0][1] / 2 + boundary[1][1] / 2,
-             boundary[0][2] - 100],
-            # left
-            [boundary[0][0] - 100, boundary[0][1] / 2 + boundary[1][1] / 2,
-             boundary[0][0] / 2 + boundary[1][0] / 2],
-            # right
-            [boundary[1][0] + 100, boundary[0][1] / 2 + boundary[1][1] / 2,
-             boundary[0][0] / 2 + boundary[1][0] / 2],
-            # front
-            [boundary[0][0] / 2 + boundary[1][0] / 2, boundary[0][1] - 100,
-             boundary[0][0] / 2 + boundary[1][0] / 2],
-            # back
-            [boundary[0][0] / 2 + boundary[1][0] / 2, boundary[1][1] + 100,
-             boundary[0][0] / 2 + boundary[1][0] / 2]
-        ]
+        for shape in ["skateboard", "hat", "dragon"]:
+            # for shape in ["skateboard", "dragon"]:
+            points, boundary, check_times = check_blocking_nums(shape, K, file_folder)
 
-        views = ["top", "bottom", "left", "right", "front", "back"]
-        # views = ["bottom"]
-        elevations = [90, -90, 0, 0, 0, 0]
-        azimuths = [0, 0, -90, 90, 0, 180]
+            cam_positions = [
+                # top
+                [boundary[0][0] / 2 + boundary[1][0] / 2, boundary[0][1] / 2 + boundary[1][1] / 2,
+                 boundary[1][2] + 100],
+                # down
+                [boundary[0][0] / 2 + boundary[1][0] / 2, boundary[0][1] / 2 + boundary[1][1] / 2,
+                 boundary[0][2] - 100],
+                # left
+                [boundary[0][0] - 100, boundary[0][1] / 2 + boundary[1][1] / 2,
+                 boundary[0][0] / 2 + boundary[1][0] / 2],
+                # right
+                [boundary[1][0] + 100, boundary[0][1] / 2 + boundary[1][1] / 2,
+                 boundary[0][0] / 2 + boundary[1][0] / 2],
+                # front
+                [boundary[0][0] / 2 + boundary[1][0] / 2, boundary[0][1] - 100,
+                 boundary[0][0] / 2 + boundary[1][0] / 2],
+                # back
+                [boundary[0][0] / 2 + boundary[1][0] / 2, boundary[1][1] + 100,
+                 boundary[0][0] / 2 + boundary[1][0] / 2]
+            ]
 
-        illum = []
-        standby = []
-        for coord in points:
-            if coord[3] == 0:
-                illum.append(coord[:3])
-            else:
-                standby.append(coord[:3])
+            views = ["top", "bottom", "left", "right", "front", "back"]
+            # views = ["bottom"]
+            elevations = [90, -90, 0, 0, 0, 0]
+            azimuths = [0, 0, -90, 90, 0, 180]
 
-        illum = np.array(illum)
-        standby = np.array(standby)
-
-        np.savetxt(f'{output_path}/points/{shape}_illum.txt', illum, fmt='%d', delimiter='\t')
-        np.savetxt(f'{output_path}/points/{shape}_standby.txt', standby, fmt='%d', delimiter='\t')
-
-        for i in range(len(views)):
-
-            print(f"{shape}, K: {K}, Ration: {illum_to_disp_ratio} ,{views[i]}")
-
-            camera = cam_positions[i]
-
-            visible, blocking, blocked_by, blocking_index = visible_cubes(camera, points)
-            # count_0 = visible[:, 3].count(0)
-            # count_1 = visible[:, 3].count(1)
-
-            visible_illum = []
-            visible_standby = []
-            for point in visible:
-                if point[3] == 1:
-                    visible_standby.append(point[0:3])
+            illum = []
+            standby = []
+            for coord in points:
+                if coord[3] == 0:
+                    illum.append(coord[:3])
                 else:
-                    visible_illum.append(point[0:3])
+                    standby.append(coord[:3])
 
-            visible_illum = np.array(visible_illum)
-            np.unique(visible_illum, axis=0)
+            illum = np.array(illum)
+            standby = np.array(standby)
 
-            visible_standby = np.array(visible_standby)
-            np.unique(visible_standby, axis=0)
+            np.savetxt(f'{output_path}/points/{shape}_illum.txt', illum, fmt='%d', delimiter='\t')
+            np.savetxt(f'{output_path}/points/{shape}_standby.txt', standby, fmt='%d', delimiter='\t')
 
-            blocking = np.array(blocking)
-            np.unique(blocking, axis=0)
+            for i in range(len(views)):
 
-            blocked_by = np.array(blocked_by)
-            np.unique(blocked_by, axis=0)
+                print(f"{shape}, K: {K}, Ration: {illum_to_disp_ratio} ,{views[i]}")
 
-            np.savetxt(f'{output_path}/points/{shape}_{views[i]}_visible_illum.txt', visible_illum, fmt='%d',
-                       delimiter='\t')
-            np.savetxt(f'{output_path}/points/{shape}_{views[i]}_visible_standby.txt', visible_standby,
-                       fmt='%d',
-                       delimiter='\t')
-            np.savetxt(f'{output_path}/points/{shape}_{views[i]}_blocking.txt', blocking, fmt='%d',
-                       delimiter='\t')
-            np.savetxt(f'{output_path}/points/{shape}_{views[i]}_blocked.txt', blocked_by, fmt='%d',
-                       delimiter='\t')
+                camera = cam_positions[i]
 
-            print(
-                f"{shape}, K: {K}, Ratio: {illum_to_disp_ratio} ,{views[i]} view: Number of Illuminating FLS: {len(visible_illum)}, Visible Standby FLS: {len(visible_standby)},  Obstructing Number: {len(blocking_index)}")
+                visible, blocking, blocked_by, blocking_index = visible_cubes(camera, points)
+                # count_0 = visible[:, 3].count(0)
+                # count_1 = visible[:, 3].count(1)
 
-            result.append(
-                [shape, K, illum_to_disp_ratio, views[i], len(visible_illum), len(blocking_index), min(check_times),
-                 statistics.mean(check_times), max(check_times)])
+                visible_illum = []
+                visible_standby = []
+                for point in visible:
+                    if point[3] == 1:
+                        visible_standby.append(point[0:3])
+                    else:
+                        visible_illum.append(point[0:3])
 
-    with open(f'{output_path}/report_R{illum_to_disp_ratio}_K{K}.csv', mode='w', newline='') as file:
+                visible_illum = np.array(visible_illum)
+                np.unique(visible_illum, axis=0)
+
+                visible_standby = np.array(visible_standby)
+                np.unique(visible_standby, axis=0)
+
+                blocking = np.array(blocking)
+                np.unique(blocking, axis=0)
+
+                blocked_by = np.array(blocked_by)
+                np.unique(blocked_by, axis=0)
+
+                np.savetxt(f'{output_path}/points/{shape}_{views[i]}_visible_illum.txt', visible_illum, fmt='%d',
+                           delimiter='\t')
+                np.savetxt(f'{output_path}/points/{shape}_{views[i]}_visible_standby.txt', visible_standby,
+                           fmt='%d',
+                           delimiter='\t')
+                np.savetxt(f'{output_path}/points/{shape}_{views[i]}_blocking.txt', blocking, fmt='%d',
+                           delimiter='\t')
+                np.savetxt(f'{output_path}/points/{shape}_{views[i]}_blocked.txt', blocked_by, fmt='%d',
+                           delimiter='\t')
+
+                print(
+                    f"{shape}, K: {K}, Ratio: {illum_to_disp_ratio} ,{views[i]} view: Number of Illuminating FLS: {len(visible_illum)}, Visible Standby FLS: {len(visible_standby)},  Obstructing Number: {len(blocking_index)}")
+
+                result.append(
+                    [shape, K, illum_to_disp_ratio, views[i], len(visible_illum), len(blocking_index), min(check_times),
+                     statistics.mean(check_times), max(check_times)])
+
+    with open(f'{report_path}/report_R{illum_to_disp_ratio}_K{K}.csv', mode='w', newline='') as file:
         writer = csv.writer(file)
 
         # Write the data from the list to the CSV file
@@ -329,20 +332,19 @@ if __name__ == "__main__":
 
     # shape = "skateboard"
     # illum_to_disp_ratio = 3
-    # file_folder = "C:/Users/zhusq/Desktop"
-    # meta_dir = "C:/Users/zhusq/Desktop"
+    file_folder = "C:/Users/zhusq/Desktop"
+    meta_dir = "C:/Users/zhusq/Desktop"
 
-    file_folder = "/users/Shuqin"
-    meta_dir = "/users/Shuqin"
+    # file_folder = "/users/Shuqin"
+    # meta_dir = "/users/Shuqin"
 
 
     treads = []
     for illum_to_disp_ratio in [1, 3, 5, 10]:
 
-        for K in [3, 20]:
-            # calculate_obstructing(file_folder, meta_dir, illum_to_disp_ratio, K)
-            treads.append(Thread(target=calculate_obstructing, args=(file_folder, meta_dir, illum_to_disp_ratio, K)))
-    #
-    for t in treads:
-        # print(t)
-        t.start()
+        calculate_obstructing(file_folder, meta_dir, illum_to_disp_ratio)
+#         treads.append(Thread(target=calculate_obstructing, args=(file_folder, meta_dir, illum_to_disp_ratio)))
+
+    # for t in treads:
+    #     # print(t)
+    #     t.start()

@@ -342,9 +342,9 @@ if __name__ == "__main__":
     treads = []
     for illum_to_disp_ratio in [1, 3, 5, 10]:
 
-        calculate_obstructing(file_folder, meta_dir, illum_to_disp_ratio)
-#         treads.append(Thread(target=calculate_obstructing, args=(file_folder, meta_dir, illum_to_disp_ratio)))
+        # calculate_obstructing(file_folder, meta_dir, illum_to_disp_ratio)
+        treads.append(Thread(target=calculate_obstructing, args=(file_folder, meta_dir, illum_to_disp_ratio)))
 
-    # for t in treads:
-    #     # print(t)
-    #     t.start()
+    for t in treads:
+        # print(t)
+        t.start()

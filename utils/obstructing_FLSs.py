@@ -221,7 +221,7 @@ if __name__ == "__main__":
 
         for K in [3, 20]:
             result = [["Shape", "K", "View", "Visible_Illum", "Obstructing FLS"]]
-            output_path = f"meta_dirobstructing/R{illum_to_disp_ratio}/K{K}"
+            output_path = f"{meta_dir}/obstructing/R{illum_to_disp_ratio}/K{K}"
 
             for shape in ["skateboard", "hat", "dragon"]:
             # for shape in ["skateboard", "dragon"]:

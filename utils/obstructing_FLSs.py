@@ -213,13 +213,15 @@ if __name__ == "__main__":
 
     # shape = "skateboard"
     # illum_to_disp_ratio = 3
-    file_folder = "/Users/shuqinzhu/Desktop/Experiments_Results.nosync/group_formation"
+    file_folder = "~"
+
+    meta_dir = "~"
 
     for illum_to_disp_ratio in [1, 3, 5, 10]:
 
         for K in [3, 20]:
             result = [["Shape", "K", "View", "Visible_Illum", "Obstructing FLS"]]
-            output_path = f"/Users/shuqinzhu/Desktop/obstructing/R{illum_to_disp_ratio}/K{K}"
+            output_path = f"meta_dirobstructing/R{illum_to_disp_ratio}/K{K}"
 
             for shape in ["skateboard", "hat", "dragon"]:
             # for shape in ["skateboard", "dragon"]:

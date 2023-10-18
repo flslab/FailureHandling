@@ -7,6 +7,7 @@ import pandas as pd
 from matplotlib import pyplot as plt
 from tqdm import tqdm
 import statistics
+import multiprocessing as mp
 
 
 def angle_between(origin, point):
@@ -339,12 +340,12 @@ if __name__ == "__main__":
     meta_dir = "/users/Shuqin"
 
 
-    treads = []
+    processes = []
     for illum_to_disp_ratio in [1, 3, 5, 10]:
 
         # calculate_obstructing(file_folder, meta_dir, illum_to_disp_ratio)
-        treads.append(Thread(target=calculate_obstructing, args=(file_folder, meta_dir, illum_to_disp_ratio)))
+        processes.append(mp.process(target=calculate_obstructing, args=(file_folder, meta_dir, illum_to_disp_ratio)))
 
-    for t in treads:
+    for p in processes:
         # print(t)
-        t.start()
+        p.start()

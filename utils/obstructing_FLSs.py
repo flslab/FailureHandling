@@ -132,7 +132,7 @@ def visible_cubes(camera, cubes):
         if cube[3] == 1 and is_visible:
 
             V = cube[:3] - camera
-            V = V/np.linalg.norm(V)
+            V = V / np.linalg.norm(V)
 
             t_values = np.linspace(0, max_dist - get_distance(camera, cube[:3]),
                                    round((max_dist - get_distance(camera, cube[:3])) / 0.1))
@@ -339,13 +339,11 @@ if __name__ == "__main__":
     file_folder = "/users/Shuqin"
     meta_dir = "/users/Shuqin"
 
-
-    processes = []
+    p_list = []
     for illum_to_disp_ratio in [1, 3, 5, 10]:
-
         # calculate_obstructing(file_folder, meta_dir, illum_to_disp_ratio)
-        processes.append(mp.process(target=calculate_obstructing, args=(file_folder, meta_dir, illum_to_disp_ratio)))
+        p_list.append(mp.Process(target=calculate_obstructing, args=(file_folder, meta_dir, illum_to_disp_ratio)))
 
-    for p in processes:
+    for p in p_list:
         # print(t)
         p.start()

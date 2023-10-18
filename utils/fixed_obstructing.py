@@ -4,9 +4,8 @@ import os
 import pandas as pd
 from matplotlib import pyplot as plt
 
-K = 20
 file_folder = "/Users/shuqinzhu/Desktop/Experiments_Results.nosync/group_formation"
-output_path = f"/Users/shuqinzhu/Desktop/obstructing/K{K}"
+
 
 
 def angle_between(origin, point):
@@ -68,7 +67,7 @@ def get_standby_coords(groups):
     return group_standby_coord
 
 
-def distance(point1, point2):
+def distance_between(point1, point2):
     return np.linalg.norm(np.array(point1) - np.array(point2))
 
 
@@ -80,7 +79,7 @@ def is_inside_cube(point, cube_center, distance):
 # Function to find visible cubes
 def visible_cubes(camera, cubes):
     # Calculate distances from the camera to each cube
-    distances = [distance(camera, cube[:3]) for cube in cubes]
+    distances = [distance_between(camera, cube[:3]) for cube in cubes]
 
     # Sort cubes by distance
     sorted_indices = np.argsort(distances)
@@ -93,10 +92,6 @@ def visible_cubes(camera, cubes):
     for i in sorted_indices:
         cube = cubes[i]
         is_visible = True
-        if cubes[i][3] == 1:
-            i += 1
-            continue
-
 
         # Check if the line of sight to the cube is obstructed
         for j in sorted_indices:
@@ -104,16 +99,18 @@ def visible_cubes(camera, cubes):
                 break
 
             # Check if any point on the line segment is inside the obstructing cube
-            t_values = np.linspace(0, 1, 200)  # Adjust the number of points as needed
+            t_values = np.linspace(0, 1, round(distance_between(camera, cubes[i][:3])/0.2))   # Adjust the number of points as needed
             line_points = np.outer((1 - t_values), camera) + np.outer(t_values, cube[:3])
-            if any(is_inside_cube(point, cubes[j][0:3], 1) for point in line_points):
-                if cubes[j][3] == 1 and cube[3] != 1 and any(
-                        is_inside_cube(point, cubes[j][0:3], 1) for point in line_points):
-                    # if j in visible_index and j not in blocking_index:
-                    blocking.append(cubes[j][0:3])
-                    blocked_by.append(cube[0:3])
+            if cubes[j][3] == 1 and cube[3] != 1 and any(
+                    is_inside_cube(point, cubes[j][0:3], 0.8) for point in line_points):
+                # if j in visible_index and j not in blocking_index:
+                blocking.append(cubes[j][0:3])
+                blocked_by.append(cube[0:3])
+
+                if j not in blocking_index:
                     blocking_index.append(j)
 
+            if any(is_inside_cube(point, cubes[j][0:3], 0.2) for point in line_points):
                 is_visible = False
                 break
 
@@ -182,133 +179,91 @@ if __name__ == "__main__":
 
     # shape = "skateboard"
 
-    for shape in ["skateboard", "hat", "dragon"]:
-        points, boundary = check_blocking_nums(shape)
+    for K in [20, 3]:
 
-        cam_positions = [
-            # top
-            [boundary[0][0] / 2 + boundary[1][0] / 2, boundary[0][1] / 2 + boundary[1][1] / 2, boundary[1][2] + 100],
-            # down
-            [boundary[0][0] / 2 + boundary[1][0] / 2, boundary[0][1] / 2 + boundary[1][1] / 2, boundary[0][2] - 100],
-            # left
-            [boundary[0][0] - 100, boundary[0][1] / 2 + boundary[1][1] / 2, boundary[0][0] / 2 + boundary[1][0] / 2],
-            # right
-            [boundary[1][0] + 100, boundary[0][1] / 2 + boundary[1][1] / 2, boundary[0][0] / 2 + boundary[1][0] / 2],
-            # front
-            [boundary[0][0] / 2 + boundary[1][0] / 2, boundary[0][1] - 100, boundary[0][0] / 2 + boundary[1][0] / 2],
-            # back
-            [boundary[0][0] / 2 + boundary[1][0] / 2, boundary[1][1] + 100, boundary[0][0] / 2 + boundary[1][0] / 2]
-        ]
+        output_path = f"/Users/shuqinzhu/Desktop/obstructing/K{K}"
 
-        views = ["top", "bottom", "left", "right", "front", "back"]
-        elevations = [90, -90, 0, 0, 0, 0]
-        azimuths = [0, 0, -90, 90, 0, 180]
+        for shape in ["skateboard", "hat", "dragon"]:
+            points, boundary = check_blocking_nums(shape)
 
-        # Create a 3D scatter plot
-        fig = plt.figure(figsize=(18, 12))
+            cam_positions = [
+                # top
+                [boundary[0][0] / 2 + boundary[1][0] / 2, boundary[0][1] / 2 + boundary[1][1] / 2, boundary[1][2] + 100],
+                # down
+                [boundary[0][0] / 2 + boundary[1][0] / 2, boundary[0][1] / 2 + boundary[1][1] / 2, boundary[0][2] - 100],
+                # left
+                [boundary[0][0] - 100, boundary[0][1] / 2 + boundary[1][1] / 2, boundary[0][0] / 2 + boundary[1][0] / 2],
+                # right
+                [boundary[1][0] + 100, boundary[0][1] / 2 + boundary[1][1] / 2, boundary[0][0] / 2 + boundary[1][0] / 2],
+                # front
+                [boundary[0][0] / 2 + boundary[1][0] / 2, boundary[0][1] - 100, boundary[0][0] / 2 + boundary[1][0] / 2],
+                # back
+                [boundary[0][0] / 2 + boundary[1][0] / 2, boundary[1][1] + 100, boundary[0][0] / 2 + boundary[1][0] / 2]
+            ]
 
-        illum = []
-        standby = []
-        for coord in points:
-            if coord[3] == 0:
-                illum.append(coord[:3])
-            else:
-                standby.append(coord[:3])
+            views = ["top", "bottom", "left", "right", "front", "back"]
+            elevations = [90, -90, 0, 0, 0, 0]
+            azimuths = [0, 0, -90, 90, 0, 180]
 
-        illum = np.array(illum)
-        standby = np.array(standby)
+            # # Create a 3D scatter plot
+            # fig = plt.figure(figsize=(18, 12))
 
-        np.savetxt(f'{output_path}/points/{shape}_illum.txt', illum, fmt='%d', delimiter='\t')
-        np.savetxt(f'{output_path}/points/{shape}_standby.txt', standby, fmt='%d', delimiter='\t')
-
-        # for i, view in enumerate(views):
-        #     ax = fig.add_subplot(projection='3d')
-        #     ax.scatter(illum[:, 0], illum[:, 1], illum[:, 2], c='blue', marker='+', alpha=1)
-        #     ax.scatter(standby[:, 0], standby[:, 1], standby[:, 2], c='red', marker='x', alpha=1)
-        #     # ax.set_xlabel('X Label')
-        #     # ax.set_ylabel('Y Label')
-        #     # ax.set_zlabel('Z Label')
-        #     ax.view_init(elev=elevations[i], azim=azimuths[i])
-        #     # ax.set_title(view.capitalize() + ' View')
-        #     ax.set_aspect('equal')
-        #     plt.savefig(f'/Users/shuqinzhu/Desktop/exp_figure/view_standby/{shape}_K{K}_{view}.png', dpi=500)
-
-        for i, camera in enumerate(cam_positions):
-
-            visible, blocking, blocked_by, blocking_index = visible_cubes(camera, points)
-            # count_0 = visible[:, 3].count(0)
-            # count_1 = visible[:, 3].count(1)
-
-            visible_illum = []
-            visible_standby = []
-            for point in visible:
-                if point[3] == 1:
-                    visible_standby.append(point[0:3])
+            illum = []
+            standby = []
+            for coord in points:
+                if coord[3] == 0:
+                    illum.append(coord[:3])
                 else:
-                    visible_illum.append(point[0:3])
+                    standby.append(coord[:3])
 
-            visible_illum = np.array(visible_illum)
-            np.unique(visible_illum, axis=0)
+            illum = np.array(illum)
+            standby = np.array(standby)
 
-            visible_standby = np.array(visible_standby)
-            np.unique(visible_standby, axis=0)
+            np.savetxt(f'{output_path}/points/{shape}_illum.txt', illum, fmt='%d', delimiter='\t')
+            np.savetxt(f'{output_path}/points/{shape}_standby.txt', standby, fmt='%d', delimiter='\t')
 
-            blocking = np.array(blocking)
-            np.unique(blocking, axis=0)
+            # for i, view in enumerate(views):
+            #     ax = fig.add_subplot(projection='3d')
+            #     ax.scatter(illum[:, 0], illum[:, 1], illum[:, 2], c='blue', marker='+', alpha=1)
+            #     ax.scatter(standby[:, 0], standby[:, 1], standby[:, 2], c='red', marker='x', alpha=1)
+            #     # ax.set_xlabel('X Label')
+            #     # ax.set_ylabel('Y Label')
+            #     # ax.set_zlabel('Z Label')
+            #     ax.view_init(elev=elevations[i], azim=azimuths[i])
+            #     # ax.set_title(view.capitalize() + ' View')
+            #     ax.set_aspect('equal')
+            #     plt.savefig(f'/Users/shuqinzhu/Desktop/exp_figure/view_standby/{shape}_K{K}_{view}.png', dpi=500)
 
-            blocked_by = np.array(blocked_by)
-            np.unique(blocked_by, axis=0)
+            for i, camera in enumerate(cam_positions):
 
-            np.savetxt(f'{output_path}/points/{shape}_{views[i]}_visible_illum.txt', visible_illum, fmt='%d', delimiter='\t')
-            np.savetxt(f'{output_path}/points/{shape}_{views[i]}_visible_standby.txt', visible_standby, fmt='%d',
-                       delimiter='\t')
-            np.savetxt(f'{output_path}/points/{shape}_{views[i]}_blocking.txt', blocking, fmt='%d', delimiter='\t')
-            np.savetxt(f'{output_path}/points/{shape}_{views[i]}_blocked.txt', blocked_by, fmt='%d', delimiter='\t')
+                visible, blocking, blocked_by, blocking_index = visible_cubes(camera, points)
+                # count_0 = visible[:, 3].count(0)
+                # count_1 = visible[:, 3].count(1)
 
-            # ax = fig.add_subplot(projection='3d')
-            # ax.scatter(illum[:, 0], illum[:, 1], illum[:, 2], c='blue', marker='+', alpha=1)
-            # ax.scatter(standby[:, 0], standby[:, 1], standby[:, 2], c='red', marker='x', alpha=1)
-            # # ax.set_xlabel('X Label')
-            # # ax.set_ylabel('Y Label')
-            # # ax.set_zlabel('Z Label')
-            # ax.view_init(elev=elevations[i], azim=azimuths[i])
-            # # ax.set_title(view.capitalize() + ' View')
-            # ax.set_aspect('equal')
-            # plt.savefig(f'/Users/shuqinzhu/Desktop/exp_figure/view_standby/{shape}_K{K}_{views[i]}.png', dpi=500)
-            #
-            # ax = fig.add_subplot(projection='3d')
-            # ax.scatter(visible_illum[:, 0], visible_illum[:, 1], visible_illum[:, 2], c='blue', marker='+', alpha=1)
-            # ax.scatter(visible_standby[:, 0], visible_standby[:, 1], visible_standby[:, 2], c='red', marker='x', alpha=1)
-            # ax.view_init(elev=elevations[i], azim=azimuths[i])
-            # # ax.set_title(view.capitalize() + ' View')
-            # ax.set_aspect('equal')
-            # plt.savefig(f'/Users/shuqinzhu/Desktop/exp_figure/view_standby/{shape}_K{K}_{views[i]}_visible.png')
-            #
-            # ax = fig.add_subplot(projection='3d')
-            # ax.scatter(blocking[:, 0], blocking[:, 1], blocking[:, 2], c='red', marker='x', alpha=1)
-            # ax.scatter(blocked_by[:, 0], blocked_by[:, 1], blocked_by[:, 2], c='blue', marker='+', alpha=1)
-            # ax.view_init(elev=elevations[i], azim=azimuths[i])
-            # # ax.set_title(view.capitalize() + ' View')
-            # ax.set_aspect('equal')
-            # plt.savefig(f'/Users/shuqinzhu/Desktop/exp_figure/view_standby/{shape}_K{K}_{views[i]}_overlap.png')
-            #
-            #
-            # ax = fig.add_subplot(projection='3d')
-            # ax.scatter(blocking[:, 0], blocking[:, 1], blocking[:, 2], c='red', marker='x', alpha=1)
-            # ax.view_init(elev=elevations[i], azim=azimuths[i])
-            # # ax.set_title(view.capitalize() + ' View')
-            # ax.set_aspect('equal')
-            # plt.savefig(f'/Users/shuqinzhu/Desktop/exp_figure/view_standby/{shape}_K{K}_{views[i]}_obstructing.png')
-            #
-            # ax = fig.add_subplot(projection='3d')
-            # ax.scatter(blocked_by[:, 0], blocked_by[:, 1], blocked_by[:, 2], c='blue', marker='+', alpha=1)
-            # ax.view_init(elev=elevations[i], azim=azimuths[i])
-            # # ax.set_title(view.capitalize() + ' View')
-            # ax.set_aspect('equal')
-            # plt.savefig(f'/Users/shuqinzhu/Desktop/exp_figure/view_standby/{shape}_K{K}_{views[i]}_blocked.png')
+                visible_illum = []
+                visible_standby = []
+                for point in visible:
+                    if point[3] == 1:
+                        visible_standby.append(point[0:3])
+                    else:
+                        visible_illum.append(point[0:3])
 
-            print(f"{shape}, {views[i]} view: Number of Illuminating FLS: {len(visible_illum)}, Number of Obstructing FLS: {len(visible_standby)}, Standby Blocking: {len(visible_standby)}, Acutal Number: {len(blocking_index)}")
+                visible_illum = np.array(visible_illum)
+                np.unique(visible_illum, axis=0)
 
-            # print(f"{shape}, {views[i]} view: Standby Blocking: {blocking}")
+                visible_standby = np.array(visible_standby)
+                np.unique(visible_standby, axis=0)
 
-            # print(f"{shape}, {views[i]} view: Number of Illuminating FLS: {count_0}, Number of Obstructing FLS: {count_1}, Standby Blocking: {blocking}")
+                blocking = np.array(blocking)
+                np.unique(blocking, axis=0)
+
+                blocked_by = np.array(blocked_by)
+                np.unique(blocked_by, axis=0)
+
+                np.savetxt(f'{output_path}/points/{shape}_{views[i]}_visible_illum.txt', visible_illum, fmt='%d', delimiter='\t')
+                np.savetxt(f'{output_path}/points/{shape}_{views[i]}_visible_standby.txt', visible_standby, fmt='%d',
+                           delimiter='\t')
+                np.savetxt(f'{output_path}/points/{shape}_{views[i]}_blocking.txt', blocking, fmt='%d', delimiter='\t')
+                np.savetxt(f'{output_path}/points/{shape}_{views[i]}_blocked.txt', blocked_by, fmt='%d', delimiter='\t')
+
+                print(f"{shape}, {views[i]} view: Number of Illuminating FLS: {len(visible_illum)}, Number of Obstructing FLS: {len(visible_standby)}, Standby Blocking: {len(visible_standby)}, Acutal Number: {len(blocking_index)}")

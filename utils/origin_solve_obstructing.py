@@ -63,7 +63,7 @@ def get_standby_coords(groups):
     return group_standby_coord
 
 
-def distance(point1, point2):
+def distance_between(point1, point2):
     return np.linalg.norm(np.array(point1) - np.array(point2))
 
 
@@ -82,23 +82,24 @@ def normalize(v):
 # Function to find visible cubes
 def visible_cubes(camera, cubes):
     # Calculate distances from the camera to each cube
-    distances = [distance(camera, cube[:3]) for cube in cubes]
+    distances = [distance_between(camera, cube[:3]) for cube in cubes]
 
     # Sort cubes by distance
     sorted_indices = np.argsort(distances)
 
-    i = 0
+    index = 0
     distance_stb = 0
     distance_ill = 0
     standby_block = []
 
     dist_between = []
+    visible_list = []
 
-    while i < len(sorted_indices):
+    while index < len(sorted_indices):
+
+        i = sorted_indices[index]
         obstruct_list = []
-        if cubes[i][3] == 1:
-            i += 1
-            continue
+        is_visible = True
 
         # Check if the line of sight to the cube is obstructed
         for j in sorted_indices:
@@ -106,22 +107,27 @@ def visible_cubes(camera, cubes):
                 break
 
             # Check if any point on the line segment is inside the obstructing cube
-            t_values = np.linspace(0, 1, 200)  # Adjust the number of points as needed
+            t_values = np.linspace(0, 1, 100)  # Adjust the number of points as needed
             line_points = np.outer((1 - t_values), camera) + np.outer(t_values, cubes[i][:3])
-            if any(is_inside_cube(point, cubes[j][0:3], 1) for point in line_points):
-                if cubes[j][3] != 1 and cubes[i][3] != 1 and any(
-                        is_inside_cube(point, cubes[j][0:3], 1) for point in line_points):
+            if any(is_inside_cube(point, cubes[j][0:3], 0.5) for point in line_points):
+                if cubes[i][3] != 1 and any(is_inside_cube(point, cubes[j][0:3], 0.5) for point in line_points):
+                    # if cubes[j][3] != 1:
+                    #     obstruct_list = []
+                    #     break
 
-                    obstruct_list = []
-                    break
+                    if cubes[j][3] == 1 and j in visible_list and j not in obstruct_list:
+                        obstruct_list.append(j)
 
-                obstruct_list.append(j)
+                is_visible = False
+
+        if is_visible:
+            visible_list.append(i)
 
 
         move_back_times = 0
-        for index, j in enumerate(obstruct_list):
+        for index_ob, j in enumerate(obstruct_list):
 
-            if index == 0:
+            if index_ob == 0:
                dist_between.append(np.linalg.norm(cubes[i][0:3] - cubes[j][0:3]))
 
             distance_stb = distance_stb + np.linalg.norm(cubes[i][0:3] - cubes[j][0:3])
@@ -147,17 +153,20 @@ def visible_cubes(camera, cubes):
             cubes[i][0:3] = V + cubes[i][0:3]
             cubes[i][3] = 1
 
-        distances = [distance(camera, cube[:3]) for cube in cubes]
+        distances = [distance_between(camera, cube[:3]) for cube in cubes]
 
         sorted_indices = np.argsort(distances)
 
+
         if len(obstruct_list) > 0:
             standby_block.append(len(obstruct_list))
-            # print(f"Illum: {i}, Standby:{obstruct_list}")
+
+            index -= len(obstruct_list) + 1
+            print(f"Illum: {i}, Standby:{obstruct_list}")
             # print(f"move_back_times: {move_back_times}")
             # print(f"    - block: {len(obstruct_list)}")
 
-        i += 1
+        index += 1
 
     return distance_ill, distance_stb, dist_between, standby_block, cubes
 
@@ -201,19 +210,18 @@ def check_blocking_nums(shape):
             while overlap:
                 for dirc in directions:
                     new_coord = coord + dirc
-
-                    new_coord = new_coord.tolist()
-
-                    if all([not is_inside_cube(new_coord, c, 1) for c in coords]):
+                    if new_coord.tolist() not in coords:
                         overlap = False
-                        coord = np.array(new_coord)
+                        coord = new_coord.tolist()
                         break
 
                 if overlap:
+                    print(f"None Stopping")
                     directions = directions * 2
                 break
         coord.append(1)
         points = np.concatenate((points, [coord]), axis=0)
+
         if len(standbys) == 0:
             standbys = np.array([coord[0:3]])
         else:
@@ -226,13 +234,12 @@ if __name__ == "__main__":
 
     # shape = "skateboard"
 
-    group_size = [3, 20]
     file_folder = "/Users/shuqinzhu/Desktop/Experiments_Results.nosync/group_formation"
 
     result = [["Shape", "View", "D_Illum", "D_Stb", "Min D_between", "Max D_between", "Avg D_between",
               "Occur Times", "Min Stb Block", "Max Stb Block", "Avg Stb Block"]]
 
-    for K in group_size:
+    for K in [20, 3]:
 
         output_path = f"/Users/shuqinzhu/Desktop/obstructing/K{K}"
 
@@ -273,14 +280,17 @@ if __name__ == "__main__":
                 illum = np.array(illum)
                 standby = np.array(standby)
 
-                np.savetxt(f'{output_path}/points/{shape}_adj_{views[i]}_ill.txt', illum, fmt='%d', delimiter='\t')
-                np.savetxt(f'{output_path}/points/{shape}_adj_{views[i]}_stb.txt', standby, fmt='%d', delimiter='\t')
+                np.savetxt(f'{output_path}/points/{shape}_origin_adj_{views[i]}_ill.txt', illum, fmt='%d', delimiter='\t')
+                np.savetxt(f'{output_path}/points/{shape}_origin_adj_{views[i]}_stb.txt', standby, fmt='%d', delimiter='\t')
 
-                print(f"{shape}, {views[i]} view: D_Illum: {distance_ill}, D_Stb: {distance_stb}, D_between: {min(dist_between), max(dist_between), statistics.mean(dist_between)}, Obstruction Times: {len(standby_block)}, standby_block: {min(standby_block), max(standby_block), statistics.mean(standby_block)}")
 
-                result.append([shape, views[i], distance_ill, distance_stb, min(dist_between), max(dist_between), statistics.mean(dist_between),
-                               len(standby_block), min(standby_block), max(standby_block), statistics.mean(standby_block)])
-                csv_file_name = f"/Users/shuqinzhu/Desktop/obstructing/K{K}_result.csv"
+                print(f"{shape}, {views[i]} view: D_Illum: {distance_ill}, D_Stb: {distance_stb}, "
+                      f"D_between: {min(dist_between) if len(dist_between) > 0 else 0, max(dist_between) if len(dist_between) > 0 else 0, statistics.mean(dist_between) if len(dist_between) > 0 else 0}, "
+                      f"Obstruction Times: {len(standby_block) if len(standby_block) > 0 else 0}, standby_block: {min(standby_block) if len(standby_block) > 0 else 0, max(standby_block) if len(standby_block) > 0 else 0,  statistics.mean(standby_block) if len(standby_block) > 0 else 0}")
+
+                result.append([shape, views[i], distance_ill, distance_stb, min(dist_between) if len(dist_between) > 0 else 0, max(dist_between) if len(dist_between) > 0 else 0, statistics.mean(dist_between) if len(dist_between) > 0 else 0,
+                               len(standby_block), min(standby_block) if len(standby_block) > 0 else 0, max(standby_block) if len(standby_block) > 0 else 0, statistics.mean(standby_block) if len(standby_block) > 0 else 0])
+                csv_file_name = f"/Users/shuqinzhu/Desktop/obstructing/K{K}_result_origin.csv"
 
                 # Open the CSV file in write mode and create a CSV writer
                 with open(csv_file_name, mode='w', newline='') as file:

@@ -282,6 +282,7 @@ def calculate_obstructing(group_file, meta_direc, ratio, K, shape):
 
     for i in range(len(views)):
 
+        print(f"{shape}, K: {K}, Ratio: {ratio} ,{views[i]}")
         camera = cam_positions[i]
 
         visible, blocking, blocked_by, blocking_index = visible_cubes(camera, points, ratio, K, views[i])

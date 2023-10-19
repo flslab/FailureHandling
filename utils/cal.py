@@ -104,7 +104,7 @@ def visible_cubes(camera, cubes, ratio, K, view):
     blocking_index = []
     blocked_by = []
 
-    for index_i in tqdm(range(0, len(sorted_indices)), desc=f"{shape}, K: {K}, Ratio: {ratio} ,{view}"):
+    for index_i in range(0, len(sorted_indices)):
         i = sorted_indices[index_i]
 
         cube = cubes[i]

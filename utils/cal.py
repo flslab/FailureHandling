@@ -346,7 +346,7 @@ if __name__ == "__main__":
 
     p_list = []
 
-    for shape in ["skateboard", "dragon", "hat"]:
+    for shape in ["dragon"]:
         p_list.append(mp.Process(target=calculate_obstructing, args=(file_folder, meta_dir, 1, 3, shape)))
         p_list.append(mp.Process(target=calculate_obstructing, args=(file_folder, meta_dir, 1, 20, shape)))
         p_list.append(mp.Process(target=calculate_obstructing, args=(file_folder, meta_dir, 3, 3, shape)))

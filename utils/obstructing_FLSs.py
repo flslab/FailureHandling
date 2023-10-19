@@ -77,7 +77,7 @@ def get_distance(point1, point2):
 
 # Function to check if a point is inside a cube
 def is_inside_cube(point, cube_center, distance):
-    return all(abs(p - c) <= distance for p, c in zip(point, cube_center))
+    return all(abs(p - c) < distance for p, c in zip(point, cube_center))
 
 
 def is_in_disp_cell(coord1, coord2):
@@ -187,7 +187,8 @@ def check_blocking_nums(shape, K, file_folder):
         coords = coords.tolist()
 
         check = 0
-        if not all([not is_in_disp_cell(coord, c) for c in coords]):
+        a = [not is_in_disp_cell(coord, c) for c in coords]
+        if not all(a):
 
             overlap = True
             rims_check = 1
@@ -198,7 +199,8 @@ def check_blocking_nums(shape, K, file_folder):
                     for y in range(-rims_check, rims_check + 1, 1):
                         for z in range(-rims_check, rims_check + 1, 1):
                             if x == 0 and y == 0 and z == 0:
-                                directions.append([x, y, z])
+                                continue
+                            directions.append([x, y, z])
 
                 directions = np.array(directions)
 
@@ -333,17 +335,17 @@ if __name__ == "__main__":
 
     # shape = "skateboard"
     # illum_to_disp_ratio = 3
-    # file_folder = "C:/Users/zhusq/Desktop"
-    # meta_dir = "C:/Users/zhusq/Desktop"
+    file_folder = "C:/Users/zhusq/Desktop"
+    meta_dir = "C:/Users/zhusq/Desktop"
 
-    file_folder = "/users/Shuqin"
-    meta_dir = "/users/Shuqin"
+    # file_folder = "/users/Shuqin"
+    # meta_dir = "/users/Shuqin"
 
     p_list = []
     for illum_to_disp_ratio in [1, 3, 5, 10]:
-        # calculate_obstructing(file_folder, meta_dir, illum_to_disp_ratio)
-        p_list.append(mp.Process(target=calculate_obstructing, args=(file_folder, meta_dir, illum_to_disp_ratio)))
-
-    for p in p_list:
-        # print(t)
-        p.start()
+        calculate_obstructing(file_folder, meta_dir, illum_to_disp_ratio)
+    #     p_list.append(mp.Process(target=calculate_obstructing, args=(file_folder, meta_dir, illum_to_disp_ratio)))
+    #
+    # for p in p_list:
+    #     # print(t)
+    #     p.start()

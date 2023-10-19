@@ -141,7 +141,7 @@ def visible_cubes(camera, cubes):
 
                 if any(is_in_illum_cell(p, cubes[j][0:3]) for p in line_points):
 
-                    blocked_by.append(cube[j][0:3])
+                    blocked_by.append(cubes[j][0:3])
 
                     if i not in blocking_index:
                         blocking.append(cube[0:3])
@@ -252,9 +252,6 @@ if __name__ == "__main__":
                 # views = ["bottom"]
                 elevations = [90, -90, 0, 0, 0, 0]
                 azimuths = [0, 0, -90, 90, 0, 180]
-
-                # Create a 3D scatter plot
-                fig = plt.figure(figsize=(18, 12))
 
                 illum = []
                 standby = []

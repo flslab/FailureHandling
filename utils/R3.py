@@ -12,7 +12,7 @@ from PIL import Image
 
 ticks_gap = 20
 
-start_time = 1800
+start_time = 900
 duration = 60
 fps = 30
 frame_rate = 1 / fps
@@ -22,6 +22,40 @@ total_points = 760
 output_name = "testd"
 input_path = f"/Users/hamed/Desktop/{output_name}/timeline.json"
 
+import numpy as np
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
+from mpl_toolkits.mplot3d.art3d import Poly3DCollection
+
+
+def get_cube_vertices(x, y, z, size):
+    half_size = size / 2.0
+
+    return [
+        [x - half_size, y - half_size, z - half_size],
+        [x + half_size, y - half_size, z - half_size],
+        [x + half_size, y + half_size, z - half_size],
+        [x - half_size, y + half_size, z - half_size],
+        [x - half_size, y - half_size, z + half_size],
+        [x + half_size, y - half_size, z + half_size],
+        [x + half_size, y + half_size, z + half_size],
+        [x - half_size, y + half_size, z + half_size]
+    ]
+
+
+def draw_cube(ax, xs, ys, zs, s=3, c='white', a=1):
+    for i in range(len(xs)):
+        vertices = get_cube_vertices(xs[i], ys[i], zs[i], s)
+        # Define the 6 faces of the cube
+        faces = [
+            [vertices[j] for j in [0, 1, 2, 3]],
+            [vertices[j] for j in [4, 5, 6, 7]],
+            [vertices[j] for j in [0, 3, 7, 4]],
+            [vertices[j] for j in [1, 2, 6, 5]],
+            [vertices[j] for j in [0, 1, 5, 4]],
+            [vertices[j] for j in [2, 3, 7, 6]]
+        ]
+        ax.add_collection3d(Poly3DCollection(faces, facecolor=c, linewidths=3, edgecolor=c, alpha=a))
 
 def set_axis(ax, length, width, height, title=""):
     ax.axes.set_xlim3d(left=min(gtl[:, 0]), right=max(gtl[:, 0]))
@@ -33,6 +67,20 @@ def set_axis(ax, length, width, height, title=""):
     # ax.set_yticks(range(0, width + 1, ticks_gap))
     # ax.set_zticks(range(0, height + 1, ticks_gap))
     # ax.set_title(title, y=.9)
+
+def set_wheel(ax):
+    x_range = [12, 30]
+    y_range = [20, 40]
+    z_range = [30, 40]
+    # ax.axes.set_xlim3d(left=min(gtl[:, 0]), right=max(gtl[:, 0]))
+    # ax.axes.set_ylim3d(bottom=min(gtl[:, 1]), top=max(gtl[:, 1]))
+    # ax.axes.set_zlim3d(bottom=min(gtl[:, 2]), top=max(gtl[:, 2]))
+
+    ax.axes.set_xlim3d(left=x_range[0], right=x_range[1])
+    ax.axes.set_ylim3d(bottom=y_range[0], top=y_range[1])
+    ax.axes.set_ylim3d(bottom=z_range[0], top=z_range[1])
+    ax.set_aspect('equal')
+    ax.grid(False)
 
 
 def set_axis_2d(ax, title):
@@ -116,13 +164,13 @@ def init(ax, ax2, ax3, ax4):
     # return line1,
     ax3.xaxis.set_pane_color((1.0, 1.0, 1.0, 1.0), alpha=0)
     ax3.yaxis.set_pane_color((1.0, 1.0, 1.0, 1.0), alpha=0)
-    ax3.zaxis.set_pane_color((1.0, 1.0, 1.0, 1.0), alpha=0)
-    ax3.view_init(elev=90, azim=-90, roll=0)
+    ax3.zaxis.set_pane_color((0, 0, 0, 0.025), alpha=0)
+    ax3.view_init(elev=14, azim=-136, roll=0)
 
     ax4.xaxis.set_pane_color((1.0, 1.0, 1.0, 1.0), alpha=0)
     ax4.yaxis.set_pane_color((1.0, 1.0, 1.0, 1.0), alpha=0)
-    ax4.zaxis.set_pane_color((1.0, 1.0, 1.0, 1.0), alpha=0)
-    ax4.view_init(elev=90, azim=-90, roll=0)
+    ax4.zaxis.set_pane_color((0, 0, 0, 0.025), alpha=0)
+    ax4.view_init(elev=14, azim=-136, roll=0)
 
 def update(frame, titles):
     t_K0 = start_time + frame * frame_rate
@@ -149,14 +197,19 @@ def update(frame, titles):
     zs = [c[2] for c in coords_K0]
 
     ax.clear()
-    ln = ax.scatter(xs, ys, np.array(zs) - 100, c='white', s=2, alpha=1)
+    # ln = ax.scatter(xs, ys, np.array(zs), c='white', s=2, alpha=1)
+
+    draw_cube(ax, xs, ys, np.array(zs), s=3, c='white', a=1)
+
     set_axis(ax, length, width, height)
 
     update_title(ax, titles[0], total_points - len(coords_K0))
 
     ax3.clear()
-    ln3 = ax3.scatter(np.array(xs), ys, zs, c='white', s=2, alpha=1)
-    set_axis(ax3, length, width, height)
+    # ln3 = ax3.scatter(np.array(xs), ys, np.array(zs), c='white', s=2, alpha=1)
+
+    draw_cube(ax3, xs, ys, np.array(zs), s=3, c='white', a=1)
+    set_wheel(ax3)
 
     while len(filtered_events_K3):
         # print(t)
@@ -180,23 +233,27 @@ def update(frame, titles):
     zs = [c[2] for c in coords_K3]
 
     ax2.clear()
-    ln2 = ax2.scatter(xs, ys, np.array(zs) - 100, c='white', s=2, alpha=1)
+    # ln2 = ax2.scatter(xs, ys, np.array(zs), c='white', s=2, alpha=1)
+
+    draw_cube(ax2, xs, ys, np.array(zs), s=3, c='white', a=1)
     set_axis(ax2, length, width, height)
     update_title(ax2, titles[1], total_points - len(coords_K3))
 
     ax4.clear()
-    ln4 = ax4.scatter(xs, ys, zs, c='white', s=2, alpha=1)
-    set_axis(ax4, length, width, height)
 
-    plt.xlim(min(xs), max(xs))
-    plt.ylim(min(ys), max(ys))
+    draw_cube(ax4, xs, ys, np.array(zs), s=3, c='white', a=1)
+    # ln4 = ax4.scatter(np.array(xs), ys, np.array(zs), c='white', s=2, alpha=1)
+    set_wheel(ax4)
+
+    # plt.xlim(min(xs), max(xs))
+    # plt.ylim(min(ys), max(ys))
     # plt.zlim(min(zs), max(zs))
 
     set_label(tx_left, "No Reliability Group")
 
     set_label(tx_right, "G=3")
 
-    return [ln, ln2, ln3, ln4]
+    # return [ln, ln2, ln3, ln4]
 
 
 def show_last_frame(events, t=30):
@@ -291,9 +348,9 @@ if __name__ == '__main__':
     shape = "skateboard"
     start_time = 540
 
-    file_name_list = [[f"{shape}_G0_R80_T300_S0", f"{shape}_G3_R80_T300_S0"]]
+    file_name_list = [[f"{shape}_G0_R3000_T60", f"{shape}_G3_R3000_T60"]]
     titles_list = [["No Standby", "G=3"]]
-    video_name_list = ["skateboard_G{0,3}_R80_T300_S0"]
+    video_name_list = ["skateboard_G{0,3}_G0_R3000_T60"]
 
     for i, file_names in enumerate(file_name_list):
         txt_file_path = f"/Users/shuqinzhu/Desktop/video/pointclouds/{shape}.txt"
@@ -319,4 +376,4 @@ if __name__ == '__main__':
         # plt.show()
         writer = FFMpegWriter(fps=fps)
         # ani.save(f"{exp_dir}/{exp_name}.mp4", writer=writer)
-        ani.save(f"/Users/shuqinzhu/Desktop/video/videos/{video_name_list[i]}_top.mp4", writer=writer)
+        ani.save(f"/Users/shuqinzhu/Desktop/video/videos/{video_name_list[i]}_wheel_R3.mp4", writer=writer)

@@ -346,15 +346,11 @@ if __name__ == "__main__":
     meta_dir = "/users/Shuqin"
 
     p_list = []
-    p_list.append(mp.Process(target=calculate_obstructing, args=(file_folder, meta_dir, 1, 3, "dragon")))
 
-    p_list.append(mp.Process(target=calculate_obstructing, args=(file_folder, meta_dir, 1, 20, "dragon")))
-
-    p_list.append(mp.Process(target=calculate_obstructing, args=(file_folder, meta_dir, 3, 3, "dragon")))
-
-    p_list.append(mp.Process(target=calculate_obstructing, args=(file_folder, meta_dir, 1, 3, "hat")))
-
-    p_list.append(mp.Process(target=calculate_obstructing, args=(file_folder, meta_dir, 1, 20, "hat")))
+    for shape in ["skateboard", "dragon", "hat"]:
+        p_list.append(mp.Process(target=calculate_obstructing, args=(file_folder, meta_dir, 1, 3, shape)))
+        p_list.append(mp.Process(target=calculate_obstructing, args=(file_folder, meta_dir, 1, 20, shape)))
+        p_list.append(mp.Process(target=calculate_obstructing, args=(file_folder, meta_dir, 3, 3, shape)))
 
     for p in p_list:
         # print(t)

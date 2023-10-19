@@ -203,7 +203,7 @@ def check_blocking_nums(shape, K, file_folder):
                 directions = np.array(directions)
 
                 for dirc in directions:
-                    new_coord = coord + dirc
+                    new_coord = coord + dirc * 0.5
                     check += 1
                     if all([not is_in_disp_cell(new_coord, c) for c in coords]):
                         overlap = False

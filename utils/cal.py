@@ -89,7 +89,7 @@ def is_in_illum_cell(coord1, coord2, ratio):
 
 
 # Function to find visible cubes
-def visible_cubes(camera, cubes, ratio):
+def visible_cubes(camera, cubes, ratio, K, view):
     # Calculate distances from the camera to each cube
     distances = [get_distance(camera, cube[:3]) for cube in cubes]
 
@@ -104,7 +104,7 @@ def visible_cubes(camera, cubes, ratio):
     blocking_index = []
     blocked_by = []
 
-    for index_i in tqdm(range(0, len(sorted_indices))):
+    for index_i in tqdm(range(0, len(sorted_indices)), desc=f"{shape}, K: {K}, Ratio: {ratio} ,{view}"):
         i = sorted_indices[index_i]
 
         cube = cubes[i]
@@ -282,11 +282,9 @@ def calculate_obstructing(group_file, meta_direc, ratio, K, shape):
 
     for i in range(len(views)):
 
-        print(f"{shape}, K: {K}, Ratio: {ratio} ,{views[i]}")
-
         camera = cam_positions[i]
 
-        visible, blocking, blocked_by, blocking_index = visible_cubes(camera, points, ratio)
+        visible, blocking, blocked_by, blocking_index = visible_cubes(camera, points, ratio, K, views[i])
         # count_0 = visible[:, 3].count(0)
         # count_1 = visible[:, 3].count(1)
 

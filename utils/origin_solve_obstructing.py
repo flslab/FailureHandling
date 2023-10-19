@@ -42,27 +42,6 @@ def read_coordinates(file_path):
         print(f"An error occurred 5: {e}")
         return None
 
-
-def get_standby_coords(groups):
-    group_standby_coord = []
-    for i in range(len(groups)):
-        group = groups[i]
-
-        if K:
-            member_count = group.shape[0]
-            sum_x = np.sum(group[:, 0])
-            sum_y = np.sum(group[:, 1])
-            sum_z = np.sum(group[:, 2])
-            stand_by_coord = [
-                float(round(sum_x / member_count)),
-                float(round(sum_y / member_count)),
-                float(round(sum_z / member_count)),
-            ]
-            group_standby_coord.append(stand_by_coord)
-
-    return group_standby_coord
-
-
 def distance_between(point1, point2):
     return np.linalg.norm(np.array(point1) - np.array(point2))
 
@@ -176,57 +155,23 @@ def check_blocking_nums(shape):
 
     txt_file = f"{shape}.txt"
 
-    groups, a = read_cliques_xlsx(os.path.join(file_folder, input_file))
+    illums = read_coordinates(f"{file_folder}/pointcloud/{txt_file}")
 
-    group_standby_coord = get_standby_coords(groups)
-
-    points = read_coordinates(f"{file_folder}/pointcloud/{txt_file}")
-
-    points = np.array(points)
-    standbys = np.array([])
+    illums = np.array(illums)
+    illums = np.c_[illums, np.zeros(illums.shape[0])]
 
     point_boundary = [
-        [min(points[:, 0]), min(points[:, 1]), min(points[:, 2])],
-        [max(points[:, 0]), max(points[:, 1]), max(points[:, 2])]
+        [min(illums[:, 0]), min(illums[:, 1]), min(illums[:, 2])],
+        [max(illums[:, 0]), max(illums[:, 1]), max(illums[:, 2])]
     ]
 
-    for coord in group_standby_coord:
+    standbys = read_coordinates(f"{file_folder}/pointcloud/{txt_file}")
 
-        coords = points[:, :3]
+    standbys = np.array(standbys)
+    standbys = np.c_[standbys, np.zeros(standbys.shape[0])]
 
-        coords = coords.tolist()
+    points = np.concatenate((illums, standbys), axis=0)
 
-        if coord in coords:
-            directions = []
-            for x in [-1, 0, 1]:
-                for y in [-1, 0, 1]:
-                    for z in [-1, 0, 1]:
-                        directions.append([x, y, z])
-
-            directions = np.array(directions)
-
-            overlap = True
-
-            while overlap:
-                for dirc in directions:
-                    new_coord = coord + dirc
-                    if new_coord.tolist() not in coords:
-                        overlap = False
-                        coord = new_coord.tolist()
-                        break
-
-                if overlap:
-                    print(f"None Stopping")
-                    directions = directions * 2
-                break
-        coord.append(1)
-        points = np.concatenate((points, [coord]), axis=0)
-
-        if len(standbys) == 0:
-            standbys = np.array([coord[0:3]])
-        else:
-            standbys = np.concatenate((standbys, [coord[0:3]]), axis=0)
-        np.savetxt(f'{output_path}/points/{shape}_ori_standbys.txt', standbys, fmt='%d', delimiter='\t')
     return points, point_boundary
 
 
@@ -234,14 +179,14 @@ if __name__ == "__main__":
 
     # shape = "skateboard"
 
-    file_folder = "/Users/shuqinzhu/Desktop/Experiments_Results.nosync/group_formation"
+    file_folder = "/Users/shuqinzhu/Desktop"
 
     result = [["Shape", "View", "D_Illum", "D_Stb", "Min D_between", "Max D_between", "Avg D_between",
               "Occur Times", "Min Stb Block", "Max Stb Block", "Avg Stb Block"]]
 
     for K in [20, 3]:
 
-        output_path = f"/Users/shuqinzhu/Desktop/obstructing/K{K}"
+        output_path = f"/Users/shuqinzhu/Desktop/obstructing/R{1}/K{K}"
 
         for shape in ["skateboard", "hat", "dragon"]:
             points, boundary = check_blocking_nums(shape)
@@ -262,10 +207,10 @@ if __name__ == "__main__":
             ]
 
             views = ["top", "bottom", "left", "right", "front", "back"]
-            elevations = [90, -90, 0, 0, 0, 0]
-            azimuths = [0, 0, -90, 90, 0, 180]
 
-            for i, camera in enumerate(cam_positions):
+            for i, in views:
+
+                camera = cam_positions[i]
 
                 distance_ill, distance_stb, dist_between, standby_block, adjusted_points = visible_cubes(camera, points)
 

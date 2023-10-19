@@ -1,4 +1,5 @@
 import csv
+from collections import Counter
 from threading import Thread
 
 import numpy as np
@@ -8,6 +9,28 @@ from matplotlib import pyplot as plt
 from tqdm import tqdm
 import statistics
 import multiprocessing as mp
+
+
+def normalize(v):
+    norm = np.linalg.norm(v)
+    if norm == 0:
+        return v
+    return v / norm
+
+
+def get_dist_to_centroid(standbys, shape, k, file_folder):
+    input_file = f"{shape}_G{k}.xlsx"
+
+    groups, a = read_cliques_xlsx(f"{file_folder}/pointcloud/{input_file}")
+
+    avg_dists = []
+
+    for i, group in enumerate(groups):
+        distances = [get_distance(standbys[i], coord) for coord in group]
+
+        avg_dists.append(statistics.mean(distances))
+
+    return avg_dists
 
 
 def angle_between(origin, point):
@@ -88,78 +111,6 @@ def is_in_illum_cell(coord1, coord2, ratio):
     return is_inside_cube(coord1, coord2, 1 * ratio)
 
 
-# Function to find visible cubes
-def visible_cubes(camera, cubes, ratio):
-    # Calculate distances from the camera to each cube
-    distances = [get_distance(camera, cube[:3]) for cube in cubes]
-
-    max_dist = max(distances)
-
-    # Sort cubes by distance
-    sorted_indices = np.argsort(distances)
-
-    visible = []
-    blocking = []
-    visible_index = []
-    blocking_index = []
-    blocked_by = []
-
-    for index_i in tqdm(range(0, len(sorted_indices))):
-        i = sorted_indices[index_i]
-
-        cube = cubes[i]
-
-        is_visible = True
-
-        t_values = np.linspace(0, 1,
-                               round(get_distance(camera, cube[:3]) / 0.1))  # Adjust the number of points as needed
-        line_points = np.outer((1 - t_values), camera) + np.outer(t_values, cube[:3])
-
-        # Check if the line of sight to the cube is obstructed
-        for index_j, j in enumerate(sorted_indices):
-            if index_j >= index_i:
-                break
-
-            if cubes[j][3] != 1 and any(
-                    is_in_illum_cell(p, cubes[j][0:3], ratio) for p in line_points):
-                is_visible = False
-                break
-
-        if is_visible:
-            visible_index.append(i)
-            visible.append(cube)
-
-        if cube[3] == 1 and is_visible:
-
-            V = cube[:3] - camera
-            V = V / np.linalg.norm(V)
-
-            t_values = np.linspace(0, max_dist - get_distance(camera, cube[:3]),
-                                   round((max_dist - get_distance(camera, cube[:3])) / 0.1))
-
-            line_points = []
-
-            for t in t_values:
-                line_points.append(V * t + cube[:3])
-
-            line_points = np.array(line_points)
-
-            for index_j, j in enumerate(sorted_indices):
-                if index_j <= index_i or cubes[j][3] == 1:
-                    continue
-
-                if any(is_in_illum_cell(p, cubes[j][0:3], ratio) for p in line_points):
-
-                    blocked_by.append(cubes[j][0:3])
-
-                    if i not in blocking_index:
-                        blocking.append(cube[0:3])
-                        blocking_index.append(i)
-                    break
-
-    return visible, blocking, blocked_by, blocking_index
-
-
 def get_points(shape, K, file_folder):
     input_file = f"{shape}_G{K}.xlsx"
 
@@ -184,15 +135,13 @@ def get_points(shape, K, file_folder):
         (min(points[:, 2]) + max(points[:, 2])) / 2
     ])
 
-    check_times = []
-
-    for coord in group_standby_coord:
-
+    for group_id, coord in enumerate(group_standby_coord):
         coords = points[:, :3]
 
         coords = coords.tolist()
 
         check = 0
+
         if not all([not is_in_disp_cell(coord, c) for c in coords]):
 
             overlap = True
@@ -223,27 +172,33 @@ def get_points(shape, K, file_folder):
                         print(f"Rim: {rims_check}")
                     rims_check += 1
                 # break
-        check_times.append(check)
 
+        group_standby_coord[group_id] = coord
         coord.append(1)
         points = np.concatenate((points, [coord]), axis=0)
 
-    return points, point_boundary, check_times
+    return points, point_boundary, group_standby_coord
 
 
 def calculate_obstructing(group_file, meta_direc, ratio):
-
     result = [
-        ["Shape", "K", "Ratio", "View", "Visible_Illum", "Obstructing FLS", "Min Times Checked", "Mean Times Checked",
-         "Max Times Checked"]]
-    report_path = f"{meta_direc}/obstructing/R{ratio}"
+        ["Shape", "K", "Ratio", "View", "Obstruction Times",
+         "Min Dist Between", "Max Dist Between", "Mean Dist Between",
+         "Min Obstructing FLSs", "Max Obstructing FLSs", "Mean Obstructing FLSs",
+         "Min Ori Dist To Center", "Max Ori Dist To Center", "Mean Ori Dist To Center",
+         "Min Dist To Center", "Max Dist To Center", "Mean Dist To Center",
+         "Dist To Center Change", "Obstructing Nums"]]
 
-    for K in [3, 20]:
-        output_path = f"{meta_direc}/obstructing/R{ratio}/K{K}"
+    for k in [3, 20]:
+        report_path = f"{meta_direc}/obstructing/R{ratio}"
+
+        output_path = f"{meta_direc}/obstructing/R{ratio}/K{k}"
 
         for shape in ["skateboard", "hat", "dragon"]:
             # for shape in ["skateboard", "dragon"]:
-            points, boundary, check_times = get_points(shape, K, group_file)
+            points, boundary, standbys = get_points(shape, k, group_file)
+
+            ori_dists_center = get_dist_to_centroid(standbys, shape, k, group_file)
 
             cam_positions = [
                 # top
@@ -268,68 +223,70 @@ def calculate_obstructing(group_file, meta_direc, ratio):
 
             views = ["top", "bottom", "left", "right", "front", "back"]
 
-            illum = []
-            standby = []
-            for coord in points:
-                if coord[3] == 0:
-                    illum.append(coord[:3])
-                else:
-                    standby.append(coord[:3])
-
-            illum = np.array(illum)
-            standby = np.array(standby)
-
-            np.savetxt(f'{output_path}/points/{shape}_illum.txt', illum, fmt='%d', delimiter='\t')
-            np.savetxt(f'{output_path}/points/{shape}_standby.txt', standby, fmt='%d', delimiter='\t')
-
             for i in range(len(views)):
 
-                print(f"{shape}, K: {K}, Ratio: {ratio} ,{views[i]}")
+                print(f"Solving: {shape}, K: {k}, Ration: {ratio} ,{views[i]}")
 
-                camera = cam_positions[i]
+                dist_illum = 0
+                dist_standby = 0
+                dist_between = []
 
-                visible, blocking, blocked_by, blocking_index = visible_cubes(camera, points, ratio)
-                # count_0 = visible[:, 3].count(0)
-                # count_1 = visible[:, 3].count(1)
+                camera = np.array(cam_positions[i])
 
-                visible_illum = []
-                visible_standby = []
-                for point in visible:
-                    if point[3] == 1:
-                        visible_standby.append(point[0:3])
-                    else:
-                        visible_illum.append(point[0:3])
+                obstructing = read_coordinates(f"{output_path}/{shape}_{views[i]}_blocking_1.txt")
+                blocked_by = read_coordinates(f"{output_path}/{shape}_{views[i]}_blocked_1.txt")
 
-                visible_illum = np.array(visible_illum)
-                np.unique(visible_illum, axis=0)
+                obs_list = []
+                for coord in obstructing:
+                    for index, row in enumerate(points[0:3]):
+                        if np.array_equal(row, coord):
+                            obs_list.append(index)
+                            break
 
-                visible_standby = np.array(visible_standby)
-                np.unique(visible_standby, axis=0)
+                standby_list = []
+                for coord in obstructing:
+                    for index, row in enumerate(points[0:3]):
+                        if np.array_equal(row, coord):
+                            standby_list.append(index)
+                            break
 
-                blocking = np.array(blocking)
-                np.unique(blocking, axis=0)
+                blocked_list = []
+                for coord in blocked_by:
+                    for index, row in enumerate(points[0:3]):
+                        if np.array_equal(row, coord):
+                            blocked_list.append(index)
+                            break
 
-                blocked_by = np.array(blocked_by)
-                np.unique(blocked_by, axis=0)
+                multi_obst = Counter(blocked_list)
 
-                np.savetxt(f'{output_path}/points/{shape}_{views[i]}_visible_illum.txt', visible_illum, fmt='%d',
-                           delimiter='\t')
-                np.savetxt(f'{output_path}/points/{shape}_{views[i]}_visible_standby.txt', visible_standby,
-                           fmt='%d',
-                           delimiter='\t')
-                np.savetxt(f'{output_path}/points/{shape}_{views[i]}_blocking_1.txt', blocking, fmt='%d',
-                           delimiter='\t')
-                np.savetxt(f'{output_path}/points/{shape}_{views[i]}_blocked_1.txt', blocked_by, fmt='%d',
-                           delimiter='\t')
+                step_length = 0.5
+                for index, coord in enumerate(blocked_by):
+                    gaze_vec = normalize(np.array(coord) - camera)
+                    new_pos = coord + gaze_vec
 
-                print(
-                    f"{shape}, K: {K}, Ratio: {ratio} ,{views[i]} view: Number of Illuminating FLS: {len(visible_illum)}, Visible Standby FLS: {len(visible_standby)},  Obstructing Number: {len(blocking_index)}")
+                    check_times = 1
+                    while not all([not is_in_disp_cell(new_pos, p) for p in points]):
+                        new_pos += gaze_vec * step_length
+                        check_times += 1
 
-                result.append(
-                    [shape, K, ratio, views[i], len(visible_illum), len(blocking_index), min(check_times),
-                     statistics.mean(check_times), max(check_times)])
+                    dist_standby += get_distance(coord, obstructing[index])
+                    dist_illum += get_distance(coord, new_pos)
 
-    with open(f'{report_path}/report_R{ratio}.csv', mode='w', newline='') as file:
+                    dist_between.append(get_distance(coord, obstructing[index]))
+
+                    points[obs_list[index]][0:3] = new_pos
+                    standbys[standby_list[index]] = new_pos
+
+                dists_center = get_dist_to_centroid(standbys, shape, k, group_file)
+
+                result.append([shape, k, ratio, views[i], dist_illum, dist_standby, len(multi_obst.keys()),
+                               min(dist_between), max(dist_between), statistics.mean(dist_between),
+                               min(multi_obst.values()), max(multi_obst.values()), statistics.mean(multi_obst.values()),
+                               min(ori_dists_center), max(ori_dists_center), statistics.mean(ori_dists_center),
+                               min(dists_center), max(dists_center), statistics.mean(dists_center),
+                               statistics.mean(dists_center)/statistics.mean(ori_dists_center), multi_obst.items()
+                               ])
+    with open(f'{report_path}/solve_R{ratio}_K{k}.csv', mode='w', newline='') as file:
         writer = csv.writer(file)
 
         # Write the data from the list to the CSV file
@@ -341,16 +298,15 @@ if __name__ == "__main__":
 
     # file_folder = "C:/Users/zhusq/Desktop"
     # meta_dir = "C:/Users/zhusq/Desktop"
-    # file_folder = "/Users/shuqinzhu/Desktop"
-    # meta_dir = "/Users/shuqinzhu/Desktop"
+    file_folder = "/Users/shuqinzhu/Desktop"
+    meta_dir = "/Users/shuqinzhu/Desktop"
 
-    file_folder = "/users/Shuqin"
-    meta_dir = "/users/Shuqin"
+    # file_folder = "/users/Shuqin"
+    # meta_dir = "/users/Shuqin"
 
     p_list = []
     for illum_to_disp_ratio in [1, 3, 5, 10]:
-
-        # calculate_obstructing(file_folder, meta_dir, illum_to_disp_ratio)
+        calculate_obstructing(file_folder, meta_dir, illum_to_disp_ratio)
         p_list.append(mp.Process(target=calculate_obstructing, args=(file_folder, meta_dir, illum_to_disp_ratio)))
     #
     for p in p_list:

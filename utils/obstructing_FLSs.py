@@ -213,7 +213,8 @@ def check_blocking_nums(shape, K, file_folder):
                         break
 
                 if overlap:
-                    print(f"Rim: {rims_check}")
+                    if rims_check%10 == 0:
+                        print(f"Rim: {rims_check}")
                     rims_check += 1
                 # break
         check_times.append(check)
@@ -335,11 +336,11 @@ if __name__ == "__main__":
 
     # shape = "skateboard"
     # illum_to_disp_ratio = 3
-    file_folder = "C:/Users/zhusq/Desktop"
-    meta_dir = "C:/Users/zhusq/Desktop"
+    # file_folder = "C:/Users/zhusq/Desktop"
+    # meta_dir = "C:/Users/zhusq/Desktop"
 
-    # file_folder = "/users/Shuqin"
-    # meta_dir = "/users/Shuqin"
+    file_folder = "/users/Shuqin"
+    meta_dir = "/users/Shuqin"
 
     p_list = []
     for illum_to_disp_ratio in [1, 3, 5, 10]:

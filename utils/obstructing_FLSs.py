@@ -187,7 +187,7 @@ def check_blocking_nums(shape, K, file_folder):
         coords = coords.tolist()
 
         check = 0
-        if all([not is_in_disp_cell(coord, c) for c in coords]):
+        if not all([not is_in_disp_cell(coord, c) for c in coords]):
 
             overlap = True
             rims_check = 1

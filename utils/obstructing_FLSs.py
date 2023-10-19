@@ -178,6 +178,12 @@ def check_blocking_nums(shape, K, file_folder):
         [max(points[:, 0]), max(points[:, 1]), max(points[:, 2])]
     ]
 
+    center = np.array([
+        (min(points[:, 0]) + max(points[:, 0])) / 2,
+        (min(points[:, 1]) + max(points[:, 1])) / 2,
+        (min(points[:, 2]) + max(points[:, 2])) / 2
+    ])
+
     check_times = []
 
     for coord in group_standby_coord:
@@ -202,6 +208,7 @@ def check_blocking_nums(shape, K, file_folder):
                                 continue
                             directions.append([x, y, z])
 
+                directions = sorted(directions, key=lambda d: get_distance(d, center))
                 directions = np.array(directions)
 
                 for dirc in directions:
@@ -213,7 +220,7 @@ def check_blocking_nums(shape, K, file_folder):
                         break
 
                 if overlap:
-                    if rims_check%10 == 0:
+                    if rims_check % 10 == 0:
                         print(f"Rim: {rims_check}")
                     rims_check += 1
                 # break

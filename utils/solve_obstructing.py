@@ -45,7 +45,7 @@ def read_cliques_xlsx(path):
 
     for c in df["7 coordinates"]:
         coord_list = np.array(eval(c))
-        # coord_list[:, 2] += 100
+        coord_list *= 3
         group_list.append(coord_list)
 
     return group_list, [max(eval(d)) + 1 if eval(d) != [] else 1 for d in df["6 dist between each pair"]]
@@ -111,7 +111,7 @@ def is_in_illum_cell(coord1, coord2, ratio):
     return is_inside_cube(coord1, coord2, 1 * ratio)
 
 
-def get_points(shape, K, file_folder):
+def get_points(shape, K, file_folder, ratio):
     input_file = f"{shape}_G{K}.xlsx"
 
     txt_file = f"{shape}.txt"
@@ -123,6 +123,7 @@ def get_points(shape, K, file_folder):
     points = read_coordinates(f"{file_folder}/pointcloud/{txt_file}", ' ')
 
     points = np.array(points)
+    points = points * ratio
 
     point_boundary = [
         [min(points[:, 0]), min(points[:, 1]), min(points[:, 2])],
@@ -197,7 +198,7 @@ def calculate_obstructing(group_file, meta_direc, ratio):
 
         for shape in ["skateboard", "hat", "dragon"]:
             # for shape in ["skateboard", "dragon"]:
-            points, boundary, standbys = get_points(shape, k, group_file)
+            points, boundary, standbys = get_points(shape, k, group_file, ratio)
 
             ori_dists_center = get_dist_to_centroid(standbys, shape, k, group_file)
 

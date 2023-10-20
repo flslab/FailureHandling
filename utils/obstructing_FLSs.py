@@ -176,7 +176,6 @@ def get_points(shape, K, file_folder, ratio):
 
     groups, a = read_cliques_xlsx(f"{file_folder}/pointcloud/{input_file}", ratio)
 
-    groups = groups * ratio
     group_standby_coord = get_standby_coords(groups, K)
 
     points = read_coordinates(f"{file_folder}/pointcloud/{txt_file}")
@@ -347,11 +346,11 @@ if __name__ == "__main__":
 
     # file_folder = "C:/Users/zhusq/Desktop"
     # meta_dir = "C:/Users/zhusq/Desktop"
-    # file_folder = "/Users/shuqinzhu/Desktop"
-    # meta_dir = "/Users/shuqinzhu/Desktop"
+    file_folder = "/Users/shuqinzhu/Desktop"
+    meta_dir = "/Users/shuqinzhu/Desktop"
 
-    file_folder = "/users/Shuqin"
-    meta_dir = "/users/Shuqin"
+    # file_folder = "/users/Shuqin"
+    # meta_dir = "/users/Shuqin"
 
     p_list = []
     for illum_to_disp_ratio in [1, 3, 5, 10]:

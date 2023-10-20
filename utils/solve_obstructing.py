@@ -293,7 +293,7 @@ def calculate_obstructing(group_file, meta_direc, ratio):
 
                     dist_between.append(get_distance(coord, obstructing[index]))
 
-                    points[obs_list[index]] = new_pos
+                    points[obs_list[index], 0:3] = new_pos
                     standbys[standby_list[index]] = new_pos
 
                 dists_center = get_dist_to_centroid(standbys, shape, k, group_file)

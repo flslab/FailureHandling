@@ -124,12 +124,12 @@ def visible_cubes(camera, cubes, ratio, shape, k, view):
             if sorted_indices[index_j] >= sorted_indices[index_i] + 1 * ratio:
                 break
 
-            if cube[3] == 1 and (cubes[j][3] == 1 and any(is_in_illum_cell(p, cubes[j][0:3], ratio, (ratio - 0.8)/ratio) for p in line_points))\
-                    or (cubes[j][3] != 1 and any(is_in_disp_cell(p, cubes[j][0:3], 0.2) for p in line_points)):
+            if cube[3] == 1 and (cubes[j][3] != 1 and any(is_in_illum_cell(p, cubes[j][0:3], ratio, (ratio - 0.8)/ratio) for p in line_points))\
+                    or (cubes[j][3] == 1 and any(is_in_disp_cell(p, cubes[j][0:3], 0.2) for p in line_points)):
                 is_visible = False
                 break
-            elif cube[3] != 1 and (cubes[j][3] == 1 and any(is_in_illum_cell(p, cubes[j][0:3], ratio, 0.2) for p in line_points)) \
-                    or (ratio == 1 and cubes[j][3] != 1 and any(is_in_disp_cell(p, cubes[j][0:3], 0.2) for p in line_points)):
+            elif cube[3] != 1 and (cubes[j][3] != 1 and any(is_in_illum_cell(p, cubes[j][0:3], ratio, 0.2) for p in line_points)) \
+                    or (ratio == 1 and cubes[j][3] == 1 and any(is_in_disp_cell(p, cubes[j][0:3], 0.2) for p in line_points)):
                 is_visible = False
                 break
 
@@ -344,19 +344,20 @@ if __name__ == "__main__":
 
     # file_folder = "C:/Users/zhusq/Desktop"
     # meta_dir = "C:/Users/zhusq/Desktop"
-    # file_folder = "/Users/shuqinzhu/Desktop"
-    # meta_dir = "/Users/shuqinzhu/Desktop"
+    file_folder = "/Users/shuqinzhu/Desktop"
+    meta_dir = "/Users/shuqinzhu/Desktop"
 
-    file_folder = "/users/Shuqin"
-    meta_dir = "/users/Shuqin"
+    # file_folder = "/users/Shuqin"
+    # meta_dir = "/users/Shuqin"
 
     p_list = []
     for illum_to_disp_ratio in [1, 3, 5, 10]:
 
         for shape in ["skateboard", "dragon", "hat"]:
             for k in [3, 20]:
-                p_list.append(mp.Process(target=calculate_obstructing, args=(file_folder, meta_dir, illum_to_disp_ratio, k, shape)))
-
-    for p in p_list:
-        print(p)
-        p.start()
+                calculate_obstructing(file_folder, meta_dir, illum_to_disp_ratio, k, shape)
+    #             p_list.append(mp.Process(target=calculate_obstructing, args=(file_folder, meta_dir, illum_to_disp_ratio, k, shape)))
+    #
+    # for p in p_list:
+    #     print(p)
+    #     p.start()

@@ -128,7 +128,7 @@ def visible_cubes(camera, cubes, ratio, shape, k, view):
                     or (cubes[j][3] == 1 and any(is_in_disp_cell(p, cubes[j][0:3], 0.2) for p in line_points)):
                 is_visible = False
                 break
-            elif cube[3] != 1 and (cubes[j][3] != 1 and any(is_in_illum_cell(p, cubes[j][0:3], ratio, 0.2) for p in line_points)) \
+            elif cube[3] != 1 and (cubes[j][3] != 1 and any(is_in_illum_cell(p, cubes[j][0:3], ratio, 0.2/ratio) for p in line_points)) \
                     or (ratio == 1 and cubes[j][3] == 1 and any(is_in_disp_cell(p, cubes[j][0:3], 0.2) for p in line_points)):
                 is_visible = False
                 break
@@ -284,8 +284,8 @@ def calculate_obstructing(group_file, meta_direc, ratio, k, shape):
     illum = np.array(illum)
     standby = np.array(standby)
 
-    np.savetxt(f'{output_path}/points/{shape}_illum.txt', illum, fmt='%f', delimiter='\t')
-    np.savetxt(f'{output_path}/points/{shape}_standby.txt', standby, fmt='%f', delimiter='\t')
+    np.savetxt(f'{output_path}/points/{shape}_illum.txt', illum, fmt='%f', delimiter=' ')
+    np.savetxt(f'{output_path}/points/{shape}_standby.txt', standby, fmt='%f', delimiter=' ')
 
     for i in range(len(views)):
 

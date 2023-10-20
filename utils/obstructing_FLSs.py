@@ -121,7 +121,7 @@ def visible_cubes(camera, cubes, ratio, shape, k, view):
 
         # Check if the line of sight to the cube is obstructed
         for index_j, j in enumerate(sorted_indices):
-            if sorted_indices[index_j] >= sorted_indices[index_i] + 1 * ratio:
+            if distances[sorted_indices[index_j]] >= distances[sorted_indices[index_i]] + 1 * ratio:
                 break
 
             if cube[3] == 1 and (cubes[j][3] != 1 and any(is_in_illum_cell(p, cubes[j][0:3], ratio, (ratio - 0.8)/ratio) for p in line_points))\

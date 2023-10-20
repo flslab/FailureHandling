@@ -123,7 +123,7 @@ def draw_figure():
     tx_left = fig.text(0.2, 0.5, s="", fontsize=20, color='white')
     tx_right = fig.text(0.7, 0.5, s="", fontsize=20, color='white')
 
-    tx_title = fig.text(0.235, 0.03, s=f"The {shape} with {total_points} points, $\lambda$=900, Speed=6.11 m/sec",
+    tx_title = fig.text(0.235, 0.03, s=f"The {shape} with {total_points} points, $\lambda$=60, Speed=6.11 m/sec",
                         fontsize=28, color='white')
     return fig, ax, ax2, ax3, ax4, tx_K0, tx_K3, tx_left, tx_right, tx_title
 

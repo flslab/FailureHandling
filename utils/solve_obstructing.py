@@ -177,7 +177,7 @@ def get_points(shape, K, file_folder):
         coord.append(1)
         points = np.concatenate((points, [coord]), axis=0)
 
-    return points, point_boundary, group_standby_coord
+    return points, point_boundary, np.array(group_standby_coord)
 
 
 def calculate_obstructing(group_file, meta_direc, ratio):
@@ -233,8 +233,21 @@ def calculate_obstructing(group_file, meta_direc, ratio):
 
                 camera = np.array(cam_positions[i])
 
-                obstructing = read_coordinates(f"{output_path}/points/{shape}_{views[i]}_blocking_1.txt", '\t')
-                blocked_by = read_coordinates(f"{output_path}/points/{shape}_{views[i]}_blocked_1.txt", '\t')
+                obstructing = read_coordinates(f"{output_path}/points/{shape}_{views[i]}_blocking.txt", ' ')
+                blocked_by = read_coordinates(f"{output_path}/points/{shape}_{views[i]}_blocked.txt", ' ')
+
+                if len(obstructing) == 0:
+                    metrics = [shape, k, ratio, views[i], 0, 0, 0,
+                               0, 0, 0,
+                               0, 0, 0,
+                               0, 0, 0,
+                               0, 0, 0,
+                               0, 0
+                               ]
+
+                    result.append(metrics)
+                    print(metrics)
+                    break
 
                 obstructing = np.array(obstructing)[:, 0:3]
                 blocked_by = np.array(blocked_by)[:, 0:3]
@@ -248,7 +261,7 @@ def calculate_obstructing(group_file, meta_direc, ratio):
 
                 standby_list = []
                 for coord in obstructing:
-                    for index, row in enumerate(points[:, 0:3]):
+                    for index, row in enumerate(standbys[:, 0:3]):
                         if np.array_equal(row, coord):
                             standby_list.append(index)
                             break

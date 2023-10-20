@@ -80,12 +80,12 @@ def is_inside_cube(point, cube_center, distance):
     return all(abs(p - c) < distance + 0.00000000001 for p, c in zip(point, cube_center))
 
 
-def is_in_disp_cell(coord1, coord2):
-    return is_inside_cube(coord1, coord2, 1)
+def is_in_disp_cell(coord1, coord2, portion=1.0):
+    return is_inside_cube(coord1, coord2, 1* portion)
 
 
-def is_in_illum_cell(coord1, coord2, ratio):
-    return is_inside_cube(coord1, coord2, 1 * ratio)
+def is_in_illum_cell(coord1, coord2, ratio, portion=1.0):
+    return is_inside_cube(coord1, coord2, portion * ratio)
 
 
 # Function to find visible cubes
@@ -121,11 +121,11 @@ def visible_cubes(camera, cubes, ratio, shape, k, view):
 
         # Check if the line of sight to the cube is obstructed
         for index_j, j in enumerate(sorted_indices):
-            if index_j >= index_i:
+            if sorted_indices[index_j] >= sorted_indices[index_i] + 1 * ratio:
                 break
 
-            if cubes[j][3] != 1 and any(
-                    is_in_illum_cell(p, cubes[j][0:3], ratio) for p in line_points):
+            if cube[3] == 1 and (cubes[j][3] != 1 and any(is_in_illum_cell(p, cubes[j][0:3], ratio, (ratio - 0.8)/ratio) for p in line_points))\
+                    or (cubes[j][3] != 1 and any(is_in_disp_cell(p, cubes[j][0:3], 0.2) for p in line_points)):
                 is_visible = False
                 break
 
@@ -280,8 +280,8 @@ def calculate_obstructing(group_file, meta_direc, ratio, k, shape):
     illum = np.array(illum)
     standby = np.array(standby)
 
-    np.savetxt(f'{output_path}/points/{shape}_illum.txt', illum, fmt='%d', delimiter='\t')
-    np.savetxt(f'{output_path}/points/{shape}_standby.txt', standby, fmt='%d', delimiter='\t')
+    np.savetxt(f'{output_path}/points/{shape}_illum.txt', illum, fmt='%f', delimiter='\t')
+    np.savetxt(f'{output_path}/points/{shape}_standby.txt', standby, fmt='%f', delimiter='\t')
 
     for i in range(len(views)):
 

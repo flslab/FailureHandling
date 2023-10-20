@@ -51,13 +51,13 @@ def read_cliques_xlsx(path):
     return group_list, [max(eval(d)) + 1 if eval(d) != [] else 1 for d in df["6 dist between each pair"]]
 
 
-def read_coordinates(file_path):
+def read_coordinates(file_path, delimiter):
     coordinates = []
     try:
         with open(file_path, 'r') as file:
             for line in file:
                 # Split the line by spaces and convert each part to a float
-                coord = [float(x) for x in line.strip().split(' ')]
+                coord = [float(x) for x in line.strip().split(delimiter)]
                 if len(coord) == 3:  # Ensure that there are exactly 3 coordinates
                     coord.append(0)
                     coordinates.append(coord)
@@ -120,7 +120,7 @@ def get_points(shape, K, file_folder):
 
     group_standby_coord = get_standby_coords(groups, K)
 
-    points = read_coordinates(f"{file_folder}/pointcloud/{txt_file}")
+    points = read_coordinates(f"{file_folder}/pointcloud/{txt_file}", ' ')
 
     points = np.array(points)
 
@@ -173,7 +173,7 @@ def get_points(shape, K, file_folder):
                     rims_check += 1
                 # break
 
-        group_standby_coord[group_id] = coord
+        group_standby_coord[group_id] = coord[:]
         coord.append(1)
         points = np.concatenate((points, [coord]), axis=0)
 
@@ -233,26 +233,29 @@ def calculate_obstructing(group_file, meta_direc, ratio):
 
                 camera = np.array(cam_positions[i])
 
-                obstructing = read_coordinates(f"{output_path}/{shape}_{views[i]}_blocking_1.txt")
-                blocked_by = read_coordinates(f"{output_path}/{shape}_{views[i]}_blocked_1.txt")
+                obstructing = read_coordinates(f"{output_path}/points/{shape}_{views[i]}_blocking_1.txt", '\t')
+                blocked_by = read_coordinates(f"{output_path}/points/{shape}_{views[i]}_blocked_1.txt", '\t')
+
+                obstructing = np.array(obstructing)[:, 0:3]
+                blocked_by = np.array(blocked_by)[:, 0:3]
 
                 obs_list = []
                 for coord in obstructing:
-                    for index, row in enumerate(points[0:3]):
+                    for index, row in enumerate(points[:, 0:3]):
                         if np.array_equal(row, coord):
                             obs_list.append(index)
                             break
 
                 standby_list = []
                 for coord in obstructing:
-                    for index, row in enumerate(points[0:3]):
+                    for index, row in enumerate(points[:, 0:3]):
                         if np.array_equal(row, coord):
                             standby_list.append(index)
                             break
 
                 blocked_list = []
                 for coord in blocked_by:
-                    for index, row in enumerate(points[0:3]):
+                    for index, row in enumerate(points[:, 0:3]):
                         if np.array_equal(row, coord):
                             blocked_list.append(index)
                             break
@@ -274,18 +277,21 @@ def calculate_obstructing(group_file, meta_direc, ratio):
 
                     dist_between.append(get_distance(coord, obstructing[index]))
 
-                    points[obs_list[index]][0:3] = new_pos
+                    points[obs_list[index], 0:3] = new_pos
                     standbys[standby_list[index]] = new_pos
 
                 dists_center = get_dist_to_centroid(standbys, shape, k, group_file)
 
-                result.append([shape, k, ratio, views[i], dist_illum, dist_standby, len(multi_obst.keys()),
-                               min(dist_between), max(dist_between), statistics.mean(dist_between),
-                               min(multi_obst.values()), max(multi_obst.values()), statistics.mean(multi_obst.values()),
-                               min(ori_dists_center), max(ori_dists_center), statistics.mean(ori_dists_center),
-                               min(dists_center), max(dists_center), statistics.mean(dists_center),
-                               statistics.mean(dists_center)/statistics.mean(ori_dists_center), multi_obst.items()
-                               ])
+                metrics = [shape, k, ratio, views[i], dist_illum, dist_standby, len(multi_obst.keys()),
+                           min(dist_between), max(dist_between), statistics.mean(dist_between),
+                           min(multi_obst.values()), max(multi_obst.values()), statistics.mean(multi_obst.values()),
+                           min(ori_dists_center), max(ori_dists_center), statistics.mean(ori_dists_center),
+                           min(dists_center), max(dists_center), statistics.mean(dists_center),
+                           statistics.mean(dists_center) / statistics.mean(ori_dists_center), multi_obst.items()
+                           ]
+
+                result.append(metrics)
+                print(metrics)
     with open(f'{report_path}/solve_R{ratio}_K{k}.csv', mode='w', newline='') as file:
         writer = csv.writer(file)
 

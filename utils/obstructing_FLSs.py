@@ -16,12 +16,13 @@ def angle_between(origin, point):
     return np.degrees(angle)
 
 
-def read_cliques_xlsx(path):
+def read_cliques_xlsx(path, ratio):
     df = pd.read_excel(path, sheet_name='cliques')
     group_list = []
 
     for c in df["7 coordinates"]:
         coord_list = np.array(eval(c))
+        coord_list = coord_list * ratio
         # coord_list[:, 2] += 100
         group_list.append(coord_list)
 
@@ -128,7 +129,7 @@ def visible_cubes(camera, cubes, ratio, shape, k, view):
                     or (cubes[j][3] == 1 and any(is_in_disp_cell(p, cubes[j][0:3], 0.2) for p in line_points)):
                 is_visible = False
                 break
-            elif cube[3] != 1 and (cubes[j][3] != 1 and any(is_in_illum_cell(p, cubes[j][0:3], ratio, 0.2/ratio) for p in line_points)) \
+            elif cube[3] != 1 and (cubes[j][3] != 1 and any(is_in_illum_cell(p, cubes[j][0:3], ratio, 0.3/ratio) for p in line_points)) \
                     or (ratio == 1 and cubes[j][3] == 1 and any(is_in_disp_cell(p, cubes[j][0:3], 0.2) for p in line_points)):
                 is_visible = False
                 break
@@ -168,18 +169,20 @@ def visible_cubes(camera, cubes, ratio, shape, k, view):
     return visible, blocking, blocked_by, blocking_index
 
 
-def get_points(shape, K, file_folder):
+def get_points(shape, K, file_folder, ratio):
     input_file = f"{shape}_G{K}.xlsx"
 
     txt_file = f"{shape}.txt"
 
-    groups, a = read_cliques_xlsx(f"{file_folder}/pointcloud/{input_file}")
+    groups, a = read_cliques_xlsx(f"{file_folder}/pointcloud/{input_file}", ratio)
 
+    groups = groups * ratio
     group_standby_coord = get_standby_coords(groups, K)
 
     points = read_coordinates(f"{file_folder}/pointcloud/{txt_file}")
 
     points = np.array(points)
+    points = points * ratio
 
     point_boundary = [
         [min(points[:, 0]), min(points[:, 1]), min(points[:, 2])],
@@ -248,7 +251,7 @@ def calculate_obstructing(group_file, meta_direc, ratio, k, shape):
 
     output_path = f"{meta_direc}/obstructing/R{ratio}/K{k}"
 
-    points, boundary, check_times = get_points(shape, k, group_file)
+    points, boundary, check_times = get_points(shape, k, group_file, ratio)
 
     cam_positions = [
         # top

@@ -181,13 +181,14 @@ def get_points(shape, K, file_folder):
 
 
 def calculate_obstructing(group_file, meta_direc, ratio):
-    result = [
-        ["Shape", "K", "Ratio", "View", "Obstruction Times",
-         "Min Dist Between", "Max Dist Between", "Mean Dist Between",
-         "Min Obstructing FLSs", "Max Obstructing FLSs", "Mean Obstructing FLSs",
-         "Min Ori Dist To Center", "Max Ori Dist To Center", "Mean Ori Dist To Center",
-         "Min Dist To Center", "Max Dist To Center", "Mean Dist To Center",
-         "Dist To Center Change", "Obstructing Nums"]]
+    title = [
+        "Shape", "K", "Ratio", "View", "Dist Illum", "Dist Standby", "Obstruction Times",
+        "Min Dist Between", "Max Dist Between", "Mean Dist Between",
+        "Min Obstructing FLSs", "Max Obstructing FLSs", "Mean Obstructing FLSs",
+        "Min Ori Dist To Center", "Max Ori Dist To Center", "Mean Ori Dist To Center",
+        "Min Dist To Center", "Max Dist To Center", "Mean Dist To Center",
+        "Dist To Center Change", "Obstructing Nums"]
+    result = [title]
 
     for k in [3, 20]:
         report_path = f"{meta_direc}/obstructing/R{ratio}"
@@ -224,6 +225,8 @@ def calculate_obstructing(group_file, meta_direc, ratio):
             views = ["top", "bottom", "left", "right", "front", "back"]
 
             for i in range(len(views)):
+                if i == 0:
+                    continue
 
                 print(f"Solving: {shape}, K: {k}, Ration: {ratio} ,{views[i]}")
 
@@ -290,7 +293,7 @@ def calculate_obstructing(group_file, meta_direc, ratio):
 
                     dist_between.append(get_distance(coord, obstructing[index]))
 
-                    points[obs_list[index], 0:3] = new_pos
+                    points[obs_list[index]] = new_pos
                     standbys[standby_list[index]] = new_pos
 
                 dists_center = get_dist_to_centroid(standbys, shape, k, group_file)
@@ -300,11 +303,11 @@ def calculate_obstructing(group_file, meta_direc, ratio):
                            min(multi_obst.values()), max(multi_obst.values()), statistics.mean(multi_obst.values()),
                            min(ori_dists_center), max(ori_dists_center), statistics.mean(ori_dists_center),
                            min(dists_center), max(dists_center), statistics.mean(dists_center),
-                           statistics.mean(dists_center) / statistics.mean(ori_dists_center), multi_obst.items()
+                           (statistics.mean(dists_center) / statistics.mean(ori_dists_center)) - 1, multi_obst.items()
                            ]
 
                 result.append(metrics)
-                print(metrics)
+                print(list(zip(title, metrics)))
     with open(f'{report_path}/solve_R{ratio}_K{k}.csv', mode='w', newline='') as file:
         writer = csv.writer(file)
 

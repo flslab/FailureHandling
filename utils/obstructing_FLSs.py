@@ -124,8 +124,12 @@ def visible_cubes(camera, cubes, ratio, shape, k, view):
             if sorted_indices[index_j] >= sorted_indices[index_i] + 1 * ratio:
                 break
 
-            if cube[3] == 1 and (cubes[j][3] != 1 and any(is_in_illum_cell(p, cubes[j][0:3], ratio, (ratio - 0.8)/ratio) for p in line_points))\
+            if cube[3] == 1 and (cubes[j][3] == 1 and any(is_in_illum_cell(p, cubes[j][0:3], ratio, (ratio - 0.8)/ratio) for p in line_points))\
                     or (cubes[j][3] != 1 and any(is_in_disp_cell(p, cubes[j][0:3], 0.2) for p in line_points)):
+                is_visible = False
+                break
+            elif cube[3] != 1 and (cubes[j][3] == 1 and any(is_in_illum_cell(p, cubes[j][0:3], ratio, 0.2) for p in line_points)) \
+                    or (ratio == 1 and cubes[j][3] != 1 and any(is_in_disp_cell(p, cubes[j][0:3], 0.2) for p in line_points)):
                 is_visible = False
                 break
 

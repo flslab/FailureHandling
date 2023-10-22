@@ -281,7 +281,7 @@ def calculate_obstructing(group_file, meta_direc, ratio):
                 standby_list = []
                 for coord in obstructing:
 
-                    point_ids = np.where(np.all(stanbys[:, 0:3] == coord, axis=1))[0]
+                    point_ids = np.where(np.all(standbys[:, 0:3] == coord, axis=1))[0]
                     if len(point_ids) == 0:
                         print(f"Standby Not Found: {coord}, " + tag)
                     else:

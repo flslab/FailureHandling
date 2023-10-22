@@ -302,7 +302,7 @@ def calculate_obstructing(group_file, meta_direc, ratio):
                            min(multi_obst.values()), max(multi_obst.values()), statistics.mean(multi_obst.values()),
                            min(ori_dists_center), max(ori_dists_center), statistics.mean(ori_dists_center),
                            min(dists_center), max(dists_center), statistics.mean(dists_center),
-                           (statistics.mean(dists_center) / statistics.mean(ori_dists_center)) - 1, multi_obst.items()
+                           (statistics.mean(distsgit _center) / statistics.mean(ori_dists_center)) - 1, multi_obst.items()
                            ]
 
                 result.append(metrics)
@@ -327,7 +327,7 @@ if __name__ == "__main__":
 
     p_list = []
     for illum_to_disp_ratio in [1, 3, 5, 10]:
-        calculate_obstructing(file_folder, meta_dir, illum_to_disp_ratio)
+        # calculate_obstructing(file_folder, meta_dir, illum_to_disp_ratio)
         p_list.append(mp.Process(target=calculate_obstructing, args=(file_folder, meta_dir, illum_to_disp_ratio)))
     #
     for p in p_list:

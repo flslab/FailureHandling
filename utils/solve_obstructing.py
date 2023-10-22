@@ -205,29 +205,27 @@ def calculate_obstructing(group_file, meta_direc, ratio):
             cam_positions = [
                 # top
                 [boundary[0][0] / 2 + boundary[1][0] / 2, boundary[0][1] / 2 + boundary[1][1] / 2,
-                 boundary[1][2] + 100],
+                 boundary[1][2] + 100 * ratio],
                 # down
                 [boundary[0][0] / 2 + boundary[1][0] / 2, boundary[0][1] / 2 + boundary[1][1] / 2,
-                 boundary[0][2] - 100],
+                 boundary[0][2] - 100 * ratio],
                 # left
-                [boundary[0][0] - 100, boundary[0][1] / 2 + boundary[1][1] / 2,
+                [boundary[0][0] - 100 * ratio, boundary[0][1] / 2 + boundary[1][1] / 2,
                  boundary[0][0] / 2 + boundary[1][0] / 2],
                 # right
-                [boundary[1][0] + 100, boundary[0][1] / 2 + boundary[1][1] / 2,
+                [boundary[1][0] + 100 * ratio, boundary[0][1] / 2 + boundary[1][1] / 2,
                  boundary[0][0] / 2 + boundary[1][0] / 2],
                 # front
-                [boundary[0][0] / 2 + boundary[1][0] / 2, boundary[0][1] - 100,
+                [boundary[0][0] / 2 + boundary[1][0] / 2, boundary[0][1] - 100 * ratio,
                  boundary[0][0] / 2 + boundary[1][0] / 2],
                 # back
-                [boundary[0][0] / 2 + boundary[1][0] / 2, boundary[1][1] + 100,
+                [boundary[0][0] / 2 + boundary[1][0] / 2, boundary[1][1] + 100 * ratio,
                  boundary[0][0] / 2 + boundary[1][0] / 2]
             ]
 
             views = ["top", "bottom", "left", "right", "front", "back"]
 
             for i in range(len(views)):
-                if i == 0:
-                    continue
 
                 print(f"Solving: {shape}, K: {k}, Ration: {ratio} ,{views[i]}")
 

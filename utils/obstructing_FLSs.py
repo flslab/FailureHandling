@@ -117,7 +117,7 @@ def visible_cubes(camera, cubes, ratio, shape, k, view):
         is_visible = True
 
         t_values = np.linspace(0, 1,
-                               round(get_distance(camera, cube[:3]) / 0.1))  # Adjust the number of points as needed
+                               round(get_distance(camera, cube[:3]) / 0.2))  # Adjust the number of points as needed
         line_points = np.outer((1 - t_values), camera) + np.outer(t_values, cube[:3])
 
         # Check if the line of sight to the cube is obstructed

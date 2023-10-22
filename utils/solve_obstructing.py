@@ -203,7 +203,7 @@ def calculate_obstructing(group_file, meta_direc, ratio):
             points, boundary, standbys = get_points(shape, k, group_file, ratio)
 
             ori_dists_center = get_dist_to_centroid(standbys, shape, k, group_file, ratio)
-            print(ori_dists_center)
+            # print(ori_dists_center)
 
             cam_positions = [
                 # top
@@ -285,7 +285,7 @@ def calculate_obstructing(group_file, meta_direc, ratio):
                     if len(point_ids) == 0:
                         print(f"Standby Not Found: {coord}, " + tag)
                     else:
-                        obs_list.append(point_ids[0])
+                        standby_list.append(point_ids[0])
 
                 blocked_list = []
                 for coord in blocked_by:
@@ -294,7 +294,7 @@ def calculate_obstructing(group_file, meta_direc, ratio):
                     if len(point_ids) == 0:
                         print(f"Blocked Not Found: {coord}, " + tag)
                     else:
-                        obs_list.append(point_ids[0])
+                        blocked_list.append(point_ids[0])
 
                 multi_obst = Counter(blocked_list)
 

@@ -302,7 +302,7 @@ def calculate_obstructing(group_file, meta_direc, ratio):
                            min(multi_obst.values()), max(multi_obst.values()), statistics.mean(multi_obst.values()),
                            min(ori_dists_center), max(ori_dists_center), statistics.mean(ori_dists_center),
                            min(dists_center), max(dists_center), statistics.mean(dists_center),
-                           (statistics.mean(distsgit _center) / statistics.mean(ori_dists_center)) - 1, multi_obst.items()
+                           (statistics.mean(dists_center) / statistics.mean(ori_dists_center)) - 1, multi_obst.items()
                            ]
 
                 result.append(metrics)

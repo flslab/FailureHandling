@@ -228,10 +228,11 @@ def calculate_obstructing(group_file, meta_direc, ratio):
 
             views = ["top", "bottom", "left", "right", "front", "back"]
 
-            np.savetxt(f'{output_path}/points/{shape}_standby_solve.txt', standbys, fmt='%f', delimiter=' ')
+            # np.savetxt(f'{output_path}/points/{shape}_standby_solve.txt', standbys, fmt='%f', delimiter=' ')
 
             for i in range(len(views)):
-                tag = f"Solving: {shape}, K: {k}, Ration: {ratio} ,{views[i]}"
+
+                tag = f"Solving: {shape}, K: {k}, Ratio: {ratio} ,{views[i]}"
 
                 print(tag)
 
@@ -262,36 +263,38 @@ def calculate_obstructing(group_file, meta_direc, ratio):
 
                 obs_list = []
                 for coord in obstructing:
-                    find_flag = False
-                    for index, row in enumerate(points[:, 0:3]):
-                        if get_distance(row, coord) < 0.3:
-                            obs_list.append(index)
-                            find_flag = True
-                            break
-                    if not find_flag:
+                    # find_flag = False
+
+                    point_ids = np.where(np.all(points[:, 0:3] == coord, axis=1))[0]
+                    if len(point_ids) == 0:
                         print(f"Obstructing Not Found: {coord}, " + tag)
+                    else:
+                        obs_list.append(point_ids[0])
+                    # for index, row in enumerate(points[:, 0:3]):
+                        # if get_distance(row, coord) < 0.3:
+                        #     obs_list.append(index)
+                        #     find_flag = True
+                        #     break
+                    # if not find_flag:
+                    #     print(f"Obstructing Not Found: {coord}, " + tag)
 
                 standby_list = []
                 for coord in obstructing:
-                    find_flag = False
-                    for index, row in enumerate(standbys[:, 0:3]):
-                        if get_distance(row, coord) < 0.3:
-                            standby_list.append(index)
-                            find_flag = True
-                            break
-                    if not find_flag:
+
+                    point_ids = np.where(np.all(points[:, 0:3] == coord, axis=1))[0]
+                    if len(point_ids) == 0:
                         print(f"Standby Not Found: {coord}, " + tag)
+                    else:
+                        obs_list.append(point_ids[0])
 
                 blocked_list = []
                 for coord in blocked_by:
-                    find_flag = False
-                    for index, row in enumerate(points[:, 0:3]):
-                        if get_distance(row, coord) < 0.3:
-                            blocked_list.append(index)
-                            find_flag = True
-                            break
-                    if not find_flag:
+
+                    point_ids = np.where(np.all(points[:, 0:3] == coord, axis=1))[0]
+                    if len(point_ids) == 0:
                         print(f"Blocked Not Found: {coord}, " + tag)
+                    else:
+                        obs_list.append(point_ids[0])
 
                 multi_obst = Counter(blocked_list)
 
@@ -344,10 +347,10 @@ if __name__ == "__main__":
     meta_dir = "/users/Shuqin"
 
     p_list = []
-    for illum_to_disp_ratio in [1, 3, 5, 10]:
-        # calculate_obstructing(file_folder, meta_dir, illum_to_disp_ratio)
-        p_list.append(mp.Process(target=calculate_obstructing, args=(file_folder, meta_dir, illum_to_disp_ratio)))
-
-    for p in p_list:
-        # print(t)
-        p.start()
+    for illum_to_disp_ratio in [1,3,5,10]:
+        calculate_obstructing(file_folder, meta_dir, illum_to_disp_ratio)
+    #     p_list.append(mp.Process(target=calculate_obstructing, args=(file_folder, meta_dir, illum_to_disp_ratio)))
+    #
+    # for p in p_list:
+    #     # print(t)
+    #     p.start()

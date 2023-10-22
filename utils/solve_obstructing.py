@@ -228,8 +228,6 @@ def calculate_obstructing(group_file, meta_direc, ratio):
             views = ["top", "bottom", "left", "right", "front", "back"]
 
             for i in range(len(views)):
-                if i == 0:
-                    continue
                 tag = f"Solving: {shape}, K: {k}, Ration: {ratio} ,{views[i]}"
 
                 print(tag)
@@ -263,7 +261,7 @@ def calculate_obstructing(group_file, meta_direc, ratio):
                 for coord in obstructing:
                     find_flag = False
                     for index, row in enumerate(points[:, 0:3]):
-                        if get_distance(row, coord) < 0.1:
+                        if get_distance(row, coord) < 0.3:
                             obs_list.append(index)
                             find_flag = True
                             break

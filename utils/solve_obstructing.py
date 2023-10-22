@@ -18,10 +18,10 @@ def normalize(v):
     return v / norm
 
 
-def get_dist_to_centroid(standbys, shape, k, file_folder):
+def get_dist_to_centroid(standbys, shape, k, file_folder, ratio):
     input_file = f"{shape}_G{k}.xlsx"
 
-    groups, a = read_cliques_xlsx(f"{file_folder}/pointcloud/{input_file}")
+    groups, a = read_cliques_xlsx(f"{file_folder}/pointcloud/{input_file}", ratio)
 
     avg_dists = []
 
@@ -39,16 +39,18 @@ def angle_between(origin, point):
     return np.degrees(angle)
 
 
-def read_cliques_xlsx(path):
+def read_cliques_xlsx(path, ratio):
     df = pd.read_excel(path, sheet_name='cliques')
     group_list = []
 
     for c in df["7 coordinates"]:
         coord_list = np.array(eval(c))
-        coord_list *= 3
+        coord_list = coord_list * ratio
+        # coord_list[:, 2] += 100
         group_list.append(coord_list)
 
     return group_list, [max(eval(d)) + 1 if eval(d) != [] else 1 for d in df["6 dist between each pair"]]
+
 
 
 def read_coordinates(file_path, delimiter):
@@ -116,7 +118,7 @@ def get_points(shape, K, file_folder, ratio):
 
     txt_file = f"{shape}.txt"
 
-    groups, a = read_cliques_xlsx(f"{file_folder}/pointcloud/{input_file}")
+    groups, a = read_cliques_xlsx(f"{file_folder}/pointcloud/{input_file}", ratio)
 
     group_standby_coord = get_standby_coords(groups, K)
 
@@ -200,7 +202,7 @@ def calculate_obstructing(group_file, meta_direc, ratio):
             # for shape in ["skateboard", "dragon"]:
             points, boundary, standbys = get_points(shape, k, group_file, ratio)
 
-            ori_dists_center = get_dist_to_centroid(standbys, shape, k, group_file)
+            ori_dists_center = get_dist_to_centroid(standbys, shape, k, group_file, ratio)
 
             cam_positions = [
                 # top
@@ -226,8 +228,11 @@ def calculate_obstructing(group_file, meta_direc, ratio):
             views = ["top", "bottom", "left", "right", "front", "back"]
 
             for i in range(len(views)):
+                if i == 0:
+                    continue
+                tag = f"Solving: {shape}, K: {k}, Ration: {ratio} ,{views[i]}"
 
-                print(f"Solving: {shape}, K: {k}, Ration: {ratio} ,{views[i]}")
+                print(tag)
 
                 dist_illum = 0
                 dist_standby = 0
@@ -256,24 +261,36 @@ def calculate_obstructing(group_file, meta_direc, ratio):
 
                 obs_list = []
                 for coord in obstructing:
+                    find_flag = False
                     for index, row in enumerate(points[:, 0:3]):
                         if np.array_equal(row, coord):
                             obs_list.append(index)
+                            find_flag = True
                             break
+                    if not find_flag:
+                        print(f"Obstructing Not Found: {coord}, " + tag)
 
                 standby_list = []
                 for coord in obstructing:
+                    find_flag = False
                     for index, row in enumerate(standbys[:, 0:3]):
                         if np.array_equal(row, coord):
                             standby_list.append(index)
+                            find_flag = True
                             break
+                    if not find_flag:
+                        print(f"Standby Not Found: {coord}, " + tag)
 
                 blocked_list = []
                 for coord in blocked_by:
+                    find_flag = False
                     for index, row in enumerate(points[:, 0:3]):
                         if np.array_equal(row, coord):
                             blocked_list.append(index)
+                            find_flag = True
                             break
+                    if not find_flag:
+                        print(f"Blocked Not Found: {coord}, " + tag)
 
                 multi_obst = Counter(blocked_list)
 
@@ -295,7 +312,7 @@ def calculate_obstructing(group_file, meta_direc, ratio):
                     points[obs_list[index], 0:3] = new_pos
                     standbys[standby_list[index]] = new_pos
 
-                dists_center = get_dist_to_centroid(standbys, shape, k, group_file)
+                dists_center = get_dist_to_centroid(standbys, shape, k, group_file, ratio)
 
                 metrics = [shape, k, ratio, views[i], dist_illum, dist_standby, len(multi_obst.keys()),
                            min(dist_between), max(dist_between), statistics.mean(dist_between),
@@ -319,17 +336,17 @@ if __name__ == "__main__":
 
     # file_folder = "C:/Users/zhusq/Desktop"
     # meta_dir = "C:/Users/zhusq/Desktop"
-    # file_folder = "/Users/shuqinzhu/Desktop"
-    # meta_dir = "/Users/shuqinzhu/Desktop"
+    file_folder = "/Users/shuqinzhu/Desktop"
+    meta_dir = "/Users/shuqinzhu/Desktop"
 
-    file_folder = "/users/Shuqin"
-    meta_dir = "/users/Shuqin"
+    # file_folder = "/users/Shuqin"
+    # meta_dir = "/users/Shuqin"
 
     p_list = []
     for illum_to_disp_ratio in [1, 3, 5, 10]:
         # calculate_obstructing(file_folder, meta_dir, illum_to_disp_ratio)
         p_list.append(mp.Process(target=calculate_obstructing, args=(file_folder, meta_dir, illum_to_disp_ratio)))
-    #
+
     for p in p_list:
         # print(t)
         p.start()

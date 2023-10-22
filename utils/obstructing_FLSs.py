@@ -346,20 +346,20 @@ if __name__ == "__main__":
 
     # file_folder = "C:/Users/zhusq/Desktop"
     # meta_dir = "C:/Users/zhusq/Desktop"
-    # file_folder = "/Users/shuqinzhu/Desktop"
-    # meta_dir = "/Users/shuqinzhu/Desktop"
+    file_folder = "/Users/shuqinzhu/Desktop"
+    meta_dir = "/Users/shuqinzhu/Desktop"
 
-    file_folder = "/users/Shuqin"
-    meta_dir = "/users/Shuqin"
+    # file_folder = "/users/Shuqin"
+    # meta_dir = "/users/Shuqin"
 
     p_list = []
     for illum_to_disp_ratio in [1, 3, 5, 10]:
 
         for shape in ["skateboard", "dragon", "hat"]:
             for k in [3, 20]:
-                # calculate_obstructing(file_folder, meta_dir, illum_to_disp_ratio, k, shape)
-                p_list.append(mp.Process(target=calculate_obstructing, args=(file_folder, meta_dir, illum_to_disp_ratio, k, shape)))
-
-    for p in p_list:
-        print(p)
-        p.start()
+                calculate_obstructing(file_folder, meta_dir, illum_to_disp_ratio, k, shape)
+    #             p_list.append(mp.Process(target=calculate_obstructing, args=(file_folder, meta_dir, illum_to_disp_ratio, k, shape)))
+    #
+    # for p in p_list:
+    #     print(p)
+    #     p.start()

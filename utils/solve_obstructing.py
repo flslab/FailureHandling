@@ -263,7 +263,7 @@ def calculate_obstructing(group_file, meta_direc, ratio):
                 for coord in obstructing:
                     find_flag = False
                     for index, row in enumerate(points[:, 0:3]):
-                        if np.array_equal(row, coord):
+                        if get_distance(row, coord) < 0.1:
                             obs_list.append(index)
                             find_flag = True
                             break
@@ -274,7 +274,7 @@ def calculate_obstructing(group_file, meta_direc, ratio):
                 for coord in obstructing:
                     find_flag = False
                     for index, row in enumerate(standbys[:, 0:3]):
-                        if np.array_equal(row, coord):
+                        if get_distance(row, coord) < 0.1:
                             standby_list.append(index)
                             find_flag = True
                             break
@@ -285,7 +285,7 @@ def calculate_obstructing(group_file, meta_direc, ratio):
                 for coord in blocked_by:
                     find_flag = False
                     for index, row in enumerate(points[:, 0:3]):
-                        if np.array_equal(row, coord):
+                        if get_distance(row, coord) < 0.1:
                             blocked_list.append(index)
                             find_flag = True
                             break

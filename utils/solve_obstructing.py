@@ -203,6 +203,7 @@ def calculate_obstructing(group_file, meta_direc, ratio):
             points, boundary, standbys = get_points(shape, k, group_file, ratio)
 
             ori_dists_center = get_dist_to_centroid(standbys, shape, k, group_file, ratio)
+            print(ori_dists_center)
 
             cam_positions = [
                 # top
@@ -226,6 +227,8 @@ def calculate_obstructing(group_file, meta_direc, ratio):
             ]
 
             views = ["top", "bottom", "left", "right", "front", "back"]
+
+            np.savetxt(f'{output_path}/points/{shape}_standby_solve.txt', standbys, fmt='%f', delimiter=' ')
 
             for i in range(len(views)):
                 tag = f"Solving: {shape}, K: {k}, Ration: {ratio} ,{views[i]}"
@@ -272,7 +275,7 @@ def calculate_obstructing(group_file, meta_direc, ratio):
                 for coord in obstructing:
                     find_flag = False
                     for index, row in enumerate(standbys[:, 0:3]):
-                        if get_distance(row, coord) < 0.1:
+                        if get_distance(row, coord) < 0.3:
                             standby_list.append(index)
                             find_flag = True
                             break
@@ -283,7 +286,7 @@ def calculate_obstructing(group_file, meta_direc, ratio):
                 for coord in blocked_by:
                     find_flag = False
                     for index, row in enumerate(points[:, 0:3]):
-                        if get_distance(row, coord) < 0.1:
+                        if get_distance(row, coord) < 0.3:
                             blocked_list.append(index)
                             find_flag = True
                             break

@@ -77,12 +77,12 @@ def get_distance(point1, point2):
 
 
 # Function to check if a point is inside a cube
-def is_inside_cube(point, cube_center, distance):
-    return all(abs(p - c) < distance + 0.00000000001 for p, c in zip(point, cube_center))
+def is_inside_cube(point, cube_center, length):
+    return all(abs(p - c) < length/2 + 0.00000000001 for p, c in zip(point, cube_center))
 
 
 def is_in_disp_cell(coord1, coord2, portion=1.0):
-    return is_inside_cube(coord1, coord2, 1* portion)
+    return is_inside_cube(coord1, coord2, 1 * portion)
 
 
 def is_in_illum_cell(coord1, coord2, ratio, portion=1.0):
@@ -255,21 +255,21 @@ def calculate_obstructing(group_file, meta_direc, ratio, k, shape):
     cam_positions = [
         # top
         [boundary[0][0] / 2 + boundary[1][0] / 2, boundary[0][1] / 2 + boundary[1][1] / 2,
-         boundary[1][2] + 100 * ratio],
+         boundary[1][2] + 100],
         # down
         [boundary[0][0] / 2 + boundary[1][0] / 2, boundary[0][1] / 2 + boundary[1][1] / 2,
-         boundary[0][2] - 100 * ratio],
+         boundary[0][2] - 100],
         # left
-        [boundary[0][0] - 100 * ratio, boundary[0][1] / 2 + boundary[1][1] / 2,
+        [boundary[0][0] - 100, boundary[0][1] / 2 + boundary[1][1] / 2,
          boundary[0][0] / 2 + boundary[1][0] / 2],
         # right
-        [boundary[1][0] + 100 * ratio, boundary[0][1] / 2 + boundary[1][1] / 2,
+        [boundary[1][0] + 100, boundary[0][1] / 2 + boundary[1][1] / 2,
          boundary[0][0] / 2 + boundary[1][0] / 2],
         # front
-        [boundary[0][0] / 2 + boundary[1][0] / 2, boundary[0][1] - 100 * ratio,
+        [boundary[0][0] / 2 + boundary[1][0] / 2, boundary[0][1] - 100,
          boundary[0][0] / 2 + boundary[1][0] / 2],
         # back
-        [boundary[0][0] / 2 + boundary[1][0] / 2, boundary[1][1] + 100 * ratio,
+        [boundary[0][0] / 2 + boundary[1][0] / 2, boundary[1][1] + 100,
          boundary[0][0] / 2 + boundary[1][0] / 2]
     ]
 

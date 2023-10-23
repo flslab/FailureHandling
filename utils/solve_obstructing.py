@@ -113,16 +113,14 @@ def is_in_illum_cell(coord1, coord2, ratio):
     return is_inside_cube(coord1, coord2, 1 * ratio)
 
 
-def get_points(shape, K, file_folder, ratio):
+def get_points(shape, K, ratio, pointcloud_folder, output_path):
     input_file = f"{shape}_G{K}.xlsx"
 
     txt_file = f"{shape}.txt"
 
-    groups, a = read_cliques_xlsx(f"{file_folder}/pointcloud/{input_file}", ratio)
+    group_standby_coord = read_coordinates(f"{output_path}/points/{shape}_standby.txt", ' ')
 
-    group_standby_coord = get_standby_coords(groups, K)
-
-    points = read_coordinates(f"{file_folder}/pointcloud/{txt_file}", ' ')
+    points = read_coordinates(f"{pointcloud_folder}/pointcloud/{txt_file}", ' ')
 
     points = np.array(points)
     points = points * ratio
@@ -138,49 +136,11 @@ def get_points(shape, K, file_folder, ratio):
         (min(points[:, 2]) + max(points[:, 2])) / 2
     ])
 
-    for group_id, coord in enumerate(group_standby_coord):
-        coords = points[:, :3]
-
-        coords = coords.tolist()
-
-        check = 0
-
-        if not all([not is_in_disp_cell(coord, c) for c in coords]):
-
-            overlap = True
-            rims_check = 1
-
-            while overlap:
-                directions = []
-                for x in range(-rims_check, rims_check + 1, 1):
-                    for y in range(-rims_check, rims_check + 1, 1):
-                        for z in range(-rims_check, rims_check + 1, 1):
-                            if x == 0 and y == 0 and z == 0:
-                                continue
-                            directions.append([x, y, z])
-
-                directions = sorted(directions, key=lambda d: get_distance(d, center))
-                directions = np.array(directions)
-
-                for dirc in directions:
-                    new_coord = coord + dirc * 0.5
-                    check += 1
-                    if all([not is_in_disp_cell(new_coord, c) for c in coords]):
-                        overlap = False
-                        coord = new_coord.tolist()
-                        break
-
-                if overlap:
-                    if rims_check % 10 == 0:
-                        print(f"Rim: {rims_check}")
-                    rims_check += 1
-                # break
-
-        group_standby_coord[group_id] = coord[:]
-        coord.append(1)
+    for coord in group_standby_coord:
+        coord[3] = 1
         points = np.concatenate((points, [coord]), axis=0)
 
-    return points, point_boundary, np.array(group_standby_coord)
+    return points, point_boundary, np.array(group_standby_coord)[:, 0:3]
 
 
 def calculate_obstructing(group_file, meta_direc, ratio):
@@ -200,7 +160,7 @@ def calculate_obstructing(group_file, meta_direc, ratio):
 
         for shape in ["skateboard", "hat", "dragon"]:
             # for shape in ["skateboard", "dragon"]:
-            points, boundary, standbys = get_points(shape, k, group_file, ratio)
+            points, boundary, standbys = get_points(shape, k, ratio, group_file, output_path)
 
             ori_dists_center = get_dist_to_centroid(standbys, shape, k, group_file, ratio)
             # print(ori_dists_center)
@@ -233,9 +193,9 @@ def calculate_obstructing(group_file, meta_direc, ratio):
             for i in range(len(views)):
 
                 tag = f"Solving: {shape}, K: {k}, Ratio: {ratio} ,{views[i]}"
-
                 print(tag)
 
+                points, boundary, standbys = get_points(shape, k, ratio, group_file, output_path)
                 dist_illum = 0
                 dist_standby = 0
                 dist_between = []
@@ -256,7 +216,7 @@ def calculate_obstructing(group_file, meta_direc, ratio):
 
                     result.append(metrics)
                     print(metrics)
-                    break
+                    continue
 
                 obstructing = np.array(obstructing)[:, 0:3]
                 blocked_by = np.array(blocked_by)[:, 0:3]
@@ -299,6 +259,7 @@ def calculate_obstructing(group_file, meta_direc, ratio):
                 multi_obst = Counter(blocked_list)
 
                 step_length = 0.5
+
                 for index, coord in enumerate(blocked_by):
                     gaze_vec = normalize(np.array(coord) - camera)
                     new_pos = coord + gaze_vec
@@ -328,7 +289,7 @@ def calculate_obstructing(group_file, meta_direc, ratio):
 
                 result.append(metrics)
                 print(list(zip(title, metrics)))
-    with open(f'{report_path}/solve_R{ratio}_K{k}.csv', mode='w', newline='') as file:
+    with open(f'{report_path}/solve_R{ratio}.csv', mode='w', newline='') as file:
         writer = csv.writer(file)
 
         # Write the data from the list to the CSV file
@@ -340,17 +301,17 @@ if __name__ == "__main__":
 
     # file_folder = "C:/Users/zhusq/Desktop"
     # meta_dir = "C:/Users/zhusq/Desktop"
-    # file_folder = "/Users/shuqinzhu/Desktop"
-    # meta_dir = "/Users/shuqinzhu/Desktop"
+    file_folder = "/Users/shuqinzhu/Desktop"
+    meta_dir = "/Users/shuqinzhu/Desktop"
 
-    file_folder = "/users/Shuqin"
-    meta_dir = "/users/Shuqin"
+    # file_folder = "/users/Shuqin"
+    # meta_dir = "/users/Shuqin"
 
     p_list = []
     for illum_to_disp_ratio in [1, 3, 5, 10]:
-        # calculate_obstructing(file_folder, meta_dir, illum_to_disp_ratio)
-        p_list.append(mp.Process(target=calculate_obstructing, args=(file_folder, meta_dir, illum_to_disp_ratio)))
-
-    for p in p_list:
-        # print(t)
-        p.start()
+        calculate_obstructing(file_folder, meta_dir, illum_to_disp_ratio)
+    #     p_list.append(mp.Process(target=calculate_obstructing, args=(file_folder, meta_dir, illum_to_disp_ratio)))
+    #
+    # for p in p_list:
+    #     # print(t)
+    #     p.start()

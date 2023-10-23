@@ -255,21 +255,21 @@ def calculate_obstructing(group_file, meta_direc, ratio, k, shape):
     cam_positions = [
         # top
         [boundary[0][0] / 2 + boundary[1][0] / 2, boundary[0][1] / 2 + boundary[1][1] / 2,
-         boundary[1][2] + 100],
+         boundary[1][2] + 100 * ratio],
         # down
         [boundary[0][0] / 2 + boundary[1][0] / 2, boundary[0][1] / 2 + boundary[1][1] / 2,
-         boundary[0][2] - 100],
+         boundary[0][2] - 100 * ratio],
         # left
-        [boundary[0][0] - 100, boundary[0][1] / 2 + boundary[1][1] / 2,
+        [boundary[0][0] - 100 * ratio, boundary[0][1] / 2 + boundary[1][1] / 2,
          boundary[0][0] / 2 + boundary[1][0] / 2],
         # right
-        [boundary[1][0] + 100, boundary[0][1] / 2 + boundary[1][1] / 2,
+        [boundary[1][0] + 100 * ratio, boundary[0][1] / 2 + boundary[1][1] / 2,
          boundary[0][0] / 2 + boundary[1][0] / 2],
         # front
-        [boundary[0][0] / 2 + boundary[1][0] / 2, boundary[0][1] - 100,
+        [boundary[0][0] / 2 + boundary[1][0] / 2, boundary[0][1] - 100 * ratio,
          boundary[0][0] / 2 + boundary[1][0] / 2],
         # back
-        [boundary[0][0] / 2 + boundary[1][0] / 2, boundary[1][1] + 100,
+        [boundary[0][0] / 2 + boundary[1][0] / 2, boundary[1][1] + 100 * ratio,
          boundary[0][0] / 2 + boundary[1][0] / 2]
     ]
 
@@ -357,9 +357,9 @@ if __name__ == "__main__":
 
         for shape in ["skateboard", "dragon", "hat"]:
             for k in [3, 20]:
-                calculate_obstructing(file_folder, meta_dir, illum_to_disp_ratio, k, shape)
-                # p_list.append(mp.Process(target=calculate_obstructing, args=(file_folder, meta_dir, illum_to_disp_ratio, k, shape)))
+                # calculate_obstructing(file_folder, meta_dir, illum_to_disp_ratio, k, shape)
+                p_list.append(mp.Process(target=calculate_obstructing, args=(file_folder, meta_dir, illum_to_disp_ratio, k, shape)))
 
-    # for p in p_list:
-    #     print(p)
-    #     p.start()
+    for p in p_list:
+        print(p)
+        p.start()

@@ -46,7 +46,6 @@ def read_cliques_xlsx(path, ratio):
     for c in df["7 coordinates"]:
         coord_list = np.array(eval(c))
         coord_list = coord_list * ratio
-        # coord_list[:, 2] += 100
         group_list.append(coord_list)
 
     return group_list, [max(eval(d)) + 1 if eval(d) != [] else 1 for d in df["6 dist between each pair"]]
@@ -168,21 +167,21 @@ def calculate_obstructing(group_file, meta_direc, ratio):
             cam_positions = [
                 # top
                 [boundary[0][0] / 2 + boundary[1][0] / 2, boundary[0][1] / 2 + boundary[1][1] / 2,
-                 boundary[1][2] + 100],
+                 boundary[1][2] + 100 * ratio],
                 # down
                 [boundary[0][0] / 2 + boundary[1][0] / 2, boundary[0][1] / 2 + boundary[1][1] / 2,
-                 boundary[0][2] - 100],
+                 boundary[0][2] - 100 * ratio],
                 # left
-                [boundary[0][0] - 100, boundary[0][1] / 2 + boundary[1][1] / 2,
+                [boundary[0][0] - 100 * ratio, boundary[0][1] / 2 + boundary[1][1] / 2,
                  boundary[0][0] / 2 + boundary[1][0] / 2],
                 # right
-                [boundary[1][0] + 100, boundary[0][1] / 2 + boundary[1][1] / 2,
+                [boundary[1][0] + 100 * ratio, boundary[0][1] / 2 + boundary[1][1] / 2,
                  boundary[0][0] / 2 + boundary[1][0] / 2],
                 # front
-                [boundary[0][0] / 2 + boundary[1][0] / 2, boundary[0][1] - 100,
+                [boundary[0][0] / 2 + boundary[1][0] / 2, boundary[0][1] - 100 * ratio,
                  boundary[0][0] / 2 + boundary[1][0] / 2],
                 # back
-                [boundary[0][0] / 2 + boundary[1][0] / 2, boundary[1][1] + 100,
+                [boundary[0][0] / 2 + boundary[1][0] / 2, boundary[1][1] + 100 * ratio,
                  boundary[0][0] / 2 + boundary[1][0] / 2]
             ]
 

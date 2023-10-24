@@ -428,9 +428,9 @@ if __name__ == "__main__":
     for illum_to_disp_ratio in [10]:
 
         for k in [3, 20]:
-            # calculate_obstructing(file_folder, meta_dir, illum_to_disp_ratio, k)
-            p_list.append(mp.Process(target=calculate_obstructing, args=(file_folder, meta_dir, illum_to_disp_ratio, k)))
+            calculate_obstructing(file_folder, meta_dir, illum_to_disp_ratio, k)
+            # p_list.append(mp.Process(target=calculate_obstructing, args=(file_folder, meta_dir, illum_to_disp_ratio, k)))
 
-    for p in p_list:
-        print(p)
-        p.start()
+    # for p in p_list:
+    #     print(p)
+    #     p.start()

@@ -316,7 +316,7 @@ def calculate_obstructing(group_file, meta_direc, ratio, k):
         points, boundary, standbys = get_points_from_file(shape, ratio, group_file, output_path)
         check_times = [0]
 
-        camera_shifting = 100
+        camera_shifting = 100 * ratio
 
         cam_positions = [
             # top

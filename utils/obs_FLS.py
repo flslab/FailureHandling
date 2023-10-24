@@ -302,116 +302,114 @@ def get_points(shape, K, file_folder, ratio):
     return points, point_boundary, check_times
 
 
-def calculate_obstructing(group_file, meta_direc, ratio, k):
-    for shape in ["skateboard", "dragon", "hat"]:
+def calculate_obstructing(group_file, meta_direc, ratio, k, shape):
+    result = [
+        ["Shape", "K", "Ratio", "View", "Visible_Illum", "Obstructing FLS", "Min Times Checked",
+         "Mean Times Checked",
+         "Max Times Checked"]]
+    report_path = f"{meta_direc}/obstructing/R{ratio}"
 
-        result = [
-            ["Shape", "K", "Ratio", "View", "Visible_Illum", "Obstructing FLS", "Min Times Checked",
-             "Mean Times Checked",
-             "Max Times Checked"]]
-        report_path = f"{meta_direc}/obstructing/R{ratio}"
+    output_path = f"{meta_direc}/obstructing/R{ratio}/K{k}"
 
-        output_path = f"{meta_direc}/obstructing/R{ratio}/K{k}"
+    points, boundary, standbys = get_points_from_file(shape, ratio, group_file, output_path)
+    check_times = [0]
 
-        points, boundary, standbys = get_points_from_file(shape, ratio, group_file, output_path)
-        check_times = [0]
+    camera_shifting = 100 * ratio
 
-        camera_shifting = 100 * ratio
+    cam_positions = [
+        # top
+        [boundary[0][0] / 2 + boundary[1][0] / 2, boundary[0][1] / 2 + boundary[1][1] / 2,
+         boundary[1][2] + camera_shifting],
+        # down
+        [boundary[0][0] / 2 + boundary[1][0] / 2, boundary[0][1] / 2 + boundary[1][1] / 2,
+         boundary[0][2] - camera_shifting],
+        # left
+        [boundary[0][0] - camera_shifting, boundary[0][1] / 2 + boundary[1][1] / 2,
+         boundary[0][0] / 2 + boundary[1][0] / 2],
+        # right
+        [boundary[1][0] + camera_shifting, boundary[0][1] / 2 + boundary[1][1] / 2,
+         boundary[0][0] / 2 + boundary[1][0] / 2],
+        # front
+        [boundary[0][0] / 2 + boundary[1][0] / 2, boundary[0][1] - camera_shifting,
+         boundary[0][0] / 2 + boundary[1][0] / 2],
+        # back
+        [boundary[0][0] / 2 + boundary[1][0] / 2, boundary[1][1] + camera_shifting,
+         boundary[0][0] / 2 + boundary[1][0] / 2]
+    ]
 
-        cam_positions = [
-            # top
-            [boundary[0][0] / 2 + boundary[1][0] / 2, boundary[0][1] / 2 + boundary[1][1] / 2,
-             boundary[1][2] + camera_shifting],
-            # down
-            [boundary[0][0] / 2 + boundary[1][0] / 2, boundary[0][1] / 2 + boundary[1][1] / 2,
-             boundary[0][2] - camera_shifting],
-            # left
-            [boundary[0][0] - camera_shifting, boundary[0][1] / 2 + boundary[1][1] / 2,
-             boundary[0][0] / 2 + boundary[1][0] / 2],
-            # right
-            [boundary[1][0] + camera_shifting, boundary[0][1] / 2 + boundary[1][1] / 2,
-             boundary[0][0] / 2 + boundary[1][0] / 2],
-            # front
-            [boundary[0][0] / 2 + boundary[1][0] / 2, boundary[0][1] - camera_shifting,
-             boundary[0][0] / 2 + boundary[1][0] / 2],
-            # back
-            [boundary[0][0] / 2 + boundary[1][0] / 2, boundary[1][1] + camera_shifting,
-             boundary[0][0] / 2 + boundary[1][0] / 2]
-        ]
+    views = ["top", "bottom", "left", "right", "front", "back"]
 
-        views = ["top", "bottom", "left", "right", "front", "back"]
+    illum = []
+    standby = []
+    for coord in points:
+        if coord[3] == 0:
+            illum.append(coord[:3])
+        else:
+            standby.append(coord[:3])
 
-        illum = []
-        standby = []
-        for coord in points:
-            if coord[3] == 0:
-                illum.append(coord[:3])
+    illum = np.array(illum)
+    standby = np.array(standby)
+
+    np.savetxt(f'{output_path}/points/{shape}_illum.txt', illum, fmt='%f', delimiter=' ')
+    np.savetxt(f'{output_path}/points/{shape}_standby.txt', standby, fmt='%f', delimiter=' ')
+
+    for i in range(len(views)):
+
+        if i < 5:
+            continue
+
+        print(f"START: {shape}, K: {k}, Ratio: {ratio} ,{views[i]}")
+
+        camera = cam_positions[i]
+
+        pix_list, resolution = get_pixels(boundary, i, camera_shifting)
+
+        visible, blocking, blocked_by, blocking_index = check_visible_cell(camera, pix_list, points, ratio,
+                                                                           resolution)
+
+        visible_illum = []
+        visible_standby = []
+        for point in visible:
+            if point[3] == 1:
+                visible_standby.append(point[0:3])
             else:
-                standby.append(coord[:3])
+                visible_illum.append(point[0:3])
 
-        illum = np.array(illum)
-        standby = np.array(standby)
+        visible_illum = np.array(visible_illum)
+        np.unique(visible_illum, axis=0)
 
-        np.savetxt(f'{output_path}/points/{shape}_illum.txt', illum, fmt='%f', delimiter=' ')
-        np.savetxt(f'{output_path}/points/{shape}_standby.txt', standby, fmt='%f', delimiter=' ')
+        visible_standby = np.array(visible_standby)
+        np.unique(visible_standby, axis=0)
 
-        for i in range(len(views)):
+        blocking = np.array(blocking)
+        np.unique(blocking, axis=0)
 
-            if i < 5:
-                continue
+        blocked_by = np.array(blocked_by)
+        np.unique(blocked_by, axis=0)
 
-            print(f"START: {shape}, K: {k}, Ratio: {ratio} ,{views[i]}")
+        np.savetxt(f'{output_path}/points/{shape}_{views[i]}_visible_illum.txt', visible_illum, fmt='%f',
+                   delimiter=' ')
+        np.savetxt(f'{output_path}/points/{shape}_{views[i]}_visible_standby.txt', visible_standby,
+                   fmt='%f',
+                   delimiter=' ')
+        np.savetxt(f'{output_path}/points/{shape}_{views[i]}_blocking.txt', blocking, fmt='%f',
+                   delimiter=' ')
+        np.savetxt(f'{output_path}/points/{shape}_{views[i]}_blocked.txt', blocked_by, fmt='%f',
+                   delimiter=' ')
 
-            camera = cam_positions[i]
+        print(
+            f"{shape}, K: {k}, Ratio: {ratio} ,{views[i]} view: Number of Illuminating FLS: {len(visible_illum)}, Visible Standby FLS: {len(visible_standby)},  Obstructing Number: {len(blocking_index)}")
 
-            pix_list, resolution = get_pixels(boundary, i, camera_shifting)
+        result.append(
+            [shape, k, ratio, views[i], len(visible_illum), len(blocking_index), min(check_times),
+             statistics.mean(check_times), max(check_times)])
 
-            visible, blocking, blocked_by, blocking_index = check_visible_cell(camera, pix_list, points, ratio,
-                                                                               resolution)
+    with open(f'{report_path}/report_R{ratio}_K{k}_{shape}.csv', mode='w', newline='') as file:
+        writer = csv.writer(file)
 
-            visible_illum = []
-            visible_standby = []
-            for point in visible:
-                if point[3] == 1:
-                    visible_standby.append(point[0:3])
-                else:
-                    visible_illum.append(point[0:3])
-
-            visible_illum = np.array(visible_illum)
-            np.unique(visible_illum, axis=0)
-
-            visible_standby = np.array(visible_standby)
-            np.unique(visible_standby, axis=0)
-
-            blocking = np.array(blocking)
-            np.unique(blocking, axis=0)
-
-            blocked_by = np.array(blocked_by)
-            np.unique(blocked_by, axis=0)
-
-            np.savetxt(f'{output_path}/points/{shape}_{views[i]}_visible_illum.txt', visible_illum, fmt='%f',
-                       delimiter=' ')
-            np.savetxt(f'{output_path}/points/{shape}_{views[i]}_visible_standby.txt', visible_standby,
-                       fmt='%f',
-                       delimiter=' ')
-            np.savetxt(f'{output_path}/points/{shape}_{views[i]}_blocking.txt', blocking, fmt='%f',
-                       delimiter=' ')
-            np.savetxt(f'{output_path}/points/{shape}_{views[i]}_blocked.txt', blocked_by, fmt='%f',
-                       delimiter=' ')
-
-            print(
-                f"{shape}, K: {k}, Ratio: {ratio} ,{views[i]} view: Number of Illuminating FLS: {len(visible_illum)}, Visible Standby FLS: {len(visible_standby)},  Obstructing Number: {len(blocking_index)}")
-
-            result.append(
-                [shape, k, ratio, views[i], len(visible_illum), len(blocking_index), min(check_times),
-                 statistics.mean(check_times), max(check_times)])
-
-        with open(f'{report_path}/report_R{ratio}_K{k}_{shape}.csv', mode='w', newline='') as file:
-            writer = csv.writer(file)
-
-            # Write the data from the list to the CSV file
-            for row in result:
-                writer.writerow(row)
+        # Write the data from the list to the CSV file
+        for row in result:
+            writer.writerow(row)
 
 
 if __name__ == "__main__":
@@ -425,10 +423,12 @@ if __name__ == "__main__":
     meta_dir = "/users/Shuqin"
 
     p_list = []
-    for illum_to_disp_ratio in [10]:
+    for illum_to_disp_ratio in [5, 10]:
 
         for k in [3, 20]:
-            calculate_obstructing(file_folder, meta_dir, illum_to_disp_ratio, k)
+
+            for shape in ["skateboard", "dragon", "hat"]:
+                calculate_obstructing(file_folder, meta_dir, illum_to_disp_ratio, k, shape)
             # p_list.append(mp.Process(target=calculate_obstructing, args=(file_folder, meta_dir, illum_to_disp_ratio, k)))
 
     # for p in p_list:

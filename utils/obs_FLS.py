@@ -423,7 +423,7 @@ if __name__ == "__main__":
     meta_dir = "/users/Shuqin"
 
     p_list = []
-    for illum_to_disp_ratio in [5, 10]:
+    for illum_to_disp_ratio in [1, 3, 5, 10]:
 
         for k in [3, 20]:
 

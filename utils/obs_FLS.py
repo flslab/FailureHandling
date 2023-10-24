@@ -1,13 +1,18 @@
 import csv
-from threading import Thread
-
-import numpy as np
-import os
-import pandas as pd
-from matplotlib import pyplot as plt
-from tqdm import tqdm
 import statistics
-import multiprocessing as mp
+import math
+import numpy as np
+import pandas as pd
+from tqdm import tqdm
+import matplotlib.pyplot as plt
+
+
+def is_cell_overlap(point, cube_center, length):
+    return all(abs(p - c) < length + 0.00000000001 for p, c in zip(point, cube_center))
+
+
+def is_disp_cell_overlap(coord1, coord2):
+    return is_cell_overlap(coord1, coord2, 1)
 
 
 def read_cliques_xlsx(path, ratio):
@@ -19,16 +24,44 @@ def read_cliques_xlsx(path, ratio):
         coord_list = coord_list * ratio
         group_list.append(coord_list)
 
-    return group_list, [max(eval(d)) + 1 if eval(d) != [] else 1 for d in df["6 dist between each pair"]]
+    return group_list
 
 
-def read_coordinates(file_path):
+def get_points_from_file(shape, ratio, pointcloud_folder, output_path):
+    txt_file = f"{shape}.txt"
+
+    group_standby_coord = read_coordinates(f"{output_path}/points/{shape}_standby.txt", ' ')
+
+    points = read_coordinates(f"{pointcloud_folder}/pointcloud/{txt_file}", ' ')
+
+    points = np.array(points)
+    points = points * ratio
+
+    point_boundary = [
+        [min(points[:, 0]), min(points[:, 1]), min(points[:, 2])],
+        [max(points[:, 0]), max(points[:, 1]), max(points[:, 2])]
+    ]
+
+    center = np.array([
+        (min(points[:, 0]) + max(points[:, 0])) / 2,
+        (min(points[:, 1]) + max(points[:, 1])) / 2,
+        (min(points[:, 2]) + max(points[:, 2])) / 2
+    ])
+
+    for coord in group_standby_coord:
+        coord[3] = 1
+        points = np.concatenate((points, [coord]), axis=0)
+
+    return points, point_boundary, np.array(group_standby_coord)[:, 0:3]
+
+
+def read_coordinates(file_path, delimeter=' '):
     coordinates = []
     try:
         with open(file_path, 'r') as file:
             for line in file:
                 # Split the line by spaces and convert each part to a float
-                coord = [float(x) for x in line.strip().split(' ')]
+                coord = [float(x) for x in line.strip().split(delimeter)]
                 if len(coord) == 3:  # Ensure that there are exactly 3 coordinates
                     coord.append(0)
                     coordinates.append(coord)
@@ -69,97 +102,131 @@ def get_distance(point1, point2):
     return np.linalg.norm(np.array(point1) - np.array(point2))
 
 
-# Function to check if a point is inside a cube
-def is_inside_cube(point, cube_center, length):
-    return all(abs(p - c) < length + 0.00000000001 for p, c in zip(point, cube_center))
+def ray_cell_intersection(origin, direction, point, ratio, is_standby):
+    """Check if a ray intersects with a cube."""
+    # Cube dimensions
+    if is_standby:
+        half_size = 0.5
+    else:
+        half_size = 0.5 * ratio
+
+    min_corner = point - half_size
+    max_corner = point + half_size
+
+    # Compute intersection of ray with all six bbox planes
+    inv_direction = 1.0 / direction
+    tmin = (min_corner - origin) * inv_direction
+    tmax = (max_corner - origin) * inv_direction
+
+    # Reorder intersections to find overall min/max
+    tmin, tmax = np.minimum(tmin, tmax), np.maximum(tmin, tmax)
+
+    tmin_max = np.max(tmin)
+    tmax_min = np.min(tmax)
+
+    # If tmax_min is less than tmin_max, then no intersection
+    if tmax_min < tmin_max:
+        return False
+
+    # If both tmin_max and tmax_min are negative, then ray is in opposite direction
+    if tmax_min < 0:
+        return False
+
+    return True
 
 
-def is_in_disp_cell(coord1, coord2, portion=1.0):
-    return is_inside_cube(coord1, coord2, 1 * portion)
+def check_visible_cell(user_eye, pix_list, points, ratio, resolution):
+    visible, blocking, blocked, blocking_index = [], [], [], []
+    vis_set = [False for _ in points]
 
-
-def is_in_illum_cell(coord1, coord2, ratio, portion=1.0):
-    return is_inside_cube(coord1, coord2, portion * ratio)
-
-
-# Function to find visible cubes
-def visible_cubes(camera, cubes, ratio, shape, k, view):
-    # Calculate distances from the camera to each cube
-    distances = [get_distance(camera, cube[:3]) for cube in cubes]
-
-    max_dist = max(distances)
-
-    # Sort cubes by distance
+    distances = [get_distance(user_eye, point[:3]) for point in points]
     sorted_indices = np.argsort(distances)
+    rgb_matrix = np.ones((resolution[0], resolution[1], 3))
 
-    visible = []
-    blocking = []
-    visible_index = []
-    blocking_index = []
-    blocked_by = []
+    for pix_index in tqdm(range(len(pix_list))):
+        l_index = pix_index // resolution[1]
+        w_index = pix_index % resolution[1]
+        pix_coord = pix_list[pix_index]
 
-    for index_i in range(0, len(sorted_indices)):
+        direction = (pix_coord - user_eye)
+        direction /= np.linalg.norm(direction)
+        direction[direction == 0] = 1e-10
 
-        if index_i % 500 == 0:
-            print(f"    Process {index_i}: {shape}, K: {k}, Ratio: {ratio} ,{view}")
+        potential_index = []
+        potential_obs = []
 
-        i = sorted_indices[index_i]
+        for p_index in sorted_indices:
 
-        cube = cubes[i]
+            point = points[p_index]
 
-        is_visible = True
+            if ray_cell_intersection(user_eye, direction, point[0:3], ratio, point[3]):
+                if not vis_set[p_index] or point[3] == 1:
+                    if point[3] == 1:
+                        potential_index.append(p_index)
+                        potential_obs.append(point[0:3])
+                        vis_set[p_index] = True
+                        visible.append(point)
 
-        t_values = np.linspace(0, 1,
-                               round(get_distance(camera, cube[:3]) / 0.2))  # Adjust the number of points as needed
-        line_points = np.outer((1 - t_values), camera) + np.outer(t_values, cube[:3])
+                        rgb_matrix[l_index][w_index] = np.array([1, 0, 0])
+                        continue
 
-        # Check if the line of sight to the cube is obstructed
-        for index_j, j in enumerate(sorted_indices):
-            if index_j == index_i or distances[sorted_indices[index_j]] >= distances[sorted_indices[index_i]] + 1 * ratio:
-                break
+                    elif point[3] != 1 and len(potential_index) > 0:
+                        blocking.extend(potential_obs)
+                        for _ in potential_obs:
+                            blocked.extend(point[0:3])
 
-            if cube[3] == 1 and (cubes[j][3] != 1 and any(is_in_illum_cell(p, cubes[j][0:3], ratio, (ratio - 0.8)/ratio) for p in line_points))\
-                    or (cubes[j][3] == 1 and any(is_in_disp_cell(p, cubes[j][0:3], 0.2) for p in line_points)):
-                is_visible = False
-                break
-            elif cube[3] != 1 and (cubes[j][3] != 1 and any(is_in_illum_cell(p, cubes[j][0:3], ratio, 0.3/ratio) for p in line_points)) \
-                    or (ratio == 1 and cubes[j][3] == 1 and any(is_in_disp_cell(p, cubes[j][0:3], 0.2) for p in line_points)):
-                is_visible = False
-                break
+                        blocking_index.extend(potential_index)
+                        break
+                    else:
+                        vis_set[p_index] = True
+                        visible.append(point)
+                        rgb_matrix[l_index][w_index] = np.array([0, 0, 1])
+                        break
 
-        if is_visible:
-            visible_index.append(i)
-            visible.append(cube)
+    # image = rgb_matrix
+    # plt.imshow(image)
+    # plt.show()
+    return np.array(visible), np.array(blocking), np.array(blocked), np.unique(blocking_index)
 
-        if cube[3] == 1 and is_visible:
 
-            V = cube[:3] - camera
-            V = V / np.linalg.norm(V)
+def get_pixels(boundary, view_index, camera_shifting=100):
+    origin = [
+        [boundary[0][0], boundary[0][1], boundary[1][2]],
+        [boundary[0][0], boundary[0][1], boundary[0][2]],
+        [boundary[0][0], boundary[0][1], boundary[0][2]],
+        [boundary[1][0], boundary[0][1], boundary[0][2]],
+        [boundary[0][0], boundary[0][1], boundary[0][2]],
+        [boundary[0][0], boundary[1][1], boundary[0][2]]
+    ]
 
-            t_values = np.linspace(0, max_dist - get_distance(camera, cube[:3]),
-                                   round((max_dist - get_distance(camera, cube[:3])) / 0.1))
+    axis_list = [
+        [0, 1],
+        [1, 2],
+        [0, 2]
+    ]
 
-            line_points = []
+    axis = axis_list[view_index // 2]
 
-            for t in t_values:
-                line_points.append(V * t + cube[:3])
+    pix_size = float('inf')
+    resolution = []
+    for ax in axis:
+        pix_size = min(pix_size, 1 * camera_shifting / (boundary[1][ax] - boundary[0][ax] + camera_shifting))
 
-            line_points = np.array(line_points)
+    vec = [np.array([0., 0., 0.]) for _ in range(2)]
+    for i, ax in enumerate(axis):
+        resolution.append(math.ceil((boundary[1][ax] - boundary[0][ax]) / pix_size))
+        vec[i][ax] += pix_size
 
-            for index_j, j in enumerate(sorted_indices):
-                if index_j <= index_i or cubes[j][3] == 1:
-                    continue
+    res_ori = origin[view_index]
+    pix_list = []
 
-                if any(is_in_illum_cell(p, cubes[j][0:3], ratio) for p in line_points):
+    for l in range(resolution[0]):
+        for w in range(resolution[1]):
+            pix_list.append(res_ori + l * vec[0] + w * vec[1])
 
-                    blocked_by.append(cubes[j][0:3])
-
-                    if i not in blocking_index:
-                        blocking.append(cube[0:3])
-                        blocking_index.append(i)
-                    break
-
-    return visible, blocking, blocked_by, blocking_index
+    resolution.reverse()
+    print(f"Resolution: {resolution}")
+    return pix_list, resolution
 
 
 def get_points(shape, K, file_folder, ratio):
@@ -167,7 +234,7 @@ def get_points(shape, K, file_folder, ratio):
 
     txt_file = f"{shape}.txt"
 
-    groups, a = read_cliques_xlsx(f"{file_folder}/pointcloud/{input_file}", ratio)
+    groups = read_cliques_xlsx(f"{file_folder}/pointcloud/{input_file}", ratio)
 
     group_standby_coord = get_standby_coords(groups, K)
 
@@ -196,7 +263,7 @@ def get_points(shape, K, file_folder, ratio):
         coords = coords.tolist()
 
         check = 0
-        if not all([not is_in_disp_cell(coord, c) for c in coords]):
+        if not all([not is_disp_cell_overlap(coord, c) for c in coords]):
 
             overlap = True
             rims_check = 1
@@ -216,7 +283,7 @@ def get_points(shape, K, file_folder, ratio):
                 for dirc in directions:
                     new_coord = coord + dirc * 0.5
                     check += 1
-                    if all([not is_in_disp_cell(new_coord, c) for c in coords]):
+                    if all([not is_disp_cell_overlap(new_coord, c) for c in coords]):
                         overlap = False
                         coord = new_coord.tolist()
                         break
@@ -238,32 +305,36 @@ def calculate_obstructing(group_file, meta_direc, ratio, k):
     for shape in ["skateboard", "dragon", "hat"]:
 
         result = [
-            ["Shape", "K", "Ratio", "View", "Visible_Illum", "Obstructing FLS", "Min Times Checked", "Mean Times Checked",
+            ["Shape", "K", "Ratio", "View", "Visible_Illum", "Obstructing FLS", "Min Times Checked",
+             "Mean Times Checked",
              "Max Times Checked"]]
         report_path = f"{meta_direc}/obstructing/R{ratio}"
 
         output_path = f"{meta_direc}/obstructing/R{ratio}/K{k}"
 
-        points, boundary, check_times = get_points(shape, k, group_file, ratio)
+        points, boundary, standbys = get_points_from_file(shape, ratio, group_file, output_path)
+        check_times = [0]
+
+        camera_shifting = 100
 
         cam_positions = [
             # top
             [boundary[0][0] / 2 + boundary[1][0] / 2, boundary[0][1] / 2 + boundary[1][1] / 2,
-             boundary[1][2] + 100 * ratio],
+             boundary[1][2] + camera_shifting],
             # down
             [boundary[0][0] / 2 + boundary[1][0] / 2, boundary[0][1] / 2 + boundary[1][1] / 2,
-             boundary[0][2] - 100 * ratio],
+             boundary[0][2] - camera_shifting],
             # left
-            [boundary[0][0] - 100 * ratio, boundary[0][1] / 2 + boundary[1][1] / 2,
+            [boundary[0][0] - camera_shifting, boundary[0][1] / 2 + boundary[1][1] / 2,
              boundary[0][0] / 2 + boundary[1][0] / 2],
             # right
-            [boundary[1][0] + 100 * ratio, boundary[0][1] / 2 + boundary[1][1] / 2,
+            [boundary[1][0] + camera_shifting, boundary[0][1] / 2 + boundary[1][1] / 2,
              boundary[0][0] / 2 + boundary[1][0] / 2],
             # front
-            [boundary[0][0] / 2 + boundary[1][0] / 2, boundary[0][1] - 100 * ratio,
+            [boundary[0][0] / 2 + boundary[1][0] / 2, boundary[0][1] - camera_shifting,
              boundary[0][0] / 2 + boundary[1][0] / 2],
             # back
-            [boundary[0][0] / 2 + boundary[1][0] / 2, boundary[1][1] + 100 * ratio,
+            [boundary[0][0] / 2 + boundary[1][0] / 2, boundary[1][1] + camera_shifting,
              boundary[0][0] / 2 + boundary[1][0] / 2]
         ]
 
@@ -285,11 +356,17 @@ def calculate_obstructing(group_file, meta_direc, ratio, k):
 
         for i in range(len(views)):
 
+            if i < 5:
+                continue
+
             print(f"START: {shape}, K: {k}, Ratio: {ratio} ,{views[i]}")
 
             camera = cam_positions[i]
 
-            visible, blocking, blocked_by, blocking_index = visible_cubes(camera, points, ratio, shape, k, views[i])
+            pix_list, resolution = get_pixels(boundary, i, camera_shifting)
+
+            visible, blocking, blocked_by, blocking_index = check_visible_cell(camera, pix_list, points, ratio,
+                                                                               resolution)
 
             visible_illum = []
             visible_standby = []
@@ -340,19 +417,20 @@ if __name__ == "__main__":
 
     # file_folder = "C:/Users/zhusq/Desktop"
     # meta_dir = "C:/Users/zhusq/Desktop"
-    # file_folder = "/Users/shuqinzhu/Desktop"
-    # meta_dir = "/Users/shuqinzhu/Desktop"
+    file_folder = "/Users/shuqinzhu/Desktop"
+    meta_dir = "/Users/shuqinzhu/Desktop"
 
-    file_folder = "/users/Shuqin"
-    meta_dir = "/users/Shuqin"
+    # file_folder = "/users/Shuqin"
+    # meta_dir = "/users/Shuqin"
 
     p_list = []
-    for illum_to_disp_ratio in [1, 3, 5, 10]:
+    for illum_to_disp_ratio in [10]:
 
         for k in [3, 20]:
-            # calculate_obstructing(file_folder, meta_dir, illum_to_disp_ratio, k, shape)
-            p_list.append(mp.Process(target=calculate_obstructing, args=(file_folder, meta_dir, illum_to_disp_ratio, k)))
-
-    for p in p_list:
-        print(p)
-        p.start()
+            calculate_obstructing(file_folder, meta_dir, illum_to_disp_ratio, k)
+    #         p_list.append(
+    #             mp.Process(target=calculate_obstructing, args=(file_folder, meta_dir, illum_to_disp_ratio, k)))
+    #
+    # for p in p_list:
+    #     print(p)
+    #     p.start()

@@ -425,9 +425,9 @@ if __name__ == "__main__":
         for k in [3, 20]:
 
             for shape in ["skateboard", "dragon", "hat"]:
-                calculate_obstructing(file_folder, meta_dir, illum_to_disp_ratio, k, shape)
-            # p_list.append(mp.Process(target=calculate_obstructing, args=(file_folder, meta_dir, illum_to_disp_ratio, k)))
+                # calculate_obstructing(file_folder, meta_dir, illum_to_disp_ratio, k, shape)
+                p_list.append(mp.Process(target=calculate_obstructing, args=(file_folder, meta_dir, illum_to_disp_ratio, k, shape)))
 
-    # for p in p_list:
-    #     print(p)
-    #     p.start()
+    for p in p_list:
+        print(p)
+        p.start()

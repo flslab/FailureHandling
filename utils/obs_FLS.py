@@ -355,9 +355,6 @@ def calculate_obstructing(group_file, meta_direc, ratio, k, shape):
 
     for i in range(len(views)):
 
-        if i < 5:
-            continue
-
         print(f"START: {shape}, K: {k}, Ratio: {ratio} ,{views[i]}")
 
         camera = cam_positions[i]

@@ -1,4 +1,5 @@
 import csv
+import math
 from collections import Counter
 from threading import Thread
 
@@ -17,6 +18,32 @@ def normalize(v):
         return v
     return v / norm
 
+
+def calculate_travel_time(max_speed, max_acceleration, max_deceleration, distance):
+    # Step 1 and 2: Calculate time and distance during acceleration
+    t_accel = max_speed / max_acceleration
+    d_accel = 0.5 * max_acceleration * t_accel ** 2
+
+    # Step 3 and 4: Calculate time and distance during deceleration
+    t_decel = max_speed / max_deceleration
+    d_decel = 0.5 * max_deceleration * t_decel ** 2
+
+    # Step 5: Check if the vehicle reaches max speed
+    if d_accel + d_decel > distance:
+        # If not, find the time using a different approach (not covered here)
+        d_accel = d_decel = distance / 2
+        t_accel = math.sqrt(d_accel * 2 / max_acceleration)
+        t_decel = math.sqrt(d_decel * 2 / max_deceleration)
+        return t_accel + t_decel
+
+    # Step 6 and 7: Calculate distance and time at max speed
+    d_cruise = distance - (d_accel + d_decel)
+    t_cruise = d_cruise / max_speed
+
+    # Step 8: Calculate total time
+    t_total = t_accel + t_cruise + t_decel
+
+    return t_total
 
 def get_dist_to_centroid(standbys, shape, k, file_folder, ratio):
     input_file = f"{shape}_G{k}.xlsx"
@@ -104,12 +131,8 @@ def is_inside_cube(point, cube_center, length):
     return all(abs(p - c) < length + 0.00000000001 for p, c in zip(point, cube_center))
 
 
-def is_in_disp_cell(coord1, coord2):
+def is_disp_cell_overlapping(coord1, coord2):
     return is_inside_cube(coord1, coord2, 1)
-
-
-def is_in_illum_cell(coord1, coord2, ratio):
-    return is_inside_cube(coord1, coord2, 1 * ratio)
 
 
 def get_points(shape, K, ratio, pointcloud_folder, output_path):
@@ -145,11 +168,11 @@ def get_points(shape, K, ratio, pointcloud_folder, output_path):
 def calculate_obstructing(group_file, meta_direc, ratio):
     title = [
         "Shape", "K", "Ratio", "View", "Dist Illum", "Dist Standby", "Obstruction Times",
-        "Min Dist Between", "Max Dist Between", "Mean Dist Between",
-        "Min Obstructing FLSs", "Max Obstructing FLSs", "Mean Obstructing FLSs",
-        "Min Ori Dist To Center", "Max Ori Dist To Center", "Mean Ori Dist To Center",
-        "Min Dist To Center", "Max Dist To Center", "Mean Dist To Center",
-        "Dist To Center Change", "Obstructing Nums"]
+        "Min Dist Between", "Max Dist Between", "Avg Dist Between",
+        "Min Obstructing FLSs", "Max Obstructing FLSs", "Avg Obstructing FLSs",
+        "Min Ori Dist To Center", "Max Ori Dist To Center", "Avg Ori Dist To Center", "Origin MTID"
+        "Min Dist To Center", "Max Dist To Center", "Avg Dist To Center", "MTID",
+        "Dist To Center Change", "MTID Change", "Obstructing Nums"]
     result = [title]
 
     for k in [3, 20]:
@@ -167,21 +190,21 @@ def calculate_obstructing(group_file, meta_direc, ratio):
             cam_positions = [
                 # top
                 [boundary[0][0] / 2 + boundary[1][0] / 2, boundary[0][1] / 2 + boundary[1][1] / 2,
-                 boundary[1][2] + 100 * ratio],
+                 boundary[1][2] + 100],
                 # down
                 [boundary[0][0] / 2 + boundary[1][0] / 2, boundary[0][1] / 2 + boundary[1][1] / 2,
-                 boundary[0][2] - 100 * ratio],
+                 boundary[0][2] - 100],
                 # left
-                [boundary[0][0] - 100 * ratio, boundary[0][1] / 2 + boundary[1][1] / 2,
+                [boundary[0][0] - 100, boundary[0][1] / 2 + boundary[1][1] / 2,
                  boundary[0][0] / 2 + boundary[1][0] / 2],
                 # right
-                [boundary[1][0] + 100 * ratio, boundary[0][1] / 2 + boundary[1][1] / 2,
+                [boundary[1][0] + 100, boundary[0][1] / 2 + boundary[1][1] / 2,
                  boundary[0][0] / 2 + boundary[1][0] / 2],
                 # front
-                [boundary[0][0] / 2 + boundary[1][0] / 2, boundary[0][1] - 100 * ratio,
+                [boundary[0][0] / 2 + boundary[1][0] / 2, boundary[0][1] - 100,
                  boundary[0][0] / 2 + boundary[1][0] / 2],
                 # back
-                [boundary[0][0] / 2 + boundary[1][0] / 2, boundary[1][1] + 100 * ratio,
+                [boundary[0][0] / 2 + boundary[1][0] / 2, boundary[1][1] + 100,
                  boundary[0][0] / 2 + boundary[1][0] / 2]
             ]
 
@@ -264,7 +287,7 @@ def calculate_obstructing(group_file, meta_direc, ratio):
                     new_pos = coord + gaze_vec
 
                     check_times = 1
-                    while not all([not is_in_disp_cell(new_pos, p) for p in points]):
+                    while not all([not is_disp_cell_overlapping(new_pos, p) for p in points]):
                         new_pos += gaze_vec * step_length
                         check_times += 1
 
@@ -278,12 +301,16 @@ def calculate_obstructing(group_file, meta_direc, ratio):
 
                 dists_center = get_dist_to_centroid(standbys, shape, k, group_file, ratio)
 
+                max_speed = max_acceleration = max_deceleration = 6.11
+
                 metrics = [shape, k, ratio, views[i], dist_illum, dist_standby, len(multi_obst.keys()),
                            min(dist_between), max(dist_between), statistics.mean(dist_between),
                            min(multi_obst.values()), max(multi_obst.values()), statistics.mean(multi_obst.values()),
-                           min(ori_dists_center), max(ori_dists_center), statistics.mean(ori_dists_center),
-                           min(dists_center), max(dists_center), statistics.mean(dists_center),
-                           (statistics.mean(dists_center) / statistics.mean(ori_dists_center)) - 1, multi_obst.items()
+                           min(ori_dists_center), max(ori_dists_center), statistics.mean(ori_dists_center), calculate_travel_time(max_speed, max_acceleration, max_deceleration, statistics.mean(ori_dists_center)),
+                           min(dists_center), max(dists_center), statistics.mean(dists_center), calculate_travel_time(max_speed, max_acceleration, max_deceleration, statistics.mean(dists_center)),
+                           (statistics.mean(dists_center) / statistics.mean(ori_dists_center)) - 1,
+                           (calculate_travel_time(max_speed, max_acceleration, max_deceleration, statistics.mean(dists_center))/calculate_travel_time(max_speed, max_acceleration, max_deceleration, statistics.mean(ori_dists_center)))-1,
+                           multi_obst.items()
                            ]
 
                 result.append(metrics)
@@ -308,9 +335,9 @@ if __name__ == "__main__":
 
     p_list = []
     for illum_to_disp_ratio in [1, 3, 5, 10]:
-        calculate_obstructing(file_folder, meta_dir, illum_to_disp_ratio)
-    #     p_list.append(mp.Process(target=calculate_obstructing, args=(file_folder, meta_dir, illum_to_disp_ratio)))
-    #
-    # for p in p_list:
-    #     # print(t)
-    #     p.start()
+        # calculate_obstructing(file_folder, meta_dir, illum_to_disp_ratio)
+        p_list.append(mp.Process(target=calculate_obstructing, args=(file_folder, meta_dir, illum_to_disp_ratio)))
+
+    for p in p_list:
+        # print(t)
+        p.start()

@@ -199,7 +199,7 @@ def check_visible_cell(user_eye, points, ratio):
 
                     point = points[check_index]
 
-                    if point[3] != 1 and ray_cell_intersection(user_eye, direction, point[0:3], ratio, point[3]):
+                    if point[3] != 1 and ray_cell_intersection(user_eye, direction, point[0:3], ratio, point[3]) and p_index not in blocking_index:
                         blocking.append(points[p_index][0:3])
                         blocked.append(point[0:3])
                         blocking_index.append(p_index)
@@ -402,9 +402,9 @@ if __name__ == "__main__":
 
         for k in [20]:
             for shape in ["skateboard"]:
-                # calculate_obstructing(file_folder, meta_dir, illum_to_disp_ratio, k, shape)
-                p_list.append(mp.Process(target=calculate_obstructing, args=(file_folder, meta_dir, illum_to_disp_ratio, k, shape)))
+                calculate_obstructing(file_folder, meta_dir, illum_to_disp_ratio, k, shape)
+                # p_list.append(mp.Process(target=calculate_obstructing, args=(file_folder, meta_dir, illum_to_disp_ratio, k, shape)))
 
-    for p in p_list:
-        print(p)
-        p.start()
+    # for p in p_list:
+    #     print(p)
+    #     p.start()

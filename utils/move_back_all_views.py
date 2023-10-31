@@ -52,8 +52,8 @@ def solve_all_views(group_file, meta_direc, ratio, k, shape):
          boundary[0][0] / 2 + boundary[1][0] / 2]
     ]
 
-    # views = ["top", "bottom", "left", "right", "front", "back"]
-    views = ["top"]
+    views = ["top", "bottom", "left", "right", "front", "back"]
+    # views = ["top"]
 
     for i in range(len(views)):
 
@@ -104,21 +104,21 @@ def solve_all_views(group_file, meta_direc, ratio, k, shape):
 
 if __name__ == "__main__":
 
-    file_folder = "/Users/shuqinzhu/Desktop/pointcloud"
-    meta_dir = "/Users/shuqinzhu/Desktop"
+    # file_folder = "/Users/shuqinzhu/Desktop/pointcloud"
+    # meta_dir = "/Users/shuqinzhu/Desktop"
 
-    # file_folder = "/users/Shuqin/pointcloud"
-    # meta_dir = "/users/Shuqin"
+    file_folder = "/users/Shuqin/pointcloud"
+    meta_dir = "/users/Shuqin"
 
     p_list = []
-    for illum_to_disp_ratio in [1, 10]:
+    for illum_to_disp_ratio in [1, 3, 5, 10]:
 
         for k in [3, 20]:
 
             for shape in ["skateboard", "dragon", "hat"]:
-                solve_all_views(file_folder, meta_dir, illum_to_disp_ratio, k, shape)
-    #             p_list.append(mp.Process(target=solve_all_views, args=(file_folder, meta_dir, illum_to_disp_ratio, k, shape)))
-    #
-    # for p in p_list:
-    #     print(p)
-    #     p.start()
+                # solve_all_views(file_folder, meta_dir, illum_to_disp_ratio, k, shape)
+                p_list.append(mp.Process(target=solve_all_views, args=(file_folder, meta_dir, illum_to_disp_ratio, k, shape)))
+
+    for p in p_list:
+        print(p)
+        p.start()

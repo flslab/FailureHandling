@@ -442,7 +442,7 @@ if __name__ == "__main__":
     # file_folder = "/Users/shuqinzhu/Desktop/pointcloud"
     # meta_dir = "/Users/shuqinzhu/Desktop"
 
-    file_folder = "/users/Shuqin"
+    file_folder = "/users/Shuqin/pointcloud"
     meta_dir = "/users/Shuqin"
 
     p_list = []

@@ -137,14 +137,14 @@ def ray_cell_intersection(origin, direction, point, ratio, is_standby):
 
 
 def check_visible_cell(user_eye, points, ratio):
-    visible, blocking, blocked, blocking_index = [], [], [], []
+    visible, blocking, blocked, blocking_index, potential_blocking_index = [], [], [], [], []
     visible_standby_index = []
 
     distances = [get_distance(user_eye, point[:3]) for point in points]
     sorted_indices = np.argsort(distances)
     distances.sort()
 
-    for index_dist in range(len(sorted_indices)):
+    for index_dist in tqdm(range(len(sorted_indices))):
         p_index = sorted_indices[index_dist]
 
         cell_center = points[p_index][0:3]
@@ -165,6 +165,7 @@ def check_visible_cell(user_eye, points, ratio):
         check_list = sorted_indices[:checklist_end]
 
         is_visible = [True for _ in range(len(vertices))]
+        possible_visible = [True for _ in range(len(vertices))]
 
         for v_index, vertex in enumerate(vertices):
 
@@ -180,12 +181,14 @@ def check_visible_cell(user_eye, points, ratio):
 
                 if ray_cell_intersection(user_eye, direction, point[0:3], ratio, point[3]):
                     is_visible[v_index] = False
-                    break
+                    if point[3] == 0:
+                        possible_visible[v_index] = False
+                        break
 
         if any(is_visible):
             visible.append(points[p_index])
 
-        if points[p_index][3] and any(is_visible):
+        if points[p_index][3] and any(possible_visible):
             for v_index, vertex in enumerate(vertices):
 
                 direction = (vertex - user_eye)
@@ -198,10 +201,12 @@ def check_visible_cell(user_eye, points, ratio):
 
                     point = points[check_index]
 
-                    if point[3] != 1 and ray_cell_intersection(user_eye, direction, point[0:3], ratio, point[3]) and p_index not in blocking_index:
+                    if point[3] != 1 and ray_cell_intersection(user_eye, direction, point[0:3], ratio, point[3]) and p_index not in potential_blocking_index:
                         blocking.append(points[p_index][0:3])
                         blocked.append(point[0:3])
-                        blocking_index.append(p_index)
+                        potential_blocking_index.append(p_index)
+                        if any(is_visible):
+                            blocking_index.append(p_index)
                         break
 
     return np.array(visible), np.array(blocking), np.array(blocked), np.unique(blocking_index)
@@ -441,13 +446,13 @@ if __name__ == "__main__":
     # meta_dir = "/users/Shuqin"
 
     p_list = []
-    for illum_to_disp_ratio in [10]:
+    for illum_to_disp_ratio in [1, 3, 5, 10]:
 
-        for k in [20]:
-            for shape in ["dragon"]:
-                calculate_obstructing(file_folder, meta_dir, illum_to_disp_ratio, k, shape)
-                # p_list.append(mp.Process(target=calculate_obstructing, args=(file_folder, meta_dir, illum_to_disp_ratio, k, shape)))
+        for k in [3, 20]:
+            for shape in ["skateboard", "dragon", "hat"]:
+                # calculate_obstructing(file_folder, meta_dir, illum_to_disp_ratio, k, shape)
+                p_list.append(mp.Process(target=calculate_obstructing, args=(file_folder, meta_dir, illum_to_disp_ratio, k, shape)))
 
-    # for p in p_list:
-    #     print(p)
-    #     p.start()
+    for p in p_list:
+        print(p)
+        p.start()

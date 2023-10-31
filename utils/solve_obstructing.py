@@ -448,10 +448,16 @@ def solve_obstructing(group_file, meta_direc, ratio):
                     dist_standby[standby_list[key]] = 0
                     dist_illum[obstruct_pairs[key]] = 0
 
+                change_mapping = {}
                 for key in obstruct_pairs.keys():
                     obstructing_index = key
                     standby_index = standby_list[obstructing_index]
-                    illum_index = obstruct_pairs[key]
+
+                    origin_illum_index = obstruct_pairs[key]
+                    if origin_illum_index in change_mapping.keys():
+                        illum_index = change_mapping[origin_illum_index]
+                    else:
+                        illum_index = origin_illum_index
 
                     illum_coord = points[illum_index][0:3]
 
@@ -468,13 +474,17 @@ def solve_obstructing(group_file, meta_direc, ratio):
 
                         new_pos += gaze_vec * step_length
                         check_times += 1
-                    print(check_times, get_distance(illum_coord, new_pos), illum_index)
 
                     dist_standby[standby_index] += get_distance(illum_coord, obstructing[obstructing_index])
-                    dist_illum[illum_index] += get_distance(illum_coord, new_pos)
+                    dist_illum[origin_illum_index] += get_distance(illum_coord, new_pos)
 
+                    # print(standby_index, check_times, get_distance(illum_coord, obstructing[obstructing_index]), get_distance(illum_coord, new_pos), dist_illum[origin_illum_index], origin_illum_index)
+
+                    # points[illum_index][0:3] = new_pos
                     points[obs_list[obstructing_index]][0:3] = new_pos
                     standbys[standby_list[obstructing_index]][0:3] = new_pos
+
+                    change_mapping[origin_illum_index] = obs_list[obstructing_index]
 
                 dists_center = get_dist_to_centroid(standbys[:, 0:3], shape, k, group_file, ratio)
 

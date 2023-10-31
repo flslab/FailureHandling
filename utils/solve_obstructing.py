@@ -340,8 +340,8 @@ def solve_obstructing(group_file, meta_direc, ratio):
             # np.savetxt(f'{output_path}/points/{shape}_standby_solve.txt', standbys, fmt='%f', delimiter=' ')
 
             for i in range(len(views)):
-                if i != 4:
-                    continue
+
+                points, boundary, standbys = get_points_from_file(ratio, group_file, output_path, txt_file, standby_file)
 
                 tag = f"Solving: {shape}, K: {k}, Ratio: {ratio} ,{views[i]}"
                 print(tag)
@@ -512,7 +512,6 @@ def solve_obstructing(group_file, meta_direc, ratio):
 
                 result.append(metrics)
                 print(list(zip(title, metrics)))
-                exit()
     with open(f'{report_path}/solve_R{ratio}.csv', mode='w', newline='') as file:
         writer = csv.writer(file)
 
@@ -532,7 +531,7 @@ if __name__ == "__main__":
     # meta_dir = "/users/Shuqin"
 
     p_list = []
-    for illum_to_disp_ratio in [10]:
+    for illum_to_disp_ratio in [1, 3, 5, 10]:
         solve_obstructing(file_folder, meta_dir, illum_to_disp_ratio)
     #     p_list.append(mp.Process(target=calculate_obstructing, args=(file_folder, meta_dir, illum_to_disp_ratio)))
     #

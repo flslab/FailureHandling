@@ -118,12 +118,15 @@ def visible_cubes(camera, cubes, ratio, shape, k, view):
             if index_j == index_i or distances[sorted_indices[index_j]] >= distances[sorted_indices[index_i]] + 1 * ratio:
                 break
 
-            if cube[3] == 1 and (cubes[j][3] != 1 and any(is_in_illum_cell(p, cubes[j][0:3], ratio, (ratio - 0.8)/ratio) for p in line_points))\
+            if cube[3] == 1 and (cubes[j][3] != 1 and any(
+                    is_in_illum_cell(p, cubes[j][0:3], ratio, (ratio - 0.8) / ratio) for p in line_points)) \
                     or (cubes[j][3] == 1 and any(is_in_disp_cell(p, cubes[j][0:3], 0.2) for p in line_points)):
                 is_visible = False
                 break
-            elif cube[3] != 1 and (cubes[j][3] != 1 and any(is_in_illum_cell(p, cubes[j][0:3], ratio, 0.3/ratio) for p in line_points)) \
-                    or (ratio == 1 and cubes[j][3] == 1 and any(is_in_disp_cell(p, cubes[j][0:3], 0.2) for p in line_points)):
+            elif cube[3] != 1 and (cubes[j][3] != 1 and any(
+                    is_in_illum_cell(p, cubes[j][0:3], ratio, 0.3 / ratio) for p in line_points)) \
+                    or (ratio == 1 and cubes[j][3] == 1 and any(
+                is_in_disp_cell(p, cubes[j][0:3], 0.2) for p in line_points)):
                 is_visible = False
                 break
 
@@ -234,11 +237,54 @@ def get_points(shape, K, file_folder, ratio):
     return points, point_boundary, check_times
 
 
+def calculate_single_view(shape, k, ratio, view, points, camera, output_path):
+    print(f"START: {shape}, K: {k}, Ratio: {ratio} ,{view}")
+
+    visible, blocking, blocked_by, blocking_index = visible_cubes(camera, points, ratio, shape, k, view)
+
+    visible_illum = []
+    visible_standby = []
+    for point in visible:
+        if point[3] == 1:
+            visible_standby.append(point[0:3])
+        else:
+            visible_illum.append(point[0:3])
+
+    visible_illum = np.array(visible_illum)
+    np.unique(visible_illum, axis=0)
+
+    visible_standby = np.array(visible_standby)
+    np.unique(visible_standby, axis=0)
+
+    blocking = np.array(blocking)
+    np.unique(blocking, axis=0)
+
+    blocked_by = np.array(blocked_by)
+    np.unique(blocked_by, axis=0)
+
+    np.savetxt(f'{output_path}/points/{shape}_{view}_visible_illum.txt', visible_illum, fmt='%f',
+               delimiter=' ')
+    np.savetxt(f'{output_path}/points/{shape}_{view}_visible_standby.txt', visible_standby,
+               fmt='%f',
+               delimiter=' ')
+    np.savetxt(f'{output_path}/points/{shape}_{view}_blocking.txt', blocking, fmt='%f',
+               delimiter=' ')
+    np.savetxt(f'{output_path}/points/{shape}_{view}_blocked.txt', blocked_by, fmt='%f',
+               delimiter=' ')
+
+    print(
+        f"{shape}, K: {k}, Ratio: {ratio} ,{view} view: Number of Illuminating FLS: {len(visible_illum)}, Visible Standby FLS: {len(visible_standby)},  Obstructing Number: {len(blocking_index)}")
+
+    metric = [shape, k, ratio, view, len(visible_illum), len(blocking_index)]
+    return metric
+
+
 def calculate_obstructing(group_file, meta_direc, ratio, k):
     for shape in ["skateboard", "dragon", "hat"]:
 
         result = [
-            ["Shape", "K", "Ratio", "View", "Visible_Illum", "Obstructing FLS", "Min Times Checked", "Mean Times Checked",
+            ["Shape", "K", "Ratio", "View", "Visible_Illum", "Obstructing FLS", "Min Times Checked",
+             "Mean Times Checked",
              "Max Times Checked"]]
         report_path = f"{meta_direc}/obstructing/R{ratio}"
 
@@ -281,7 +327,7 @@ def calculate_obstructing(group_file, meta_direc, ratio, k):
         standby = np.array(standby)
 
         np.savetxt(f'{output_path}/points/{shape}_illum.txt', illum, fmt='%f', delimiter=' ')
-        np.savetxt(f'{output_path}/points/{shape}_standby.txt', standby, fmt='%f', delimiter=' ')
+        np.savetxt(f'{output_path}/points/{shape}_origin_standby.txt', standby, fmt='%f', delimiter=' ')
 
         for i in range(len(views)):
 
@@ -340,19 +386,20 @@ if __name__ == "__main__":
 
     # file_folder = "C:/Users/zhusq/Desktop"
     # meta_dir = "C:/Users/zhusq/Desktop"
-    # file_folder = "/Users/shuqinzhu/Desktop"
-    # meta_dir = "/Users/shuqinzhu/Desktop"
+    file_folder = "/Users/shuqinzhu/Desktop"
+    meta_dir = "/Users/shuqinzhu/Desktop"
 
-    file_folder = "/users/Shuqin"
-    meta_dir = "/users/Shuqin"
+    # file_folder = "/users/Shuqin"
+    # meta_dir = "/users/Shuqin"
 
     p_list = []
     for illum_to_disp_ratio in [1, 3, 5, 10]:
 
         for k in [3, 20]:
-            # calculate_obstructing(file_folder, meta_dir, illum_to_disp_ratio, k, shape)
-            p_list.append(mp.Process(target=calculate_obstructing, args=(file_folder, meta_dir, illum_to_disp_ratio, k)))
-
-    for p in p_list:
-        print(p)
-        p.start()
+            calculate_obstructing(file_folder, meta_dir, illum_to_disp_ratio, k)
+    #         p_list.append(
+    #             mp.Process(target=calculate_obstructing, args=(file_folder, meta_dir, illum_to_disp_ratio, k)))
+    #
+    # for p in p_list:
+    #     print(p)
+    #     p.start()

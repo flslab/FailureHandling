@@ -1,7 +1,7 @@
 import csv
 
 from solve_obstructing import solve_single_view, get_points
-from obstructing_FLSs import calculate_single_view
+from find_obstructing_raybox import calculate_single_view
 import multiprocessing as mp
 
 

@@ -280,6 +280,50 @@ def get_points(shape, K, file_folder, ratio):
     return points, point_boundary, check_times
 
 
+def calculate_single_view(shape, k, ratio, view, points, camera, output_path):
+    print(f"START: {shape}, K: {k}, Ratio: {ratio} ,{view}")
+
+    visible, blocking, blocked_by, blocking_index = check_visible_cell(camera, points, ratio)
+
+    visible_illum = []
+    visible_standby = []
+    for point in visible:
+        if point[3] == 1:
+            visible_standby.append(point[0:3])
+        else:
+            visible_illum.append(point[0:3])
+
+    visible_illum = np.array(visible_illum)
+    np.unique(visible_illum, axis=0)
+
+    visible_standby = np.array(visible_standby)
+    np.unique(visible_standby, axis=0)
+
+    blocking = np.array(blocking)
+    np.unique(blocking, axis=0)
+
+    blocked_by = np.array(blocked_by)
+    np.unique(blocked_by, axis=0)
+
+    np.savetxt(f'{output_path}/points/{shape}_{view}_visible_illum.txt', visible_illum, fmt='%f',
+               delimiter=' ')
+    np.savetxt(f'{output_path}/points/{shape}_{view}_visible_standby.txt', visible_standby,
+               fmt='%f',
+               delimiter=' ')
+    np.savetxt(f'{output_path}/points/{shape}_{view}_blocking.txt', blocking, fmt='%f',
+               delimiter=' ')
+    np.savetxt(f'{output_path}/points/{shape}_{view}_blocked.txt', blocked_by, fmt='%f',
+               delimiter=' ')
+
+    print(
+        f"{shape}, K: {k}, Ratio: {ratio} ,{view} view: Number of Illuminating FLS: {len(visible_illum)}, Visible Standby FLS: {len(visible_standby)},  Obstructing Number: {len(blocking_index)}")
+
+
+    metric = [shape, k, ratio, view, len(visible_illum), len(blocking_index)]
+    return metric
+
+
+
 def calculate_obstructing(group_file, meta_direc, ratio, k, shape):
     result = [
         ["Shape", "K", "Ratio", "View", "Visible_Illum", "Obstructing FLS", "Min Times Checked",

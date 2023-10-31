@@ -36,12 +36,11 @@ def read_cliques_xlsx(path, ratio):
     return group_list
 
 
-def get_points_from_file(shape, ratio, pointcloud_folder, output_path):
-    txt_file = f"{shape}.txt"
+def get_points_from_file(shape, ratio, pointcloud_folder, output_path, poitcloud_file, standby_file):
 
-    group_standby_coord = read_coordinates(f"{output_path}/points/{shape}_standby.txt", ' ', 1)
+    group_standby_coord = read_coordinates(f"{output_path}/points/{standby_file}", ' ', 1)
 
-    points = read_coordinates(f"{pointcloud_folder}/{txt_file}", ' ')
+    points = read_coordinates(f"{pointcloud_folder}/{poitcloud_file}", ' ')
 
     points = np.array(points)
     points = points * ratio
@@ -54,7 +53,7 @@ def get_points_from_file(shape, ratio, pointcloud_folder, output_path):
     for coord in group_standby_coord:
         points = np.concatenate((points, [coord]), axis=0)
 
-    return points, point_boundary, group_standby_coord
+    return points, point_boundary, np.array(group_standby_coord)
 
 
 def read_coordinates(file_path, delimeter=' ', type=0):
@@ -333,7 +332,7 @@ def calculate_obstructing(group_file, meta_direc, ratio, k, shape):
 
     output_path = f"{meta_direc}/obstructing/R{ratio}/K{k}"
 
-    points, boundary, standbys = get_points_from_file(shape, ratio, group_file, output_path)
+    points, boundary, standbys = get_points_from_file(shape, ratio, group_file, output_path, f"{shape}.txt", f"{shape}_standby.txt")
     check_times = [0]
 
     camera_shifting = 100
@@ -377,8 +376,8 @@ def calculate_obstructing(group_file, meta_direc, ratio, k, shape):
 
     for i in range(len(views)):
 
-        if i < 2:
-            continue
+        # if i != 4:
+        #     continue
 
         print(f"START: {shape}, K: {k}, Ratio: {ratio} ,{views[i]}")
 
@@ -442,10 +441,10 @@ if __name__ == "__main__":
     # meta_dir = "/users/Shuqin"
 
     p_list = []
-    for illum_to_disp_ratio in [1, 3, 5, 10]:
+    for illum_to_disp_ratio in [10]:
 
         for k in [20]:
-            for shape in ["skateboard"]:
+            for shape in ["dragon"]:
                 calculate_obstructing(file_folder, meta_dir, illum_to_disp_ratio, k, shape)
                 # p_list.append(mp.Process(target=calculate_obstructing, args=(file_folder, meta_dir, illum_to_disp_ratio, k, shape)))
 

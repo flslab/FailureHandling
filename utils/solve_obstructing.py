@@ -11,6 +11,8 @@ from tqdm import tqdm
 import statistics
 import multiprocessing as mp
 
+from find_obstructing_raybox import get_points_from_file
+
 
 def normalize(v):
     norm = np.linalg.norm(v)
@@ -134,36 +136,14 @@ def is_inside_cube(point, cube_center, length):
 def is_disp_cell_overlapping(coord1, coord2):
     return is_inside_cube(coord1, coord2, 1)
 
-
-def get_points(ratio, pointcloud_folder, output_path, txt_file, standby_file):
-
-    group_standby_coord = read_coordinates(f"{output_path}/points/{standby_file}", ' ')
-
-    points = read_coordinates(f"{pointcloud_folder}/{txt_file}", ' ')
-
-    points = np.array(points)
-    points = points * ratio
-
-    point_boundary = [
-        [min(points[:, 0]), min(points[:, 1]), min(points[:, 2])],
-        [max(points[:, 0]), max(points[:, 1]), max(points[:, 2])]
-    ]
-
-    for coord in group_standby_coord:
-        coord[3] = 1
-        points = np.concatenate((points, [coord]), axis=0)
-
-    return points, point_boundary, np.array(group_standby_coord)[:, 0:3]
-
-
 def solve_single_view(shape, k, ratio, view, lastview, camera, group_file, output_path):
     tag = f"Solving: {shape}, K: {k}, Ratio: {ratio} ,{view}"
     print(tag)
 
     txt_file = f"{shape}.txt"
     standby_file = f"{shape}{lastview}_standby.txt"
-    points, boundary, standbys = get_points(ratio, group_file, output_path, txt_file, standby_file)
-    ori_dists_center = get_dist_to_centroid(standbys, shape, k, group_file, ratio)
+    points, boundary, standbys = get_points_from_file(shape, ratio, group_file, output_path, txt_file, standby_file)
+    ori_dists_center = get_dist_to_centroid(standbys[:, 0:3], shape, k, group_file, ratio)
     dist_illum = {}
     dist_standby = {}
     dist_between = []
@@ -181,6 +161,7 @@ def solve_single_view(shape, k, ratio, view, lastview, camera, group_file, outpu
                    ]
 
         print(metrics)
+        return metrics
 
     obstructing = np.array(obstructing)[:, 0:3]
     blocked_by = np.array(blocked_by)[:, 0:3]
@@ -268,7 +249,7 @@ def solve_single_view(shape, k, ratio, view, lastview, camera, group_file, outpu
         new_pos = illum_coord + gaze_vec
 
         check_times = 1
-        while not all([not is_disp_cell_overlapping(new_pos, p) for p in points]):
+        while not all([not is_disp_cell_overlapping(new_pos, p) for p in points[:, 0:3]]):
             new_pos += gaze_vec * step_length
             check_times += 1
 
@@ -276,11 +257,11 @@ def solve_single_view(shape, k, ratio, view, lastview, camera, group_file, outpu
         dist_illum[illum_index] += get_distance(illum_coord, new_pos)
 
         points[obs_list[obstructing_index], 0:3] = new_pos
-        standbys[standby_list[obstructing_index]] = new_pos
+        standbys[standby_list[obstructing_index]][0:3] = new_pos
 
     np.savetxt(f'{output_path}/points/{shape}_{view}_standby.txt', standbys, fmt='%f', delimiter=' ')
 
-    dists_center = get_dist_to_centroid(standbys, shape, k, group_file, ratio)
+    dists_center = get_dist_to_centroid(standbys[:, 0:3], shape, k, group_file, ratio)
 
     max_speed = max_acceleration = max_deceleration = 6.11
 
@@ -328,14 +309,14 @@ def solve_obstructing(group_file, meta_direc, ratio):
 
         output_path = f"{meta_direc}/obstructing/R{ratio}/K{k}"
 
-        for shape in ["skateboard", "hat", "dragon"]:
+        for shape in ["skateboard", "dragon", 'hat']:
             # for shape in ["skateboard", "dragon"]:
 
             txt_file = f"{shape}.txt"
             standby_file = f"{shape}_standby.txt"
-            points, boundary, standbys = get_points(ratio, group_file, output_path, txt_file, standby_file)
+            points, boundary, standbys = get_points_from_file(shape, ratio, group_file, output_path, txt_file, standby_file)
 
-            ori_dists_center = get_dist_to_centroid(standbys, shape, k, group_file, ratio)
+            ori_dists_center = get_dist_to_centroid(standbys[:, 0:3], shape, k, group_file, ratio)
             # print(ori_dists_center)
 
             cam_positions = [
@@ -364,8 +345,8 @@ def solve_obstructing(group_file, meta_direc, ratio):
             # np.savetxt(f'{output_path}/points/{shape}_standby_solve.txt', standbys, fmt='%f', delimiter=' ')
 
             for i in range(len(views)):
-                # if i != 3:
-                #     continue
+                if i != 4:
+                    continue
 
                 tag = f"Solving: {shape}, K: {k}, Ratio: {ratio} ,{views[i]}"
                 print(tag)
@@ -478,17 +459,24 @@ def solve_obstructing(group_file, meta_direc, ratio):
                     new_pos = illum_coord + gaze_vec
 
                     check_times = 1
+
                     while not all([not is_disp_cell_overlapping(new_pos, p) for p in points]):
+
+                        for p in points:
+                            if is_disp_cell_overlapping(new_pos, p):
+                                print(p, np.where(np.all(points == p, axis=1))[0])
+
                         new_pos += gaze_vec * step_length
                         check_times += 1
+                    print(check_times, get_distance(illum_coord, new_pos), illum_index)
 
                     dist_standby[standby_index] += get_distance(illum_coord, obstructing[obstructing_index])
                     dist_illum[illum_index] += get_distance(illum_coord, new_pos)
 
-                    points[obs_list[obstructing_index], 0:3] = new_pos
-                    standbys[standby_list[obstructing_index]] = new_pos
+                    points[obs_list[obstructing_index]][0:3] = new_pos
+                    standbys[standby_list[obstructing_index]][0:3] = new_pos
 
-                dists_center = get_dist_to_centroid(standbys, shape, k, group_file, ratio)
+                dists_center = get_dist_to_centroid(standbys[:, 0:3], shape, k, group_file, ratio)
 
                 max_speed = max_acceleration = max_deceleration = 6.11
 
@@ -519,6 +507,7 @@ def solve_obstructing(group_file, meta_direc, ratio):
 
                 result.append(metrics)
                 print(list(zip(title, metrics)))
+                exit()
     with open(f'{report_path}/solve_R{ratio}.csv', mode='w', newline='') as file:
         writer = csv.writer(file)
 
@@ -538,7 +527,7 @@ if __name__ == "__main__":
     # meta_dir = "/users/Shuqin"
 
     p_list = []
-    for illum_to_disp_ratio in [1, 3, 5, 10]:
+    for illum_to_disp_ratio in [10]:
         solve_obstructing(file_folder, meta_dir, illum_to_disp_ratio)
     #     p_list.append(mp.Process(target=calculate_obstructing, args=(file_folder, meta_dir, illum_to_disp_ratio)))
     #

@@ -41,7 +41,7 @@ def get_points_from_file(shape, ratio, pointcloud_folder, output_path):
 
     group_standby_coord = read_coordinates(f"{output_path}/points/{shape}_standby.txt", ' ', 1)
 
-    points = read_coordinates(f"{pointcloud_folder}/pointcloud/{txt_file}", ' ')
+    points = read_coordinates(f"{pointcloud_folder}/{txt_file}", ' ')
 
     points = np.array(points)
     points = points * ratio
@@ -213,11 +213,11 @@ def get_points(shape, K, file_folder, ratio):
 
     txt_file = f"{shape}.txt"
 
-    groups = read_cliques_xlsx(f"{file_folder}/pointcloud/{input_file}", ratio)
+    groups = read_cliques_xlsx(f"{file_folder}/{input_file}", ratio)
 
     group_standby_coord = get_standby_coords(groups, K)
 
-    points = read_coordinates(f"{file_folder}/pointcloud/{txt_file}")
+    points = read_coordinates(f"{file_folder}/{txt_file}")
 
     points = np.array(points)
     points = points * ratio
@@ -435,7 +435,7 @@ if __name__ == "__main__":
 
     # file_folder = "C:/Users/zhusq/Desktop"
     # meta_dir = "C:/Users/zhusq/Desktop"
-    file_folder = "/Users/shuqinzhu/Desktop"
+    file_folder = "/Users/shuqinzhu/Desktop/pointcloud"
     meta_dir = "/Users/shuqinzhu/Desktop"
 
     # file_folder = "/users/Shuqin"

@@ -52,8 +52,8 @@ def solve_all_views(group_file, meta_direc, ratio, k, shape):
          boundary[0][0] / 2 + boundary[1][0] / 2]
     ]
 
-    views = ["top", "bottom", "left", "right", "front", "back", "top"]
-    # views = ["top"]
+    # views = ["top", "bottom", "left", "right", "front", "back", "top"]
+    views = ["top"]
 
     for i in range(len(views)):
 
@@ -67,7 +67,7 @@ def solve_all_views(group_file, meta_direc, ratio, k, shape):
         metrics_find = calculate_single_view(shape, k, ratio, view, points, camera, output_path)
         result_find.append(metrics_find)
 
-        metrics_solve = solve_single_view(shape, k, ratio, view, views[i - 1] if i > 1 else "origin", camera,
+        metrics_solve = solve_single_view(shape, k, ratio, view, "_" + views[i - 1] if i > 1 else "", camera,
                                           group_file, output_path)
 
         result_solve.append(metrics_solve)

@@ -161,7 +161,7 @@ def solve_single_view(shape, k, ratio, view, lastview, camera, group_file, outpu
     print(tag)
 
     txt_file = f"{shape}.txt"
-    standby_file = f"{shape}_{lastview}_standby.txt"
+    standby_file = f"{shape}{lastview}_standby.txt"
     points, boundary, standbys = get_points(ratio, group_file, output_path, txt_file, standby_file)
     ori_dists_center = get_dist_to_centroid(standbys, shape, k, group_file, ratio)
     dist_illum = {}

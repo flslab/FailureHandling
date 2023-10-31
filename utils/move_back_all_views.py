@@ -2,6 +2,7 @@ import csv
 
 from solve_obstructing import solve_single_view, get_points
 from obstructing_FLSs import calculate_single_view
+import multiprocessing as mp
 
 
 def solve_all_views(group_file, meta_direc, ratio, k, shape):
@@ -109,4 +110,9 @@ if __name__ == "__main__":
         for k in [3, 20]:
 
             for shape in ["skateboard", "dragon", "hat"]:
-                solve_all_views(file_folder, meta_dir, illum_to_disp_ratio, k, shape)
+                # solve_all_views(file_folder, meta_dir, illum_to_disp_ratio, k, shape)
+                p_list.append(mp.Process(target=solve_all_views, args=(file_folder, meta_dir, illum_to_disp_ratio, k, shape)))
+
+    for p in p_list:
+        print(p)
+        p.start()

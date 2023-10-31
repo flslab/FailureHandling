@@ -36,7 +36,7 @@ def read_cliques_xlsx(path, ratio):
     return group_list
 
 
-def get_points_from_file(shape, ratio, pointcloud_folder, output_path, poitcloud_file, standby_file):
+def get_points_from_file(ratio, pointcloud_folder, output_path, poitcloud_file, standby_file):
 
     group_standby_coord = read_coordinates(f"{output_path}/points/{standby_file}", ' ', 1)
 
@@ -65,6 +65,9 @@ def read_coordinates(file_path, delimeter=' ', type=0):
                 coord = [float(x) for x in line.strip().split(delimeter)]
                 if len(coord) == 3:  # Ensure that there are exactly 3 coordinates
                     coord.append(type)
+                    coordinates.append(coord)
+                elif len(coord) == 4:  # Ensure that there are exactly 3 coordinates
+                    coord[3] = type
                     coordinates.append(coord)
                 else:
                     print(f"Invalid coordinate data on line: {line.strip()}")
@@ -138,7 +141,6 @@ def ray_cell_intersection(origin, direction, point, ratio, is_standby):
 
 def check_visible_cell(user_eye, points, ratio):
     visible, blocking, blocked, blocking_index, potential_blocking_index = [], [], [], [], []
-    visible_standby_index = []
 
     distances = [get_distance(user_eye, point[:3]) for point in points]
     sorted_indices = np.argsort(distances)
@@ -337,7 +339,7 @@ def calculate_obstructing(group_file, meta_direc, ratio, k, shape):
 
     output_path = f"{meta_direc}/obstructing/R{ratio}/K{k}"
 
-    points, boundary, standbys = get_points_from_file(shape, ratio, group_file, output_path, f"{shape}.txt", f"{shape}_standby.txt")
+    points, boundary, standbys = get_points_from_file(ratio, group_file, output_path, f"{shape}.txt", f"{shape}_standby.txt")
     check_times = [0]
 
     camera_shifting = 100

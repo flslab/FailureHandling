@@ -29,7 +29,7 @@ def solve_all_views(group_file, meta_direc, ratio, k, shape):
 
     txt_file = f"{shape}.txt"
     standby_file = f"{shape}_standby.txt"
-    points, boundary, standbys = get_points_from_file(shape, ratio, group_file, output_path, txt_file, standby_file)
+    points, boundary, standbys = get_points_from_file(ratio, group_file, output_path, txt_file, standby_file)
 
     cam_positions = [
         # top
@@ -52,8 +52,8 @@ def solve_all_views(group_file, meta_direc, ratio, k, shape):
          boundary[0][0] / 2 + boundary[1][0] / 2]
     ]
 
-    views = ["top", "bottom", "left", "right", "front", "back"]
-    # views = ["top"]
+    # views = ["top", "bottom", "left", "right", "front", "back"]
+    views = ["top"]
 
     for i in range(len(views)):
 
@@ -62,13 +62,15 @@ def solve_all_views(group_file, meta_direc, ratio, k, shape):
 
         txt_file = f"{shape}.txt"
         standby_file = f"{shape}_{views[i-1]}_standby.txt" if i > 1 else f"{shape}_standby.txt"
-        points, boundary, standbys = get_points_from_file(shape, ratio, group_file, output_path, txt_file, standby_file)
+        points, boundary, standbys = get_points_from_file(ratio, group_file, output_path, txt_file, standby_file)
 
         metrics_find = calculate_single_view(shape, k, ratio, view, points, camera, output_path)
         result_find.append(metrics_find)
 
         metrics_solve = solve_single_view(shape, k, ratio, view, "_" + views[i - 1] if i > 1 else "", camera,
                                           group_file, output_path)
+
+        print(metrics_solve)
 
         result_solve.append(metrics_solve)
 
@@ -78,7 +80,7 @@ def solve_all_views(group_file, meta_direc, ratio, k, shape):
 
         txt_file = f"{shape}.txt"
         standby_file = f"{shape}_{views[-1]}_standby.txt"
-        points, boundary, standbys = get_points_from_file(shape, ratio, group_file, output_path, txt_file, standby_file)
+        points, boundary, standbys = get_points_from_file(ratio, group_file, output_path, txt_file, standby_file)
 
         metrics_find = calculate_single_view(shape, k, ratio, view, points, camera, output_path)
         result_find.append(metrics_find)
@@ -109,11 +111,11 @@ if __name__ == "__main__":
     # meta_dir = "/users/Shuqin"
 
     p_list = []
-    for illum_to_disp_ratio in [10]:
+    for illum_to_disp_ratio in [1, 10]:
 
-        for k in [20]:
+        for k in [3, 20]:
 
-            for shape in ["dragon", "hat"]:
+            for shape in ["skateboard", "dragon", "hat"]:
                 solve_all_views(file_folder, meta_dir, illum_to_disp_ratio, k, shape)
     #             p_list.append(mp.Process(target=solve_all_views, args=(file_folder, meta_dir, illum_to_disp_ratio, k, shape)))
     #

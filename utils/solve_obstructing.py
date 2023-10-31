@@ -11,7 +11,7 @@ from tqdm import tqdm
 import statistics
 import multiprocessing as mp
 
-from find_obstructing_raybox import get_points_from_file
+from find_obstructing_raybox import get_points_from_file, read_coordinates
 
 
 def normalize(v):
@@ -81,27 +81,6 @@ def read_cliques_xlsx(path, ratio):
     return group_list, [max(eval(d)) + 1 if eval(d) != [] else 1 for d in df["6 dist between each pair"]]
 
 
-def read_coordinates(file_path, delimiter):
-    coordinates = []
-    try:
-        with open(file_path, 'r') as file:
-            for line in file:
-                # Split the line by spaces and convert each part to a float
-                coord = [float(x) for x in line.strip().split(delimiter)]
-                if len(coord) == 3:  # Ensure that there are exactly 3 coordinates
-                    coord.append(0)
-                    coordinates.append(coord)
-                else:
-                    print(f"Invalid coordinate data on line: {line.strip()}")
-        return coordinates
-    except FileNotFoundError:
-        print(f"The file at path {file_path} does not exist.")
-        return None
-    except Exception as e:
-        print(f"An error occurred 5: {e}")
-        return None
-
-
 def get_standby_coords(groups, K):
     group_standby_coord = []
 
@@ -142,7 +121,7 @@ def solve_single_view(shape, k, ratio, view, lastview, camera, group_file, outpu
 
     txt_file = f"{shape}.txt"
     standby_file = f"{shape}{lastview}_standby.txt"
-    points, boundary, standbys = get_points_from_file(shape, ratio, group_file, output_path, txt_file, standby_file)
+    points, boundary, standbys = get_points_from_file(ratio, group_file, output_path, txt_file, standby_file)
     ori_dists_center = get_dist_to_centroid(standbys[:, 0:3], shape, k, group_file, ratio)
     dist_illum = {}
     dist_standby = {}
@@ -238,10 +217,16 @@ def solve_single_view(shape, k, ratio, view, lastview, camera, group_file, outpu
         dist_standby[standby_list[key]] = 0
         dist_illum[obstruct_pairs[key]] = 0
 
+    change_mapping = {}
     for key in obstruct_pairs.keys():
         obstructing_index = key
         standby_index = standby_list[obstructing_index]
-        illum_index = obstruct_pairs[key]
+
+        origin_illum_index = obstruct_pairs[key]
+        if origin_illum_index in change_mapping.keys():
+            illum_index = change_mapping[origin_illum_index]
+        else:
+            illum_index = origin_illum_index
 
         illum_coord = points[illum_index][0:3]
 
@@ -249,15 +234,25 @@ def solve_single_view(shape, k, ratio, view, lastview, camera, group_file, outpu
         new_pos = illum_coord + gaze_vec
 
         check_times = 1
-        while not all([not is_disp_cell_overlapping(new_pos, p) for p in points[:, 0:3]]):
+
+        while not all([not is_disp_cell_overlapping(new_pos, p) for p in points]):
+            # for p in points:
+            #     if is_disp_cell_overlapping(new_pos, p):
+            #         print(p, np.where(np.all(points == p, axis=1))[0])
+
             new_pos += gaze_vec * step_length
             check_times += 1
 
         dist_standby[standby_index] += get_distance(illum_coord, obstructing[obstructing_index])
-        dist_illum[illum_index] += get_distance(illum_coord, new_pos)
+        dist_illum[origin_illum_index] += get_distance(illum_coord, new_pos)
 
-        points[obs_list[obstructing_index], 0:3] = new_pos
+        # print(standby_index, check_times, get_distance(illum_coord, obstructing[obstructing_index]), get_distance(illum_coord, new_pos), dist_illum[origin_illum_index], origin_illum_index)
+
+        # points[illum_index][0:3] = new_pos
+        points[obs_list[obstructing_index]][0:3] = new_pos
         standbys[standby_list[obstructing_index]][0:3] = new_pos
+
+        change_mapping[origin_illum_index] = obs_list[obstructing_index]
 
     np.savetxt(f'{output_path}/points/{shape}_{view}_standby.txt', standbys, fmt='%f', delimiter=' ')
 
@@ -314,7 +309,7 @@ def solve_obstructing(group_file, meta_direc, ratio):
 
             txt_file = f"{shape}.txt"
             standby_file = f"{shape}_standby.txt"
-            points, boundary, standbys = get_points_from_file(shape, ratio, group_file, output_path, txt_file, standby_file)
+            points, boundary, standbys = get_points_from_file(ratio, group_file, output_path, txt_file, standby_file)
 
             ori_dists_center = get_dist_to_centroid(standbys[:, 0:3], shape, k, group_file, ratio)
             # print(ori_dists_center)
@@ -468,9 +463,9 @@ def solve_obstructing(group_file, meta_direc, ratio):
 
                     while not all([not is_disp_cell_overlapping(new_pos, p) for p in points]):
 
-                        for p in points:
-                            if is_disp_cell_overlapping(new_pos, p):
-                                print(p, np.where(np.all(points == p, axis=1))[0])
+                        # for p in points:
+                        #     if is_disp_cell_overlapping(new_pos, p):
+                        #         print(p, np.where(np.all(points == p, axis=1))[0])
 
                         new_pos += gaze_vec * step_length
                         check_times += 1

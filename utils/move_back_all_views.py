@@ -7,6 +7,8 @@ import multiprocessing as mp
 
 def solve_all_views(group_file, meta_direc, ratio, k, shape):
 
+    print(f"{shape}, R={ratio}, K={k}")
+
     result_find = [
         ["Shape", "K", "Ratio", "View", "Visible_Illum", "Obstructing FLS"]]
 

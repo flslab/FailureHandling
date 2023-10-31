@@ -52,8 +52,8 @@ def solve_all_views(group_file, meta_direc, ratio, k, shape):
          boundary[0][0] / 2 + boundary[1][0] / 2]
     ]
 
-    # views = ["top", "bottom", "left", "right", "front", "back", "top"]
-    views = ["top"]
+    views = ["top", "bottom", "left", "right", "front", "back", "top"]
+    # views = ["top"]
 
     for i in range(len(views)):
 
@@ -72,15 +72,17 @@ def solve_all_views(group_file, meta_direc, ratio, k, shape):
 
         result_solve.append(metrics_solve)
 
-    view = views[0]
-    camera = cam_positions[0]
+    for i in range(len(views)):
+        view = views[i]
+        camera = cam_positions[i]
 
-    txt_file = f"{shape}.txt"
-    standby_file = f"{shape}_{views[-1]}_standby.txt"
-    points, boundary, standbys = get_points(ratio, group_file, output_path, txt_file, standby_file)
+        txt_file = f"{shape}.txt"
+        standby_file = f"{shape}_{views[-1]}_standby.txt"
+        points, boundary, standbys = get_points(ratio, group_file, output_path, txt_file, standby_file)
 
-    metrics_find = calculate_single_view(shape, k, ratio, view, points, camera, output_path)
-    result_find.append(metrics_find)
+        metrics_find = calculate_single_view(shape, k, ratio, view, points, camera, output_path)
+        result_find.append(metrics_find)
+
 
     with open(f'{report_path}/report_find_R{ratio}_K{k}_{shape}.csv', mode='w', newline='') as file:
         writer = csv.writer(file)

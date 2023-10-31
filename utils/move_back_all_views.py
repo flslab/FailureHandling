@@ -52,7 +52,7 @@ def solve_all_views(group_file, meta_direc, ratio, k, shape):
          boundary[0][0] / 2 + boundary[1][0] / 2]
     ]
 
-    views = ["top", "bottom", "left", "right", "front", "back", "top"]
+    views = ["top", "bottom", "left", "right", "front", "back"]
     # views = ["top"]
 
     for i in range(len(views)):

@@ -145,7 +145,7 @@ def check_visible_cell(user_eye, points, ratio):
     sorted_indices = np.argsort(distances)
     distances.sort()
 
-    for index_dist in tqdm(range(len(sorted_indices))):
+    for index_dist in range(len(sorted_indices)):
         p_index = sorted_indices[index_dist]
 
         cell_center = points[p_index][0:3]

@@ -116,9 +116,9 @@ if __name__ == "__main__":
         for k in [3, 20]:
 
             for shape in ["skateboard", "dragon", "hat"]:
-                solve_all_views(file_folder, meta_dir, illum_to_disp_ratio, k, shape)
-    #             p_list.append(mp.Process(target=solve_all_views, args=(file_folder, meta_dir, illum_to_disp_ratio, k, shape)))
-    #
-    # for p in p_list:
-    #     print(p)
-    #     p.start()
+                # solve_all_views(file_folder, meta_dir, illum_to_disp_ratio, k, shape)
+                p_list.append(mp.Process(target=solve_all_views, args=(file_folder, meta_dir, illum_to_disp_ratio, k, shape)))
+
+    for p in p_list:
+        print(p)
+        p.start()

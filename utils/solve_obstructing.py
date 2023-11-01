@@ -115,14 +115,19 @@ def is_inside_cube(point, cube_center, length):
 def is_disp_cell_overlapping(coord1, coord2):
     return is_inside_cube(coord1, coord2, 1)
 
-def solve_single_view(shape, k, ratio, view, lastview, camera, group_file, output_path):
+
+def solve_single_view(shape, k, ratio, view, lastview, camera, group_file, output_path, test=False):
     tag = f"Solving: {shape}, K: {k}, Ratio: {ratio} ,{view}"
     print(tag)
 
     txt_file = f"{shape}.txt"
     standby_file = f"{shape}{lastview}_standby.txt"
     points, boundary, standbys = get_points_from_file(ratio, group_file, output_path, txt_file, standby_file)
-    ori_dists_center = get_dist_to_centroid(standbys[:, 0:3], shape, k, group_file, ratio)
+    if not test:
+        ori_dists_center = get_dist_to_centroid(standbys[:, 0:3], shape, k, group_file, ratio)
+    else:
+        ori_dists_center = [0]
+
     dist_illum = {}
     dist_standby = {}
     dist_between = []
@@ -256,7 +261,10 @@ def solve_single_view(shape, k, ratio, view, lastview, camera, group_file, outpu
 
     np.savetxt(f'{output_path}/points/{shape}_{view}_standby.txt', standbys, fmt='%f', delimiter=' ')
 
-    dists_center = get_dist_to_centroid(standbys[:, 0:3], shape, k, group_file, ratio)
+    if not test:
+        dists_center = get_dist_to_centroid(standbys[:, 0:3], shape, k, group_file, ratio)
+    else:
+        dists_center = [0]
 
     max_speed = max_acceleration = max_deceleration = 6.11
 
@@ -273,13 +281,10 @@ def solve_single_view(shape, k, ratio, view, lastview, camera, group_file, outpu
                calculate_travel_time(max_speed, max_acceleration, max_deceleration, statistics.mean(ori_dists_center)),
                min(dists_center), max(dists_center), statistics.mean(dists_center),
                calculate_travel_time(max_speed, max_acceleration, max_deceleration, statistics.mean(dists_center)),
-               (statistics.mean(dists_center) / statistics.mean(ori_dists_center)) - 1,
-               (calculate_travel_time(max_speed, max_acceleration, max_deceleration,
-                                      statistics.mean(dists_center)) / calculate_travel_time(max_speed,
-                                                                                             max_acceleration,
-                                                                                             max_deceleration,
-                                                                                             statistics.mean(
-                                                                                                 ori_dists_center))) - 1,
+               (statistics.mean(dists_center) / statistics.mean(ori_dists_center)) - 1 if statistics.mean(ori_dists_center) > 0 else 0,
+               (calculate_travel_time(max_speed, max_acceleration, max_deceleration, statistics.mean(dists_center)) /
+               calculate_travel_time(max_speed, max_acceleration, max_deceleration, statistics.mean(ori_dists_center))) - 1
+               if statistics.mean(ori_dists_center) > 0 else 0,
                multi_obst
                ]
 
@@ -341,7 +346,8 @@ def solve_obstructing(group_file, meta_direc, ratio):
 
             for i in range(len(views)):
 
-                points, boundary, standbys = get_points_from_file(ratio, group_file, output_path, txt_file, standby_file)
+                points, boundary, standbys = get_points_from_file(ratio, group_file, output_path, txt_file,
+                                                                  standby_file)
 
                 tag = f"Solving: {shape}, K: {k}, Ratio: {ratio} ,{views[i]}"
                 print(tag)
@@ -462,7 +468,6 @@ def solve_obstructing(group_file, meta_direc, ratio):
                     check_times = 1
 
                     while not all([not is_disp_cell_overlapping(new_pos, p) for p in points]):
-
                         # for p in points:
                         #     if is_disp_cell_overlapping(new_pos, p):
                         #         print(p, np.where(np.all(points == p, axis=1))[0])

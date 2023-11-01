@@ -34,21 +34,21 @@ def solve_all_views(group_file, meta_direc, ratio, k, shape):
     cam_positions = [
         # top
         [boundary[0][0] / 2 + boundary[1][0] / 2, boundary[0][1] / 2 + boundary[1][1] / 2,
-         boundary[1][2] + 100 * ratio],
+         boundary[1][2] + 100],
         # down
         [boundary[0][0] / 2 + boundary[1][0] / 2, boundary[0][1] / 2 + boundary[1][1] / 2,
-         boundary[0][2] - 100 * ratio],
+         boundary[0][2] - 100],
         # left
-        [boundary[0][0] - 100 * ratio, boundary[0][1] / 2 + boundary[1][1] / 2,
+        [boundary[0][0] - 100, boundary[0][1] / 2 + boundary[1][1] / 2,
          boundary[0][0] / 2 + boundary[1][0] / 2],
         # right
-        [boundary[1][0] + 100 * ratio, boundary[0][1] / 2 + boundary[1][1] / 2,
+        [boundary[1][0] + 100, boundary[0][1] / 2 + boundary[1][1] / 2,
          boundary[0][0] / 2 + boundary[1][0] / 2],
         # front
-        [boundary[0][0] / 2 + boundary[1][0] / 2, boundary[0][1] - 100 * ratio,
+        [boundary[0][0] / 2 + boundary[1][0] / 2, boundary[0][1] - 100,
          boundary[0][0] / 2 + boundary[1][0] / 2],
         # back
-        [boundary[0][0] / 2 + boundary[1][0] / 2, boundary[1][1] + 100 * ratio,
+        [boundary[0][0] / 2 + boundary[1][0] / 2, boundary[1][1] + 100,
          boundary[0][0] / 2 + boundary[1][0] / 2]
     ]
 

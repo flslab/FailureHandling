@@ -136,6 +136,7 @@ def solve_single_view(shape, k, ratio, view, lastview, camera, group_file, outpu
     blocked_by = read_coordinates(f"{output_path}/points/{shape}_{view}_blocked.txt", ' ')
 
     if len(obstructing) == 0:
+        np.savetxt(f'{output_path}/points/{shape}_{view}_standby.txt', standbys, fmt='%f', delimiter=' ')
         metrics = [shape, k, ratio, view, 0, 0, 0,
                    0, 0, 0,
                    0, 0, 0,
@@ -143,8 +144,6 @@ def solve_single_view(shape, k, ratio, view, lastview, camera, group_file, outpu
                    0, 0, 0,
                    0, 0
                    ]
-
-        print(metrics)
         return metrics
 
     obstructing = np.array(obstructing)[:, 0:3]

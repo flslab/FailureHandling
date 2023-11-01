@@ -34,21 +34,21 @@ def solve_all_views(group_file, meta_direc, ratio, k, shape):
     cam_positions = [
         # top
         [boundary[0][0] / 2 + boundary[1][0] / 2, boundary[0][1] / 2 + boundary[1][1] / 2,
-         boundary[1][2] + 100 * ratio],
+         boundary[1][2] + 100],
         # down
         [boundary[0][0] / 2 + boundary[1][0] / 2, boundary[0][1] / 2 + boundary[1][1] / 2,
-         boundary[0][2] - 100 * ratio],
+         boundary[0][2] - 100],
         # left
-        [boundary[0][0] - 100 * ratio, boundary[0][1] / 2 + boundary[1][1] / 2,
+        [boundary[0][0] - 100, boundary[0][1] / 2 + boundary[1][1] / 2,
          boundary[0][0] / 2 + boundary[1][0] / 2],
         # right
-        [boundary[1][0] + 100 * ratio, boundary[0][1] / 2 + boundary[1][1] / 2,
+        [boundary[1][0] + 100, boundary[0][1] / 2 + boundary[1][1] / 2,
          boundary[0][0] / 2 + boundary[1][0] / 2],
         # front
-        [boundary[0][0] / 2 + boundary[1][0] / 2, boundary[0][1] - 100 * ratio,
+        [boundary[0][0] / 2 + boundary[1][0] / 2, boundary[0][1] - 100,
          boundary[0][0] / 2 + boundary[1][0] / 2],
         # back
-        [boundary[0][0] / 2 + boundary[1][0] / 2, boundary[1][1] + 100 * ratio,
+        [boundary[0][0] / 2 + boundary[1][0] / 2, boundary[1][1] + 100,
          boundary[0][0] / 2 + boundary[1][0] / 2]
     ]
 
@@ -104,21 +104,21 @@ def solve_all_views(group_file, meta_direc, ratio, k, shape):
 
 if __name__ == "__main__":
 
-    # file_folder = "/Users/shuqinzhu/Desktop/pointcloud"
-    # meta_dir = "/Users/shuqinzhu/Desktop"
+    file_folder = "/Users/shuqinzhu/Desktop/pointcloud"
+    meta_dir = "/Users/shuqinzhu/Desktop"
 
-    file_folder = "/users/Shuqin/pointcloud"
-    meta_dir = "/users/Shuqin"
+    # file_folder = "/users/Shuqin/pointcloud"
+    # meta_dir = "/users/Shuqin"
 
     p_list = []
-    for illum_to_disp_ratio in [1, 3, 5, 10]:
+    for illum_to_disp_ratio in [5]:
 
-        for k in [3, 20]:
+        for k in [3]:
 
-            for shape in ["skateboard", "dragon", "hat"]:
-                # solve_all_views(file_folder, meta_dir, illum_to_disp_ratio, k, shape)
-                p_list.append(mp.Process(target=solve_all_views, args=(file_folder, meta_dir, illum_to_disp_ratio, k, shape)))
-
-    for p in p_list:
-        print(p)
-        p.start()
+            for shape in ["hat"]:
+                solve_all_views(file_folder, meta_dir, illum_to_disp_ratio, k, shape)
+    #             p_list.append(mp.Process(target=solve_all_views, args=(file_folder, meta_dir, illum_to_disp_ratio, k, shape)))
+    #
+    # for p in p_list:
+    #     print(p)
+    #     p.start()

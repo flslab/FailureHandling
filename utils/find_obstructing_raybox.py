@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 
 
 def is_cell_overlap(point, cube_center, length):
-    return all(abs(p - c) < length + 0.00000000001 for p, c in zip(point, cube_center))
+    return all(abs(p - c) < length - 0.00000000001 for p, c in zip(point, cube_center))
 
 
 def is_disp_cell_overlap(coord1, coord2):
@@ -17,7 +17,7 @@ def is_disp_cell_overlap(coord1, coord2):
 
 
 def is_inside_cube(point, cube_center, length):
-    return all(abs(p - c) < length / 2 + 0.00000000001 for p, c in zip(point, cube_center))
+    return all(abs(p - c) < length / 2 - 0.00000000001 for p, c in zip(point, cube_center))
 
 
 def is_in_illum_cell(coord1, coord2, ratio):
@@ -267,8 +267,6 @@ def get_points(shape, K, file_folder, ratio):
 
         coords = points[:, :3]
 
-        coords = coords.tolist()
-
         check = 0
         if not all([not is_disp_cell_overlap(coord, c) for c in coords]):
 
@@ -294,6 +292,10 @@ def get_points(shape, K, file_folder, ratio):
                         overlap = False
                         coord = new_coord.tolist()
                         break
+                    else:
+                        for c in coords:
+                            if is_disp_cell_overlap(new_coord, c):
+                                print(new_coord, c)
 
                 if overlap:
                     if rims_check % 10 == 0:
@@ -463,21 +465,21 @@ if __name__ == "__main__":
 
     # file_folder = "C:/Users/zhusq/Desktop"
     # meta_dir = "C:/Users/zhusq/Desktop"
-    # file_folder = "/Users/shuqinzhu/Desktop/pointcloud"
-    # meta_dir = "/Users/shuqinzhu/Desktop"
+    file_folder = "/Users/shuqinzhu/Desktop/pointcloud"
+    meta_dir = "/Users/shuqinzhu/Desktop"
 
-    file_folder = "/users/Shuqin/pointcloud"
-    meta_dir = "/users/Shuqin"
+    # file_folder = "/users/Shuqin/pointcloud"
+    # meta_dir = "/users/Shuqin"
 
     p_list = []
     for illum_to_disp_ratio in [1, 3, 5, 10]:
 
         for k in [3, 20]:
             for shape in ["skateboard", "dragon", "hat"]:
-                # calculate_obstructing(file_folder, meta_dir, illum_to_disp_ratio, k, shape)
-                p_list.append(mp.Process(target=calculate_obstructing,
-                                         args=(file_folder, meta_dir, illum_to_disp_ratio, k, shape)))
-
-    for p in p_list:
-        print(p)
-        p.start()
+                calculate_obstructing(file_folder, meta_dir, illum_to_disp_ratio, k, shape)
+    #             p_list.append(mp.Process(target=calculate_obstructing,
+    #                                      args=(file_folder, meta_dir, illum_to_disp_ratio, k, shape)))
+    #
+    # for p in p_list:
+    #     print(p)
+    #     p.start()

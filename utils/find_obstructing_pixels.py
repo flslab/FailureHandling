@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 
 
 def is_cell_overlap(point, cube_center, length):
-    return all(abs(p - c) < length + 0.00000000001 for p, c in zip(point, cube_center))
+    return all(abs(p - c) < length - 0.00000000001 for p, c in zip(point, cube_center))
 
 
 def is_disp_cell_overlap(coord1, coord2):

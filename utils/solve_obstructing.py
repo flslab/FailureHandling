@@ -109,7 +109,7 @@ def get_distance(point1, point2):
 
 # Function to check if a point is inside a cube
 def is_inside_cube(point, cube_center, length):
-    return all(abs(p - c) < length + 0.0001 for p, c in zip(point, cube_center))
+    return all(abs(p - c) < length - 0.000001 for p, c in zip(point, cube_center))
 
 
 def is_disp_cell_overlapping(coord1, coord2):
@@ -215,7 +215,7 @@ def solve_single_view(shape, k, ratio, view, lastview, camera, group_file, outpu
     for blocking_list in list(multiple_blocking.values()):
         multi_obst.append(len(blocking_list))
 
-    step_length = 0.5
+    step_length = 1
 
     for key in obstruct_pairs.keys():
         dist_standby[standby_list[key]] = 0

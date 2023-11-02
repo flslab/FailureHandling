@@ -1,17 +1,4 @@
-import csv
-import math
-from collections import Counter
-from threading import Thread
-
-import numpy as np
-import os
-import pandas as pd
-from matplotlib import pyplot as plt
-from tqdm import tqdm
-import statistics
-import multiprocessing as mp
-
-from find_obstructing_raybox import get_points_from_file, read_coordinates, move_back_still_visible
+from find_obstructing_raybox import *
 
 
 def normalize(v):
@@ -51,7 +38,7 @@ def calculate_travel_time(max_speed, max_acceleration, max_deceleration, distanc
 def get_dist_to_centroid(standbys, shape, k, file_folder, ratio):
     input_file = f"{shape}_G{k}.xlsx"
 
-    groups, a = read_cliques_xlsx(f"{file_folder}/{input_file}", ratio)
+    groups = read_cliques_xlsx(f"{file_folder}/{input_file}", ratio)
 
     avg_dists = []
 
@@ -61,60 +48,6 @@ def get_dist_to_centroid(standbys, shape, k, file_folder, ratio):
         avg_dists.append(statistics.mean(distances))
 
     return avg_dists
-
-
-def angle_between(origin, point):
-    vector = np.array(point) - np.array(origin)
-    angle = np.arctan2(vector[1], vector[0])
-    return np.degrees(angle)
-
-
-def read_cliques_xlsx(path, ratio):
-    df = pd.read_excel(path, sheet_name='cliques')
-    group_list = []
-
-    for c in df["7 coordinates"]:
-        coord_list = np.array(eval(c))
-        coord_list = coord_list * ratio
-        group_list.append(coord_list)
-
-    return group_list, [max(eval(d)) + 1 if eval(d) != [] else 1 for d in df["6 dist between each pair"]]
-
-
-def get_standby_coords(groups, K):
-    group_standby_coord = []
-
-    for i in range(len(groups)):
-
-        group = groups[i]
-
-        if K:
-            member_count = group.shape[0]
-            sum_x = np.sum(group[:, 0])
-            sum_y = np.sum(group[:, 1])
-            sum_z = np.sum(group[:, 2])
-            stand_by_coord = [
-                float(round(sum_x / member_count)),
-                float(round(sum_y / member_count)),
-                float(round(sum_z / member_count)),
-            ]
-            group_standby_coord.append(stand_by_coord)
-
-    return group_standby_coord
-
-
-def get_distance(point1, point2):
-    return np.linalg.norm(np.array(point1) - np.array(point2))
-
-
-# Function to check if a point is inside a cube
-def is_inside_cube(point, cube_center, length):
-    return all(abs(p - c) < length - 0.000001 for p, c in zip(point, cube_center))
-
-
-def is_disp_cell_overlapping(coord1, coord2):
-    return is_inside_cube(coord1, coord2, 1)
-
 
 def solve_single_view(shape, k, ratio, view, lastview, user_eye, group_file, output_path, test=False):
     tag = f"Solving: {shape}, K: {k}, Ratio: {ratio} ,{view}"
@@ -239,7 +172,7 @@ def solve_single_view(shape, k, ratio, view, lastview, user_eye, group_file, out
 
         check_times = 1
 
-        while ((not all([not is_disp_cell_overlapping(new_pos, p) for p in points]))
+        while ((not all([not is_disp_cell_overlap(new_pos, p) for p in points]))
                and move_back_still_visible(user_eye, ratio, new_pos, illum_coord)):
             # for p in points:
             #     if is_disp_cell_overlapping(new_pos, p):
@@ -281,9 +214,11 @@ def solve_single_view(shape, k, ratio, view, lastview, user_eye, group_file, out
                calculate_travel_time(max_speed, max_acceleration, max_deceleration, statistics.mean(ori_dists_center)),
                min(dists_center), max(dists_center), statistics.mean(dists_center),
                calculate_travel_time(max_speed, max_acceleration, max_deceleration, statistics.mean(dists_center)),
-               (statistics.mean(dists_center) / statistics.mean(ori_dists_center)) - 1 if statistics.mean(ori_dists_center) > 0 else 0,
+               (statistics.mean(dists_center) / statistics.mean(ori_dists_center)) - 1 if statistics.mean(
+                   ori_dists_center) > 0 else 0,
                (calculate_travel_time(max_speed, max_acceleration, max_deceleration, statistics.mean(dists_center)) /
-               calculate_travel_time(max_speed, max_acceleration, max_deceleration, statistics.mean(ori_dists_center))) - 1
+                calculate_travel_time(max_speed, max_acceleration, max_deceleration,
+                                      statistics.mean(ori_dists_center))) - 1
                if statistics.mean(ori_dists_center) > 0 else 0,
                multi_obst
                ]
@@ -348,9 +283,10 @@ def solve_obstructing(group_file, meta_direc, ratio):
                 view = views[i]
                 user_eye = eye_positions[i]
                 lastview = ""
-                metrics = solve_single_view(shape, k, ratio, view, lastview, user_eye, group_file, output_path, test=False)
+                metrics = solve_single_view(shape, k, ratio, view, lastview, user_eye, group_file, output_path,
+                                            test=False)
                 print(list(zip(title, metrics)))
-                
+
     with open(f'{report_path}/solve_R{ratio}.csv', mode='w', newline='') as file:
         writer = csv.writer(file)
 

@@ -109,7 +109,7 @@ def get_distance(point1, point2):
 
 # Function to check if a point is inside a cube
 def is_inside_cube(point, cube_center, length):
-    return all(abs(p - c) < length + 0.00000000001 for p, c in zip(point, cube_center))
+    return all(abs(p - c) < length + 0.0001 for p, c in zip(point, cube_center))
 
 
 def is_disp_cell_overlapping(coord1, coord2):

@@ -240,8 +240,10 @@ def get_points(shape, K, file_folder, ratio):
     ])
 
     check_times = []
+    standbys = []
 
-    for coord in group_standby_coord:
+    for i in tqdm(range(len(group_standby_coord))):
+        coord = group_standby_coord[i]
 
         coords = points[:, :3]
 
@@ -266,7 +268,7 @@ def get_points(shape, K, file_folder, ratio):
                 directions = np.array(directions)
 
                 for dirc in directions:
-                    new_coord = coord + dirc * 0.5
+                    new_coord = coord + dirc * 1
                     check += 1
                     if all([not is_disp_cell_overlap(new_coord, c) for c in coords]):
                         overlap = False
@@ -279,11 +281,11 @@ def get_points(shape, K, file_folder, ratio):
                     rims_check += 1
                 # break
         check_times.append(check)
-
         coord.append(1)
+        standbys.append(coord)
         points = np.concatenate((points, [coord]), axis=0)
 
-    return points, point_boundary, check_times
+    return points, point_boundary, np.array(standbys), check_times
 
 
 def calculate_single_view(shape, k, ratio, view, points, camera, output_path):
@@ -339,8 +341,10 @@ def calculate_obstructing(group_file, meta_direc, ratio, k, shape):
 
     output_path = f"{meta_direc}/obstructing/R{ratio}/K{k}"
 
-    points, boundary, standbys = get_points_from_file(ratio, group_file, output_path, f"{shape}.txt", f"{shape}_standby.txt")
-    check_times = [0]
+    points, boundary, standbys, check_times = get_points(shape, k, file_folder, ratio)
+
+    # points, boundary, standbys = get_points_from_file(ratio, group_file, output_path, f"{shape}.txt", f"{shape}_standby.txt")
+    # check_times = [0]
 
     camera_shifting = 100
 
@@ -448,10 +452,10 @@ if __name__ == "__main__":
     # meta_dir = "/users/Shuqin"
 
     p_list = []
-    for illum_to_disp_ratio in [5, 10]:
+    for illum_to_disp_ratio in [1, 3, 5, 10]:
 
         for k in [3, 20]:
-            for shape in ["hat"]:
+            for shape in ["skateboard", "dragon", "hat"]:
                 calculate_obstructing(file_folder, meta_dir, illum_to_disp_ratio, k, shape)
     #             p_list.append(mp.Process(target=calculate_obstructing, args=(file_folder, meta_dir, illum_to_disp_ratio, k, shape)))
     #

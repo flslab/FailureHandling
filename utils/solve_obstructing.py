@@ -11,7 +11,7 @@ from tqdm import tqdm
 import statistics
 import multiprocessing as mp
 
-from find_obstructing_raybox import get_points_from_file, read_coordinates
+from find_obstructing_raybox import get_points_from_file, read_coordinates, move_back_still_visible
 
 
 def normalize(v):
@@ -116,7 +116,7 @@ def is_disp_cell_overlapping(coord1, coord2):
     return is_inside_cube(coord1, coord2, 1)
 
 
-def solve_single_view(shape, k, ratio, view, lastview, camera, group_file, output_path, test=False):
+def solve_single_view(shape, k, ratio, view, lastview, user_eye, group_file, output_path, test=False):
     tag = f"Solving: {shape}, K: {k}, Ratio: {ratio} ,{view}"
     print(tag)
 
@@ -205,7 +205,7 @@ def solve_single_view(shape, k, ratio, view, lastview, camera, group_file, outpu
 
         for blocked_index in set(blocked_index_list):
             dist_between.append(get_distance(standbys[uni_index][0:3], points[blocked_index][0:3]))
-            dist = get_distance(camera, points[blocked_index][0:3])
+            dist = get_distance(user_eye, points[blocked_index][0:3])
             if dist < min_dist:
                 min_dist = dist
                 pair_index = blocked_index
@@ -234,17 +234,18 @@ def solve_single_view(shape, k, ratio, view, lastview, camera, group_file, outpu
 
         illum_coord = points[illum_index][0:3]
 
-        gaze_vec = normalize(np.array(illum_coord) - camera)
-        new_pos = illum_coord + gaze_vec
+        gaze_vec = normalize(np.array(illum_coord) - user_eye)
+        new_pos = np.round(illum_coord + gaze_vec)
 
         check_times = 1
 
-        while not all([not is_disp_cell_overlapping(new_pos, p) for p in points]):
+        while ((not all([not is_disp_cell_overlapping(new_pos, p) for p in points]))
+               and move_back_still_visible(user_eye, ratio, new_pos, illum_coord)):
             # for p in points:
             #     if is_disp_cell_overlapping(new_pos, p):
             #         print(p, np.where(np.all(points == p, axis=1))[0])
 
-            new_pos += gaze_vec * step_length
+            new_pos = np.round(new_pos + gaze_vec * step_length)
             check_times += 1
 
         dist_standby[standby_index] += get_distance(illum_coord, obstructing[obstructing_index])
@@ -318,7 +319,7 @@ def solve_obstructing(group_file, meta_direc, ratio):
             ori_dists_center = get_dist_to_centroid(standbys[:, 0:3], shape, k, group_file, ratio)
             # print(ori_dists_center)
 
-            cam_positions = [
+            eye_positions = [
                 # top
                 [boundary[0][0] / 2 + boundary[1][0] / 2, boundary[0][1] / 2 + boundary[1][1] / 2,
                  boundary[1][2] + 100],
@@ -344,178 +345,12 @@ def solve_obstructing(group_file, meta_direc, ratio):
             # np.savetxt(f'{output_path}/points/{shape}_standby_solve.txt', standbys, fmt='%f', delimiter=' ')
 
             for i in range(len(views)):
-
-                points, boundary, standbys = get_points_from_file(ratio, group_file, output_path, txt_file,
-                                                                  standby_file)
-
-                tag = f"Solving: {shape}, K: {k}, Ratio: {ratio} ,{views[i]}"
-                print(tag)
-
-                dist_illum = {}
-                dist_standby = {}
-                dist_between = []
-
-                camera = np.array(cam_positions[i])
-
-                obstructing = read_coordinates(f"{output_path}/points/{shape}_{views[i]}_blocking.txt", ' ')
-                blocked_by = read_coordinates(f"{output_path}/points/{shape}_{views[i]}_blocked.txt", ' ')
-
-                if len(obstructing) == 0:
-                    metrics = [shape, k, ratio, views[i], 0, 0, 0,
-                               0, 0, 0,
-                               0, 0, 0,
-                               0, 0, 0,
-                               0, 0, 0,
-                               0, 0
-                               ]
-
-                    result.append(metrics)
-                    print(metrics)
-                    continue
-
-                obstructing = np.array(obstructing)[:, 0:3]
-                blocked_by = np.array(blocked_by)[:, 0:3]
-
-                obs_list = []
-                for coord in obstructing:
-                    # find_flag = False
-
-                    point_ids = np.where(np.all(points[:, 0:3] == coord, axis=1))[0]
-                    if len(point_ids) == 0:
-                        print(f"Obstructing Not Found: {coord}, " + tag)
-                    else:
-                        obs_list.append(point_ids[0])
-                    # for index, row in enumerate(points[:, 0:3]):
-                    # if get_distance(row, coord) < 0.3:
-                    #     obs_list.append(index)
-                    #     find_flag = True
-                    #     break
-                    # if not find_flag:
-                    #     print(f"Obstructing Not Found: {coord}, " + tag)
-
-                standby_list = []
-                for coord in obstructing:
-                    point_ids = np.where(np.all(standbys[:, 0:3] == coord, axis=1))[0][0]
-                    # if len(point_ids) == 0:
-                    #     print(f"Standby Not Found: {coord}, " + tag)
-                    # else:
-                    standby_list.append(point_ids)
-
-                blocked_list = []
-                multiple_blocking = {}
-                for blocked_index, coord in enumerate(blocked_by):
-
-                    point_ids = np.where(np.all(points[:, 0:3] == coord, axis=1))[0][0]
-                    # if len(point_ids) == 0:
-                    #     print(f"Blocked Not Found: {coord}, " + tag)
-                    # else:
-                    blocked_list.append(point_ids)
-                    if point_ids in multiple_blocking.keys():
-                        if standby_list[blocked_index] not in multiple_blocking[point_ids]:
-                            multiple_blocking[point_ids].append(standby_list[blocked_index])
-                            # if len(multiple_blocking[point_ids]) == 4:
-                            #     for pid in multiple_blocking[point_ids]:
-                            #         print(standbys[pid][0:3])
-                    else:
-                        multiple_blocking[point_ids] = [standby_list[blocked_index]]
-
-                obstruct_pairs = dict()
-
-                # Match obstructing FLSs with only one illuminating FLS, they just needs to move once
-                for uni_index in set(standby_list):
-                    blocked_list_indexes = np.where(standby_list == uni_index)[0]
-                    pair_index = None
-                    min_dist = float('inf')
-                    blocked_index_list = []
-                    for blocked_list_index in blocked_list_indexes:
-                        blocked_index_list.append(blocked_list[blocked_list_index])
-
-                    for blocked_index in set(blocked_index_list):
-                        dist_between.append(get_distance(standbys[uni_index][0:3], points[blocked_index][0:3]))
-                        dist = get_distance(camera, points[blocked_index][0:3])
-                        if dist < min_dist:
-                            min_dist = dist
-                            pair_index = blocked_index
-                        obstruct_pairs[blocked_list_indexes[0]] = pair_index
-
-                multi_obst = []
-                for blocking_list in list(multiple_blocking.values()):
-                    multi_obst.append(len(blocking_list))
-
-                step_length = 0.5
-
-                for key in obstruct_pairs.keys():
-                    dist_standby[standby_list[key]] = 0
-                    dist_illum[obstruct_pairs[key]] = 0
-
-                change_mapping = {}
-                for key in obstruct_pairs.keys():
-                    obstructing_index = key
-                    standby_index = standby_list[obstructing_index]
-
-                    origin_illum_index = obstruct_pairs[key]
-                    if origin_illum_index in change_mapping.keys():
-                        illum_index = change_mapping[origin_illum_index]
-                    else:
-                        illum_index = origin_illum_index
-
-                    illum_coord = points[illum_index][0:3]
-
-                    gaze_vec = normalize(np.array(illum_coord) - camera)
-                    new_pos = illum_coord + gaze_vec
-
-                    check_times = 1
-
-                    while not all([not is_disp_cell_overlapping(new_pos, p) for p in points]):
-                        # for p in points:
-                        #     if is_disp_cell_overlapping(new_pos, p):
-                        #         print(p, np.where(np.all(points == p, axis=1))[0])
-
-                        new_pos += gaze_vec * step_length
-                        check_times += 1
-
-                    dist_standby[standby_index] += get_distance(illum_coord, obstructing[obstructing_index])
-                    dist_illum[origin_illum_index] += get_distance(illum_coord, new_pos)
-
-                    # print(standby_index, check_times, get_distance(illum_coord, obstructing[obstructing_index]), get_distance(illum_coord, new_pos), dist_illum[origin_illum_index], origin_illum_index)
-
-                    # points[illum_index][0:3] = new_pos
-                    points[obs_list[obstructing_index]][0:3] = new_pos
-                    standbys[standby_list[obstructing_index]][0:3] = new_pos
-
-                    change_mapping[origin_illum_index] = obs_list[obstructing_index]
-
-                dists_center = get_dist_to_centroid(standbys[:, 0:3], shape, k, group_file, ratio)
-
-                max_speed = max_acceleration = max_deceleration = 6.11
-
-                dist_illum_list = list(dist_illum.values())
-                dist_standby_list = list(dist_standby.values())
-
-                metrics = [shape, k, ratio, views[i],
-                           min(dist_illum_list), max(dist_illum_list), statistics.mean(dist_illum_list),
-                           min(dist_standby_list), max(dist_standby_list), statistics.mean(dist_standby_list),
-                           len(obstruct_pairs.values()),
-                           min(dist_between), max(dist_between), statistics.mean(dist_between),
-                           min(multi_obst), max(multi_obst), statistics.mean(multi_obst),
-                           min(ori_dists_center), max(ori_dists_center), statistics.mean(ori_dists_center),
-                           calculate_travel_time(max_speed, max_acceleration, max_deceleration,
-                                                 statistics.mean(ori_dists_center)),
-                           min(dists_center), max(dists_center), statistics.mean(dists_center),
-                           calculate_travel_time(max_speed, max_acceleration, max_deceleration,
-                                                 statistics.mean(dists_center)),
-                           (statistics.mean(dists_center) / statistics.mean(ori_dists_center)) - 1,
-                           (calculate_travel_time(max_speed, max_acceleration, max_deceleration,
-                                                  statistics.mean(dists_center)) / calculate_travel_time(max_speed,
-                                                                                                         max_acceleration,
-                                                                                                         max_deceleration,
-                                                                                                         statistics.mean(
-                                                                                                             ori_dists_center))) - 1,
-                           multi_obst
-                           ]
-
-                result.append(metrics)
+                view = views[i]
+                user_eye = eye_positions[i]
+                lastview = ""
+                metrics = solve_single_view(shape, k, ratio, view, lastview, user_eye, group_file, output_path, test=False)
                 print(list(zip(title, metrics)))
+                
     with open(f'{report_path}/solve_R{ratio}.csv', mode='w', newline='') as file:
         writer = csv.writer(file)
 

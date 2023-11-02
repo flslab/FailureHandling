@@ -17,11 +17,11 @@ def is_disp_cell_overlap(coord1, coord2):
 
 
 def is_inside_cube(point, cube_center, length):
-    return all(abs(p - c) < length/2 + 0.00000000001 for p, c in zip(point, cube_center))
+    return all(abs(p - c) < length / 2 + 0.00000000001 for p, c in zip(point, cube_center))
 
 
 def is_in_illum_cell(coord1, coord2, ratio):
-    return is_inside_cube(coord1, coord2, ratio-1)
+    return is_inside_cube(coord1, coord2, ratio - 1)
 
 
 def read_cliques_xlsx(path, ratio):
@@ -37,7 +37,6 @@ def read_cliques_xlsx(path, ratio):
 
 
 def get_points_from_file(ratio, pointcloud_folder, output_path, poitcloud_file, standby_file):
-
     group_standby_coord = read_coordinates(f"{output_path}/points/{standby_file}", ' ', 1)
 
     points = read_coordinates(f"{pointcloud_folder}/{poitcloud_file}", ' ')
@@ -139,6 +138,33 @@ def ray_cell_intersection(origin, direction, point, ratio, is_standby):
     return True
 
 
+def get_vertices(cell_center, is_standby, ratio):
+    if is_standby:
+        offsets = [-0.5, 0.5]
+    else:
+        offsets = [-0.5 * ratio, 0.5 * ratio]
+
+    vertices = [cell_center + np.array([x, y, z]) for x in offsets for y in offsets for z in offsets]
+    vertices.append(np.array(cell_center))
+    vertices = np.array(vertices)
+    return vertices
+
+
+def move_back_still_visible(user_eye, ratio, new_pos, illum_cell):
+    vertices = get_vertices(new_pos, True, ratio)
+
+    for v_index, vertex in enumerate(vertices):
+
+        direction = (vertex - user_eye)
+        direction /= np.linalg.norm(direction)
+        direction[direction == 0] = 1e-10
+
+        if not ray_cell_intersection(user_eye, direction, illum_cell, ratio, False):
+            return False
+
+    return True
+
+
 def check_visible_cell(user_eye, points, ratio):
     visible, blocking, blocked, blocking_index, potential_blocking_index = [], [], [], [], []
 
@@ -150,18 +176,11 @@ def check_visible_cell(user_eye, points, ratio):
         p_index = sorted_indices[index_dist]
 
         cell_center = points[p_index][0:3]
-        if points[p_index][3]:
-            offsets = [-0.5, 0.5]
-        else:
-            offsets = [-0.5 * ratio, 0.5 * ratio]
-
-        vertices = [cell_center + np.array([x, y, z]) for x in offsets for y in offsets for z in offsets]
-        vertices.append(np.array(cell_center))
-        vertices = np.array(vertices)
+        vertices = get_vertices(cell_center, points[p_index][3], ratio)
 
         checklist_end = index_dist
         if points[p_index][3]:
-            while (distances[checklist_end] - distances[index_dist]) < ratio/2 and checklist_end < len(distances)-1:
+            while (distances[checklist_end] - distances[index_dist]) < ratio / 2 and checklist_end < len(distances) - 1:
                 checklist_end += 1
 
         check_list = sorted_indices[:checklist_end]
@@ -203,7 +222,8 @@ def check_visible_cell(user_eye, points, ratio):
 
                     point = points[check_index]
 
-                    if point[3] != 1 and ray_cell_intersection(user_eye, direction, point[0:3], ratio, point[3]) and p_index not in potential_blocking_index:
+                    if point[3] != 1 and ray_cell_intersection(user_eye, direction, point[0:3], ratio,
+                                                               point[3]) and p_index not in potential_blocking_index:
                         blocking.append(points[p_index][0:3])
                         blocked.append(point[0:3])
                         potential_blocking_index.append(p_index)
@@ -326,10 +346,8 @@ def calculate_single_view(shape, k, ratio, view, points, camera, output_path):
     print(
         f"{shape}, K: {k}, Ratio: {ratio} ,{view} view: Number of Illuminating FLS: {len(visible_illum)}, Visible Standby FLS: {len(visible_standby)},  Obstructing Number: {len(blocking_index)}")
 
-
     metric = [shape, k, ratio, view, len(visible_illum), len(blocking_index)]
     return metric
-
 
 
 def calculate_obstructing(group_file, meta_direc, ratio, k, shape):
@@ -457,7 +475,8 @@ if __name__ == "__main__":
         for k in [3, 20]:
             for shape in ["skateboard", "dragon", "hat"]:
                 # calculate_obstructing(file_folder, meta_dir, illum_to_disp_ratio, k, shape)
-                p_list.append(mp.Process(target=calculate_obstructing, args=(file_folder, meta_dir, illum_to_disp_ratio, k, shape)))
+                p_list.append(mp.Process(target=calculate_obstructing,
+                                         args=(file_folder, meta_dir, illum_to_disp_ratio, k, shape)))
 
     for p in p_list:
         print(p)

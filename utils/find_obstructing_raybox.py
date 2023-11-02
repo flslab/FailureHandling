@@ -445,11 +445,11 @@ if __name__ == "__main__":
 
     # file_folder = "C:/Users/zhusq/Desktop"
     # meta_dir = "C:/Users/zhusq/Desktop"
-    file_folder = "/Users/shuqinzhu/Desktop/pointcloud"
-    meta_dir = "/Users/shuqinzhu/Desktop"
+    # file_folder = "/Users/shuqinzhu/Desktop/pointcloud"
+    # meta_dir = "/Users/shuqinzhu/Desktop"
 
-    # file_folder = "/users/Shuqin/pointcloud"
-    # meta_dir = "/users/Shuqin"
+    file_folder = "/users/Shuqin/pointcloud"
+    meta_dir = "/users/Shuqin"
 
     p_list = []
     for illum_to_disp_ratio in [1, 3, 5, 10]:

@@ -160,9 +160,9 @@ def move_back_still_visible(user_eye, ratio, new_pos, illum_cell):
         direction[direction == 0] = 1e-10
 
         if not ray_cell_intersection(user_eye, direction, illum_cell, ratio, False):
-            return False
+            return True
 
-    return True
+    return False
 
 
 def check_visible_cell(user_eye, points, ratio):

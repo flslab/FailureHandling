@@ -150,12 +150,14 @@ def solve_single_view(shape, k, ratio, view, lastview, user_eye, group_file, out
 
     step_length = 1
 
-    for key in obstruct_pairs.keys():
+    key_list = obstruct_pairs.keys()
+
+    for key in key_list:
         dist_standby[standby_list[key]] = 0
         dist_illum[obstruct_pairs[key]] = 0
 
     change_mapping = {}
-    for key in obstruct_pairs.keys():
+    for key in tqdm(range(len(key_list))):
         obstructing_index = key
         standby_index = standby_list[obstructing_index]
 
@@ -168,17 +170,20 @@ def solve_single_view(shape, k, ratio, view, lastview, user_eye, group_file, out
         illum_coord = points[illum_index][0:3]
 
         gaze_vec = normalize(np.array(illum_coord) - user_eye)
-        new_pos = np.round(illum_coord + gaze_vec)
+
+        new_coord = illum_coord + gaze_vec
+
+        new_pos = np.round(new_coord)
 
         check_times = 1
-
-        while ((not all([not is_disp_cell_overlap(new_pos, p) for p in points]))
-               and move_back_still_visible(user_eye, ratio, new_pos, illum_coord)):
+        while (not all([not is_disp_cell_overlap(new_pos, p) for p in points])
+               or move_back_still_visible(user_eye, ratio, new_pos, illum_coord)):
             # for p in points:
-            #     if is_disp_cell_overlapping(new_pos, p):
+            #     if is_disp_cell_overlap(new_pos, p):
             #         print(p, np.where(np.all(points == p, axis=1))[0])
 
-            new_pos = np.round(new_pos + gaze_vec * step_length)
+            new_coord += gaze_vec * step_length
+            new_pos = np.round(new_coord)
             check_times += 1
 
         dist_standby[standby_index] += get_distance(illum_coord, obstructing[obstructing_index])
@@ -286,7 +291,7 @@ def solve_obstructing(group_file, meta_direc, ratio):
                 metrics = solve_single_view(shape, k, ratio, view, lastview, user_eye, group_file, output_path,
                                             test=False)
                 print(list(zip(title, metrics)))
-
+                result.append(metrics)
     with open(f'{report_path}/solve_R{ratio}.csv', mode='w', newline='') as file:
         writer = csv.writer(file)
 

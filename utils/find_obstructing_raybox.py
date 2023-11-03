@@ -188,6 +188,8 @@ def check_visible_cell(user_eye, points, ratio):
         is_visible = [True for _ in range(len(vertices))]
         possible_visible = [True for _ in range(len(vertices))]
 
+        b_list = []
+
         for v_index, vertex in enumerate(vertices):
 
             direction = (vertex - user_eye)
@@ -205,6 +207,9 @@ def check_visible_cell(user_eye, points, ratio):
                     if point[3] == 0:
                         possible_visible[v_index] = False
                         break
+                    else:
+                        b_list.append(check_index)
+
 
         if any(is_visible):
             visible.append(points[p_index])
@@ -229,6 +234,8 @@ def check_visible_cell(user_eye, points, ratio):
                         potential_blocking_index.append(p_index)
                         if any(is_visible):
                             blocking_index.append(p_index)
+                        else:
+                            print("FOUND", b_list, p_index, check_index)
                         break
 
     return np.array(visible), np.array(blocking), np.array(blocked), np.unique(blocking_index)
@@ -292,10 +299,6 @@ def get_points(shape, K, file_folder, ratio):
                         overlap = False
                         coord = new_coord.tolist()
                         break
-                    else:
-                        for c in coords:
-                            if is_disp_cell_overlap(new_coord, c):
-                                print(new_coord, c)
 
                 if overlap:
                     if rims_check % 10 == 0:
@@ -407,7 +410,7 @@ def calculate_obstructing(group_file, meta_direc, ratio, k, shape):
 
     for i in range(len(views)):
 
-        # if i != 4:
+        # if i != 2:
         #     continue
 
         print(f"START: {shape}, K: {k}, Ratio: {ratio} ,{views[i]}")
@@ -465,21 +468,21 @@ if __name__ == "__main__":
 
     # file_folder = "C:/Users/zhusq/Desktop"
     # meta_dir = "C:/Users/zhusq/Desktop"
-    # file_folder = "/Users/shuqinzhu/Desktop/pointcloud"
-    # meta_dir = "/Users/shuqinzhu/Desktop"
+    file_folder = "/Users/shuqinzhu/Desktop/pointcloud"
+    meta_dir = "/Users/shuqinzhu/Desktop"
 
-    file_folder = "/users/Shuqin/pointcloud"
-    meta_dir = "/users/Shuqin"
+    # file_folder = "/users/Shuqin/pointcloud"
+    # meta_dir = "/users/Shuqin"
 
     p_list = []
-    for illum_to_disp_ratio in [1, 3, 5, 10]:
+    for illum_to_disp_ratio in [1]:
 
         for k in [3, 20]:
             for shape in ["skateboard", "dragon", "hat"]:
-                # calculate_obstructing(file_folder, meta_dir, illum_to_disp_ratio, k, shape)
-                p_list.append(mp.Process(target=calculate_obstructing,
-                                         args=(file_folder, meta_dir, illum_to_disp_ratio, k, shape)))
-
-    for p in p_list:
-        print(p)
-        p.start()
+                calculate_obstructing(file_folder, meta_dir, illum_to_disp_ratio, k, shape)
+    #             p_list.append(mp.Process(target=calculate_obstructing,
+    #                                      args=(file_folder, meta_dir, illum_to_disp_ratio, k, shape)))
+    #
+    # for p in p_list:
+    #     print(p)
+    #     p.start()

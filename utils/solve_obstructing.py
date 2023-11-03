@@ -49,6 +49,7 @@ def get_dist_to_centroid(standbys, shape, k, file_folder, ratio):
 
     return avg_dists
 
+
 def solve_single_view(shape, k, ratio, view, lastview, user_eye, group_file, output_path, test=False):
     tag = f"Solving: {shape}, K: {k}, Ratio: {ratio} ,{view}"
     print(tag)
@@ -150,14 +151,16 @@ def solve_single_view(shape, k, ratio, view, lastview, user_eye, group_file, out
 
     step_length = 1
 
-    key_list = obstruct_pairs.keys()
+    key_list = list(obstruct_pairs.keys())
 
     for key in key_list:
         dist_standby[standby_list[key]] = 0
         dist_illum[obstruct_pairs[key]] = 0
 
     change_mapping = {}
-    for key in tqdm(range(len(key_list))):
+    # block_mapping = {}
+    for key_index in tqdm(range(len(key_list))):
+        key = key_list[key_index]
         obstructing_index = key
         standby_index = standby_list[obstructing_index]
 
@@ -180,7 +183,7 @@ def solve_single_view(shape, k, ratio, view, lastview, user_eye, group_file, out
                or move_back_still_visible(user_eye, ratio, new_pos, illum_coord)):
             # for p in points:
             #     if is_disp_cell_overlap(new_pos, p):
-            #         print(p, np.where(np.all(points == p, axis=1))[0])
+            #         print("FOUND", p, np.where(np.all(points == p, axis=1))[0])
 
             new_coord += gaze_vec * step_length
             new_pos = np.round(new_coord)
@@ -192,6 +195,12 @@ def solve_single_view(shape, k, ratio, view, lastview, user_eye, group_file, out
         # print(standby_index, check_times, get_distance(illum_coord, obstructing[obstructing_index]), get_distance(illum_coord, new_pos), dist_illum[origin_illum_index], origin_illum_index)
 
         # points[illum_index][0:3] = new_pos
+        # if change_mapping[origin_illum_index] != origin_illum_index:
+        #
+        #
+        #     if not move_back_still_visible(user_eye, ratio, new_pos, illum_coord):
+        #
+        # block_mapping[origin_illum_index].append(points[obs_list[obstructing_index]][0:3])
         points[obs_list[obstructing_index]][0:3] = new_pos
         standbys[standby_list[obstructing_index]][0:3] = new_pos
 
@@ -285,6 +294,8 @@ def solve_obstructing(group_file, meta_direc, ratio):
             # np.savetxt(f'{output_path}/points/{shape}_standby_solve.txt', standbys, fmt='%f', delimiter=' ')
 
             for i in range(len(views)):
+                # if i != 2:
+                #     continue
                 view = views[i]
                 user_eye = eye_positions[i]
                 lastview = ""

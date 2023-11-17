@@ -32,7 +32,7 @@ ax.spines['top'].set_visible(False)
 plt.xticks([0, 3, 5, 10, 15, 20])
 
 ax.set_ylabel('Mean Time to Illuminate after a Failure(MTIF)', loc='top', rotation=0, labelpad=-260)
-ax.set_xlabel('Group Size (G)', loc='right')
+ax.set_xlabel('Group Size (G)', loc='right', fontsize='large')
 ax.set_xlim(left=0)
 
 yticks = plt.yticks()[0]
@@ -47,7 +47,7 @@ plt.text(6, 48, 'With Priority Queue', color=pri_line.get_color(), fontweight='b
 plt.text(6, 54, 'No Priority Queue', color=nopri_line.get_color(), fontweight='bold', zorder=3)
 
 # Add legend
-# plt.show(dpi=500)
+plt.show(dpi=500)
 plt.tight_layout()
 plt.savefig(f"../dragon_MTIF_groupsize_compare.png", dpi=500)
 plt.close()
@@ -78,7 +78,7 @@ ax.set_xlim(left=0)
 ax.set_ylim(0.3, 0.4)
 
 ax.set_ylabel('Quality of Illumination (QoI)', loc='top', rotation=0, labelpad=-175)
-ax.set_xlabel('Group Size (G)', loc='right')
+ax.set_xlabel('Group Size (G)', loc='right', fontsize='large')
 plt.tight_layout()
 # Add legend
 # plt.show(dpi=500)

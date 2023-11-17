@@ -38,7 +38,7 @@ ax.set_ylim(bottom=0)
 ax.set_title('Quality of Illumination (QoI)', loc='left', zorder=4)
 
 # ax.set_ylabel('Quality of Illumination (QoI)', loc='top', rotation=0, labelpad=-140)
-ax.set_xlabel('Maximum Time To Live (λ)', loc='right')
+ax.set_xlabel('Maximum Time To Live (λ)', loc='right', fontsize='large')
 # plt.tight_layout()
 # Add legend
 # plt.show(dpi=500)
@@ -70,7 +70,7 @@ plt.xticks(mttf_list)
 ax.set_title('MTID (Second)', loc='left', zorder=1)
 
 # ax.set_ylabel('Mean Time to Illuminate after a Failure(MTIF)', loc='top', rotation=0, labelpad=-225)
-ax.set_xlabel('Maximum Time To Live (λ)', loc='right')
+ax.set_xlabel('Maximum Time To Live (λ)', loc='right', fontsize='large')
 ax.set_xlim(left=0)
 
 yticks = plt.yticks()[0]
@@ -116,7 +116,7 @@ plt.xticks(mttf_list)
 ax.set_title('Queuing Delay (Second)', loc='left', zorder=4)
 # ax.set_ylabel('Queuing Delay (Second)', loc='top', rotation=0, labelpad=-121)
 
-ax.set_xlabel('Maximum Time To Live (λ)', loc='right')
+ax.set_xlabel('Maximum Time To Live (λ)', loc='right', fontsize='large')
 ax.set_xlim(left=0)
 
 yticks = plt.yticks()[0]

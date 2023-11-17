@@ -10,7 +10,7 @@ speed = "66"
 mpl.rcParams['font.family'] = 'Times New Roman'
 
 # data_names = ["50th percentile", "95th percentile", "99th percentile"]
-data_names = ["99th percentile"]
+data_names = ["95th percentile"]
 for shape in shapes:
 
     for data_name in data_names:
@@ -41,16 +41,16 @@ for shape in shapes:
             plt.plot(time, mtif, label=labels[i], color=colors[i])
 
         # Customize the plot
-        plt.xlabel('Time (Minute)', loc='right')
+        plt.xlabel('Time (Minute)', loc='right', fontsize="large")
 
         ax.spines['right'].set_visible(False)
         ax.spines['top'].set_visible(False)
 
         ax.set_title('MTID (Second)', loc='left', zorder=4)
         # plt.legend()
-        plt.text(30, 0.45, 'No Standby', color=colors[0], fontweight='bold', zorder=3)
-        plt.text(30, 0.07, 'G=3', color=colors[1], fontweight='bold', zorder=3)
-        plt.text(30, 0.36, 'G=20', color=colors[2], fontweight='bold', zorder=3)
+        plt.text(30, 0.43, 'No Standby', color=colors[0], fontweight='bold', zorder=3)
+        plt.text(30, 0.1, 'G=3', color=colors[1], fontweight='bold', zorder=3)
+        plt.text(30, 0.15, 'G=20', color=colors[2], fontweight='bold', zorder=3)
 
         # Show the plot
         # plt.show(dpi=500)

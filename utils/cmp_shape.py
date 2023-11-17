@@ -353,7 +353,7 @@ def distance_centroid_to_point_plot(data_sets, group_sizes, name):
 
     # print(f"Group centroid to points:{data_sets}")
     # Set the x-axis label
-    plt.xlabel('Group Size (G)')
+    plt.xlabel('Group Size (G)', loc='right', fontsize='large')
 
     # Set the title
     # plt.title('Distance from Group Centroid To Points in Group by Group Size')

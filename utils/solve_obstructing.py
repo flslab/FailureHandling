@@ -265,9 +265,6 @@ def solve_obstructing(group_file, meta_direc, ratio):
             standby_file = f"{shape}_standby.txt"
             points, boundary, standbys = get_points_from_file(ratio, group_file, output_path, txt_file, standby_file)
 
-            ori_dists_center = get_dist_to_centroid(standbys[:, 0:3], shape, k, group_file, ratio)
-            # print(ori_dists_center)
-
             eye_positions = [
                 # top
                 [boundary[0][0] / 2 + boundary[1][0] / 2, boundary[0][1] / 2 + boundary[1][1] / 2,

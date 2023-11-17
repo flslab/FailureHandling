@@ -30,7 +30,7 @@ ax.yaxis.set_major_formatter(y_formatter)
 
 ax.set_title('Execution Time (Second)', loc='left')
 # ax.set_ylabel('Execution Time (Second)', loc='top', rotation=0, labelpad=-124)
-ax.set_xlabel('Group Size (G)', loc='right', labelpad=-1)
+ax.set_xlabel('Group Size (G)', loc='right', labelpad=-1, fontsize='large')
 
 plt.text(7.5, 88.5, 'CANF Execution Time', color=CANF_line.get_color(), fontweight='bold')
 
@@ -61,7 +61,7 @@ counts = list(group_counts.values())
 # bin_edges = np.linspace(min(sizes) - 0.5, max(sizes) + 0.5, len(sizes) + 1)
 # Create a bar graph
 plt.bar(sizes, counts, align='center', edgecolor='black', linewidth=1, width=1)
-plt.xlabel('Size of the Group')
+plt.xlabel('Size of the Group', fontsize='large')
 
 plt.xticks(sizes)
 ax.set_title('Number of Groups', loc='left')

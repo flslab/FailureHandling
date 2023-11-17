@@ -234,8 +234,6 @@ def check_visible_cell(user_eye, points, ratio):
                         potential_blocking_index.append(p_index)
                         if any(is_visible):
                             blocking_index.append(p_index)
-                        else:
-                            print("FOUND", b_list, p_index, check_index)
                         break
 
     return np.array(visible), np.array(blocking), np.array(blocked), np.unique(blocking_index)
@@ -410,8 +408,8 @@ def calculate_obstructing(group_file, meta_direc, ratio, k, shape):
 
     for i in range(len(views)):
 
-        # if i != 2:
-        #     continue
+        if i != 3:
+            continue
 
         print(f"START: {shape}, K: {k}, Ratio: {ratio} ,{views[i]}")
 
@@ -475,9 +473,9 @@ if __name__ == "__main__":
     # meta_dir = "/users/Shuqin"
 
     p_list = []
-    for illum_to_disp_ratio in [1]:
+    for illum_to_disp_ratio in [10]:
 
-        for k in [3, 20]:
+        for k in [3]:
             for shape in ["skateboard", "dragon", "hat"]:
                 calculate_obstructing(file_folder, meta_dir, illum_to_disp_ratio, k, shape)
     #             p_list.append(mp.Process(target=calculate_obstructing,

@@ -66,12 +66,12 @@ general_props = [
     #         #  "FAILURE_TIMEOUT": "60", "PRIORITIZE_ILLUMINATING_FLS": "False"},
     #     ]
     # },
-    {
-        "keys": ["DISPATCH_RATE"],
-        "values": ["80"],
-        # "values": ["10", "20", "100"]
-        # "values": ["5", "10"]
-    },
+    # {
+    #     "keys": ["DISPATCH_RATE"],
+    #     "values": ["35"],
+    #     # "values": ["10", "20", "100"]
+    #     # "values": ["5", "10"]
+    # },
     {
         "keys": ["K", "INPUT", "SHAPE", "FAILURE_TIMEOUT", "DISPATCH_RATE", "DURATION"],
         "values": [
@@ -124,8 +124,8 @@ general_props = [
     {
         "keys": ["MAX_SPEED", "ACCELERATION", "DECELERATION"],
         "values": [
-            {"MAX_SPEED": "0.1", "ACCELERATION": "0.1", "DECELERATION": "0.1"},
-            # {"MAX_SPEED": "6.11", "ACCELERATION": "6.11", "DECELERATION": "6.11"},
+            # {"MAX_SPEED": "0.1", "ACCELERATION": "0.1", "DECELERATION": "0.1"},
+            {"MAX_SPEED": "6.11", "ACCELERATION": "6.11", "DECELERATION": "6.11"},
             # {"MAX_SPEED": "30", "ACCELERATION": "30", "DECELERATION": "30"},
             # {"MAX_SPEED": "66.67", "ACCELERATION": "66.67", "DECELERATION": "66.67"},
         ]

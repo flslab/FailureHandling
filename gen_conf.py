@@ -75,9 +75,9 @@ general_props = [
     {
         "keys": ["K", "INPUT", "SHAPE", "FAILURE_TIMEOUT", "DISPATCH_RATE", "DURATION", "PRIORITIZE_ILLUMINATING_FLS"],
         "values": [
-            {"K": "0", "INPUT": "'skateboard_G3'", "SHAPE": "'skateboard'", "FAILURE_TIMEOUT": "150", "DISPATCH_RATE": "35", "DURATION": "60 * 10", "PRIORITIZE_ILLUMINATING_FLS": "False"},
-            {"K": "3", "INPUT": "'skateboard_G3'", "SHAPE": "'skateboard'", "FAILURE_TIMEOUT": "150", "DISPATCH_RATE": "35", "DURATION": "60 * 10", "PRIORITIZE_ILLUMINATING_FLS": "False"},
-            {"K": "3", "INPUT": "'skateboard_G3'", "SHAPE": "'skateboard'", "FAILURE_TIMEOUT": "150", "DISPATCH_RATE": "35", "DURATION": "60 * 10", "PRIORITIZE_ILLUMINATING_FLS": "True"},
+            {"K": "0", "INPUT": "'skateboard_G3'", "SHAPE": "'skateboard'", "FAILURE_TIMEOUT": "60", "DISPATCH_RATE": "35", "DURATION": "60 * 10", "PRIORITIZE_ILLUMINATING_FLS": "False"},
+            {"K": "3", "INPUT": "'skateboard_G3'", "SHAPE": "'skateboard'", "FAILURE_TIMEOUT": "60", "DISPATCH_RATE": "35", "DURATION": "60 * 10", "PRIORITIZE_ILLUMINATING_FLS": "False"},
+            {"K": "3", "INPUT": "'skateboard_G3'", "SHAPE": "'skateboard'", "FAILURE_TIMEOUT": "60", "DISPATCH_RATE": "35", "DURATION": "60 * 10", "PRIORITIZE_ILLUMINATING_FLS": "True"},
             # {"K": "20", "INPUT": "'skateboard_G20'", "SHAPE": "'skateboard'", "FAILURE_TIMEOUT": "60", "DISPATCH_RATE": "3000", "DURATION": "60 * 30"},
             # {"K": "5", "INPUT": "'skateboard_G5'", "SHAPE": "'skateboard'", "FAILURE_TIMEOUT": "60", "DISPATCH_RATE": "3000", "DURATION": "60 * 30"},
             # {"K": "10", "INPUT": "'skateboard_G10'", "SHAPE": "'skateboard'", "FAILURE_TIMEOUT": "60", "DISPATCH_RATE": "3000", "DURATION": "60 * 30"},
@@ -125,8 +125,8 @@ general_props = [
     {
         "keys": ["MAX_SPEED", "ACCELERATION", "DECELERATION"],
         "values": [
-            {"MAX_SPEED": "0.3", "ACCELERATION": "0.3", "DECELERATION": "0.3"},
-            # {"MAX_SPEED": "6.11", "ACCELERATION": "6.11", "DECELERATION": "6.11"},
+            # {"MAX_SPEED": "0.3", "ACCELERATION": "0.3", "DECELERATION": "0.3"},
+            {"MAX_SPEED": "6.11", "ACCELERATION": "6.11", "DECELERATION": "6.11"},
             # {"MAX_SPEED": "30", "ACCELERATION": "30", "DECELERATION": "30"},
             # {"MAX_SPEED": "66.67", "ACCELERATION": "66.67", "DECELERATION": "66.67"},
         ]

@@ -37,7 +37,7 @@ ax.set_ylim(bottom=0)
 ax.set_title('Number of Obstructing FLS', loc='left')
 
 # ax.set_ylabel('Quality of Illumination (QoI)', loc='top', rotation=0, labelpad=-140)
-ax.set_xlabel('Illumination Cell to Display Cell Ratio (R)', loc='right', fontsize='large')
+ax.set_xlabel('Illumination Cell to Display Cell Ratio (Q)', loc='right', fontsize='large')
 # plt.tight_layout()
 # Add legend
 # plt.show(dpi=500)
@@ -72,7 +72,7 @@ ax.set_ylim(bottom=0)
 ax.set_title('Display Cells Moved', loc='left')
 
 # ax.set_ylabel('Quality of Illumination (QoI)', loc='top', rotation=0, labelpad=-140)
-ax.set_xlabel('Illumination Cell to Display Cell Ratio (R)', loc='right', fontsize='large')
+ax.set_xlabel('Illumination Cell to Display Cell Ratio (Q)', loc='right', fontsize='large')
 # plt.tight_layout()
 # Add legend
 # plt.show(dpi=500)
@@ -107,7 +107,7 @@ ax.set_ylim(bottom=0)
 ax.set_title('Display Cells Moved', loc='left')
 
 # ax.set_ylabel('Quality of Illumination (QoI)', loc='top', rotation=0, labelpad=-140)
-ax.set_xlabel('Illumination Cell to Display Cell Ratio (R)', loc='right', fontsize='large')
+ax.set_xlabel('Illumination Cell to Display Cell Ratio (Q)', loc='right', fontsize='large')
 # plt.tight_layout()
 # Add legend
 # plt.show(dpi=500)
@@ -142,7 +142,7 @@ ax.set_ylim(bottom=0)
 
 ax.set_title('Percentage Change in MTID', loc='left')
 
-ax.set_xlabel('Illumination Cell to Display Cell Ratio (R)', loc='right', fontsize='large')
+ax.set_xlabel('Illumination Cell to Display Cell Ratio (Q)', loc='right', fontsize='large')
 # plt.tight_layout()
 # Add legend
 # plt.show(dpi=500)
@@ -176,7 +176,7 @@ ax.set_ylim(bottom=0)
 
 ax.set_title('Number of Obstructing FLSs', loc='left')
 
-ax.set_xlabel('Illumination Cell to Display Cell Ratio (R)', loc='right', fontsize='large')
+ax.set_xlabel('Illumination Cell to Display Cell Ratio (Q)', loc='right', fontsize='large')
 # plt.tight_layout()
 # Add legend
 # plt.show(dpi=500)

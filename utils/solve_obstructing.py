@@ -40,6 +40,21 @@ def get_dist_to_centroid(standbys, shape, k, file_folder, ratio):
 
     groups = read_cliques_xlsx(f"{file_folder}/{input_file}", ratio)
 
+    dists = []
+
+    for i, group in enumerate(groups):
+        distances = [get_distance(standbys[i], coord) for coord in group]
+
+        dists.extend(distances)
+
+    return dists
+
+
+def dist_to_move_all(standbys, shape, k, file_folder, ratio):
+    input_file = f"{shape}_G{k}.xlsx"
+
+    groups = read_cliques_xlsx(f"{file_folder}/{input_file}", ratio)
+
     avg_dists = []
 
     for i, group in enumerate(groups):

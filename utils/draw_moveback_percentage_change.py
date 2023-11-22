@@ -142,13 +142,6 @@ plt.savefig(f"/Users/shuqinzhu/Desktop/figure/dragon_standby_move_percentage_cha
 plt.close()
 
 
-fig = plt.figure(figsize=(5, 3), layout='constrained')
-ori_standby_line, = plt.plot(ratios, [-6.0107, 0.5813, -0.5874, 0.7143], marker='o',  label=f'G=3')
-
-dispatcher_line, = plt.plot(ratios, [-8.5830, -2.0107, -0.7686, -0.1875], marker='x',  label=f'G=20')
-
-zero_line, = plt.plot([0, 11], [0, 0], '--', color=(0.7, 0.7, 0.7), linewidth=1)
-
 
 fig = plt.figure(figsize=(5, 3), layout='constrained')
 ori_standby_line, = plt.plot(ratios, [0.45, 0.52, 0.52, 0.54], marker='o',  label=f'G=3')
@@ -179,7 +172,7 @@ plt.xticks(ratios)
 
 plt.text(7, 0.55, 'CANF', color=ori_standby_line.get_color(), fontweight='bold', zorder=3)
 
-plt.text(7, 0.2, 'K-Means', color=dispatcher_line.get_color(), fontweight='bold', zorder=3)
+plt.text(7, 0.2, 'k-means', color=dispatcher_line.get_color(), fontweight='bold', zorder=3)
 
 # Add legend
 # ax.legend()

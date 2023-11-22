@@ -381,16 +381,20 @@ def time_centroid_to_point_plot(data_sets, group_sizes, speed_models, name):
     markers = ["o", "v", "s", "x"]
 
     for i, data_set in enumerate(data_sets):
-        plt.plot(group_sizes, data_set, marker=markers[i], label=f'Speed Model: {speed_models[i]}')
+        line, = plt.plot(group_sizes, data_set, marker=markers[i], label=f'{speed_models[i]} Meters/Second')
+
+        plt.text(12, (data_set[-1])/5 + (data_set[-2] * 4)/5 + max(max(data_sets))/50 + max(data_set)/15, f'{speed_models[i]} Meters/Second', color=line.get_color(), fontweight='bold')
 
     # Configure the chart
-    plt.xlabel('Group Size (G)', loc='right')
+    plt.xlabel('Group Size (G)', loc='right', fontsize='large')
 
     ax.set_title('MTID (Second)', loc='left', zorder=4)
     # plt.ylabel('Avg Time To Travel from Group Centroid to Points in Group')
     # plt.title('Avg Time To Travel by Group Size')
-    plt.legend(bbox_to_anchor=(1, 0.89), loc='upper right')
+
+    # plt.legend(bbox_to_anchor=(1, 0.65), loc='upper right')
     plt.xticks(group_sizes)
+    # plt.ylim(0, 5)
 
     # Display the plot
     plt.savefig(f"/Users/shuqinzhu/Desktop/figures/time_centroid_to_point/{name}", dpi=500)
@@ -497,7 +501,7 @@ if __name__ == '__main__':
                 avg_centroid_dist = sum(centroid_dist) / len(centroid_dist)
                 centroid_dist_list.append(centroid_dist)
 
-                for i, speed_model in enumerate([3, 10, 30, 60]):
+                for i, speed_model in enumerate([3, 6.11, 30, 66.76]):
                     time_to_travel_center_list[i].append(
                         calculate_travel_time(speed_model, speed_model, speed_model, avg_centroid_dist))
 
@@ -505,6 +509,8 @@ if __name__ == '__main__':
 
                 # mttr = [calculate_travel_time(max_speed, max_acceleration, max_deceleration,
                 #                               dist * disp_cell_size if dist > 0 else disp_cell_size) for dist in dists]
+
+                max_speed = max_acceleration = max_deceleration = 6.11
 
                 mttr = [calculate_travel_time(max_speed, max_acceleration, max_deceleration,
                                               dist * disp_cell_size if dist != 1 else 0) for dist in dists]
@@ -579,7 +585,7 @@ if __name__ == '__main__':
 
             dispatcher_to_center_compare.append(avg_dispatcher_to_center_list)
 
-            time_centroid_to_point_plot(time_to_travel_center_list, [3, 5, 10, 20], [3, 10, 30, 60],
+            time_centroid_to_point_plot(time_to_travel_center_list, [3, 5, 10, 20], [3, 6.11, 30, 66.67],
                                         f"{shape}_{group_name}_time_to_travel.png")
 
         compare_dispatcher_to_centroid_plot(dispatcher_to_center_compare, [3, 5, 10, 20],

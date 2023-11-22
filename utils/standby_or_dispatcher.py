@@ -29,13 +29,13 @@ def get_dist_to_dispatcher(dispatcher, shape, k, file_folder, ratio):
 
     groups = read_cliques_xlsx(f"{file_folder}/{input_file}", ratio)
 
-    avg_dists = []
+    dists = []
 
     for i, group in enumerate(groups):
         distances = [distance_point_to_line(coord, dispatcher) for coord in group]
-        avg_dists.append(statistics.mean(distances))
+        dists.extend(distances)
 
-    return avg_dists
+    return dists
 
 
 def draw_dispatcher_standby_MTID(MTID_info, output_info):

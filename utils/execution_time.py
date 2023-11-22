@@ -9,7 +9,7 @@ fig = plt.figure(figsize=(5, 3), layout='constrained')
 ax = fig.add_subplot()
 CANF_line, = plt.plot([3, 5, 10, 20], [108.17, 118.11, 232.67, 1339.43], marker='o', label=f'CANF Execution Time')
 
-kmeans_line, = plt.plot([3, 5, 10, 20], [5.15, 3.85, 3.15, 1.38], marker='x', label=f'K-Means Execution Time')
+kmeans_line, = plt.plot([3, 5, 10, 20], [5.15, 3.85, 3.15, 1.38], marker='x', label=f'k-means Execution Time')
 
 plt.yscale('log')
 
@@ -34,7 +34,7 @@ ax.set_xlabel('Group Size (G)', loc='right', labelpad=-1, fontsize='large')
 
 plt.text(7.5, 88.5, 'CANF Execution Time', color=CANF_line.get_color(), fontweight='bold')
 
-plt.text(7.5, 4.5, 'K-Means Execution Time', color=kmeans_line.get_color(), fontweight='bold')
+plt.text(7.5, 4.5, 'k-means Execution Time', color=kmeans_line.get_color(), fontweight='bold')
 
 # Add legend
 # plt.legend()

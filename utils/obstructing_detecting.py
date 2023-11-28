@@ -141,23 +141,21 @@ if __name__ == "__main__":
 
     # file_folder = "C:/Users/zhusq/Desktop"
     # meta_dir = "C:/Users/zhusq/Desktop"
-    ptcld_folder = "/Users/shuqinzhu/Desktop/pointcloud"
-    meta_dir = "/Users/shuqinzhu/Desktop"
+    ptcld_folder = "../assets/pointcloud"
+    meta_dir = "../assets"
 
-    # file_folder = "/users/Shuqin/pointcloud"
-    # meta_dir = "/users/Shuqin"
 
-    granularity = 10
+    granularity = 45
 
     p_list = []
     for illum_to_disp_ratio in [1, 3, 5, 10]:
 
-        # for k in [3, 20]:
-        #     for shape in ["skateboard", "dragon", "hat"]:
-        #         calculate_obstructing_omnidegree(ptcld_folder, meta_dir, illum_to_disp_ratio, k, shape, granularity)
-        p_list.append(mp.Process(target=run_with_multiProcess,
-                                 args=(ptcld_folder, meta_dir, illum_to_disp_ratio, granularity)))
+        for k in [3, 20]:
+            for shape in ["skateboard", "dragon", "hat"]:
+                calculate_obstructing_omnidegree(ptcld_folder, meta_dir, illum_to_disp_ratio, k, shape, granularity)
+        # p_list.append(mp.Process(target=run_with_multiProcess,
+        #                          args=(ptcld_folder, meta_dir, illum_to_disp_ratio, granularity)))
     #
-    for p in p_list:
-        print(p)
-        p.start()
+    # for p in p_list:
+    #     print(p)
+    #     p.start()

@@ -220,7 +220,7 @@ def calculate_obstructing(group_file, meta_direc, ratio, k, shape):
 
     output_path = f"{meta_direc}/obstructing/R{ratio}/K{k}"
 
-    points, boundary, standbys = get_points_from_file(shape, ratio, group_file, output_path)
+    points, boundary, standbys = get_points_from_file(ratio, group_file, output_path)
     check_times = [0]
 
     camera_shifting = 100
@@ -322,8 +322,8 @@ if __name__ == "__main__":
 
     # file_folder = "C:/Users/zhusq/Desktop"
     # meta_dir = "C:/Users/zhusq/Desktop"
-    file_folder = "/Users/shuqinzhu/Desktop"
-    meta_dir = "/Users/shuqinzhu/Desktop"
+    file_folder = "/Users/hamed/Documents/Holodeck/FailureHandling/assets"
+    meta_dir = "/Users/hamed/Documents/Holodeck/FailureHandling/assets"
 
     # file_folder = "/users/Shuqin"
     # meta_dir = "/users/Shuqin"
@@ -333,7 +333,7 @@ if __name__ == "__main__":
 
         for k in [3, 20]:
 
-            for shape in ["dragon", "hat"]:
+            for shape in ["skateboard"]:
                 calculate_obstructing(file_folder, meta_dir, illum_to_disp_ratio, k, shape)
                 # p_list.append(mp.Process(target=calculate_obstructing, args=(file_folder, meta_dir, illum_to_disp_ratio, k, shape)))
 

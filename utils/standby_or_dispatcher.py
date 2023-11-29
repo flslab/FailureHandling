@@ -42,9 +42,9 @@ def draw_dispatcher_standby_MTID(MTID_info, output_info):
     # output_info: save_path, shape, ratio, group_size, speed, ratio
 
     fig = plt.figure(figsize=(5, 3), layout='constrained')
-    ori_standby_line, = plt.plot(MTID_info[0], MTID_info[1], marker='o', markersize=4, label=f'MTID with Origin Standby')
+    ori_standby_line, = plt.plot(MTID_info[0], MTID_info[1], marker='o', markersize=4, label=f'MTID with Origin Standby', linewidth=0.5)
 
-    new_standby_line, = plt.plot(MTID_info[0], MTID_info[2], marker='s', markersize=4, label=f'MTID with Moved Standby')
+    new_standby_line, = plt.plot(MTID_info[0], MTID_info[2], marker='s', markersize=4, label=f'MTID with Moved Standby', linewidth=0.5)
 
     dispatcher_line, = plt.plot(MTID_info[0], MTID_info[3], marker='x', markersize=4, label=f'MTID with Dispatcher')
 
@@ -54,8 +54,8 @@ def draw_dispatcher_standby_MTID(MTID_info, output_info):
 
     ax.set_title('MTID (Second)', loc='left')
     ax.set_xlabel('Distance From Group To Dispatcher (Display Cells)', loc='right', fontsize="large")
-    ax.set_xlim(left=0, right=100)
-    ax.set_ylim(0, 40)
+    # ax.set_xlim(left=0, right=1000)
+    # ax.set_ylim(0, 40)
 
     # plt.text(6, 48, 'With Priority Queue', color=pri_line.get_color(), fontweight='bold', zorder=3)
     #
@@ -106,11 +106,10 @@ def cmp_standby_dispatcher(ratio, ptcld_folder, file_path, move_back_path, txt_f
 
 
 if __name__ == "__main__":
-    ptcloud_folder = "/Users/shuqinzhu/Desktop/pointcloud"
+    ptcloud_folder = "../assets/pointcloud"
+    meta_dir = "../assets"
 
-    meta_dir = "/Users/shuqinzhu/Desktop"
-
-    for ratio in [1]:
+    for ratio in [3, 5, 10]:
 
         for k in [3, 20]:
 
@@ -132,5 +131,5 @@ if __name__ == "__main__":
                                         MTID_info[0][i] - MTID_info[0][i - 1]))
                     print(f"{shape}, slop: {statistics.mean(slops)}")
 
-                    output_info = ["/Users/shuqinzhu/Desktop/standby_or_dispatcher", shape, ratio, k, speed, ratio]
+                    output_info = [meta_dir, shape, ratio, k, speed, ratio]
                     draw_dispatcher_standby_MTID(MTID_info, output_info)

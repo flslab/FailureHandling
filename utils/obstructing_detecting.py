@@ -27,12 +27,25 @@ def rotate_vector(vector, angle_degrees):
     return rotated_vector
 
 def check_obstructing(user_eye, points, ratio):
-    potential_blocking_index, obstructing_list = [], []
+    potential_blocking_index = []
+
+    num_of_standby = 0
+    num_of_illum = 0
+
+    for point in points:
+        if point[3] == 1:
+            num_of_standby += 1
+        else:
+            num_of_illum += 1
+
+    obstructing_list = [0 for _ in range(0, num_of_standby)]
 
     distances = [get_distance(user_eye, point[:3]) for point in points]
     sorted_indices = np.argsort(distances)
     distances.sort()
 
+    obstructing_coord = []
+    blocked_coord = []
 
     for index_dist in tqdm(range(len(sorted_indices))):
         p_index = sorted_indices[index_dist]
@@ -92,12 +105,17 @@ def check_obstructing(user_eye, points, ratio):
 
                     if point[3] != 1 and ray_cell_intersection(user_eye, direction, point[0:3], ratio,
                                                                point[3]) and p_index not in potential_blocking_index:
+
+                        obstructing_coord.append(points[p_index][0:3])
+                        blocked_coord.append(point[0:3])
+                        potential_blocking_index.append(p_index)
+
                         if any(is_visible):
                             is_obstruct = True
                         break
-        obstructing_list.append(is_obstruct)
+        obstructing_list[p_index - num_of_illum] = is_obstruct
 
-    return obstructing_list
+    return obstructing_list, obstructing_coord, blocked_coord
 
 def calculate_obstructing_omnidegree(ptcld_folder, meta_direc, ratio, k, shape, granularity):
 
@@ -124,13 +142,18 @@ def calculate_obstructing_omnidegree(ptcld_folder, meta_direc, ratio, k, shape, 
 
         print(f"START: {shape}, K: {k}, Ratio: {ratio}, Angle:{angle}")
 
-        obstructing_list = check_obstructing(user_pos, points, ratio)
+        obstructing_list, obstructing_coord, blocked_coord = check_obstructing(user_pos, points, ratio)
 
         np.savetxt(f'{output_path}/points/{shape}_{granularity}_{i}.txt', obstructing_list, fmt='%d',
                    delimiter=' ')
 
+        np.savetxt(f'{output_path}/points/{shape}_{granularity}_{i}_blocking.txt', obstructing_coord, fmt='%f',
+                   delimiter=' ')
+        np.savetxt(f'{output_path}/points/{shape}_{granularity}_{i}_blocked.txt', blocked_coord, fmt='%f',
+                   delimiter=' ')
+
         print(
-            f"{shape}, K: {k}, Ratio: {ratio} ,{angle} view: Number of Illuminating FLS: {Counter(obstructing_list)}")
+            f"{shape}, K: {k}, Ratio: {ratio} ,view: {angle}, Number of Illuminating FLS: {Counter(obstructing_list)}")
 
 def run_with_multiProcess(ptcld_folder, meta_dir, illum_to_disp_ratio, granularity):
     for k in [3, 20]:
@@ -145,17 +168,17 @@ if __name__ == "__main__":
     meta_dir = "../assets"
 
 
-    granularity = 45
+    granularity = 10
 
     p_list = []
     for illum_to_disp_ratio in [1, 3, 5, 10]:
 
-        for k in [3, 20]:
-            for shape in ["skateboard", "dragon", "hat"]:
-                calculate_obstructing_omnidegree(ptcld_folder, meta_dir, illum_to_disp_ratio, k, shape, granularity)
-        # p_list.append(mp.Process(target=run_with_multiProcess,
-        #                          args=(ptcld_folder, meta_dir, illum_to_disp_ratio, granularity)))
-    #
-    # for p in p_list:
-    #     print(p)
-    #     p.start()
+        # for k in [3, 20]:
+        #     for shape in ["skateboard"]:
+        #         calculate_obstructing_omnidegree(ptcld_folder, meta_dir, illum_to_disp_ratio, k, shape, granularity)
+        p_list.append(mp.Process(target=run_with_multiProcess,
+                                 args=(ptcld_folder, meta_dir, illum_to_disp_ratio, granularity)))
+
+    for p in p_list:
+        print(p)
+        p.start()

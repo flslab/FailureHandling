@@ -70,7 +70,7 @@ def read_coordinates(file_path, delimeter=' ', type=0):
                     coordinates.append(coord)
                 else:
                     print(f"Invalid coordinate data on line: {line.strip()}")
-        return coordinates
+        return np.array(coordinates)
     except FileNotFoundError:
         print(f"The file at path {file_path} does not exist.")
         return None

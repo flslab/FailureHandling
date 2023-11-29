@@ -65,7 +65,7 @@ def dist_to_move_all(standbys, shape, k, file_folder, ratio):
     return avg_dists
 
 
-def solve_single_view(shape, k, ratio, view, lastview, user_eye, group_file, output_path, test=False):
+def solve_single_view(shape, k, ratio, view, lastview, user_eye, group_file, output_path, test=False, file_surfix="standby"):
     tag = f"Solving: {shape}, K: {k}, Ratio: {ratio} ,{view}"
     print(tag)
 
@@ -221,7 +221,7 @@ def solve_single_view(shape, k, ratio, view, lastview, user_eye, group_file, out
 
         change_mapping[origin_illum_index] = obs_list[obstructing_index]
 
-    np.savetxt(f'{output_path}/points/{shape}_{view}_standby.txt', standbys, fmt='%f', delimiter=' ')
+    np.savetxt(f'{output_path}/points/{shape}_{view}_{file_surfix}.txt', standbys, fmt='%f', delimiter=' ')
 
     if not test:
         dists_center = get_dist_to_centroid(standbys[:, 0:3], shape, k, group_file, ratio)

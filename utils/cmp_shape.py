@@ -379,11 +379,12 @@ def time_centroid_to_point_plot(data_sets, group_sizes, speed_models, name):
     ax.spines['top'].set_visible(False)
 
     markers = ["o", "v", "s", "x"]
+    colors = ['#1f77b4', 'orange', '#9467bd', 'black']
 
     for i, data_set in enumerate(data_sets):
-        line, = plt.plot(group_sizes, data_set, marker=markers[i], label=f'{speed_models[i]} Meters/Second')
+        line, = plt.plot(group_sizes, data_set, marker=markers[i], c=colors[i], label=f'{speed_models[i]} Meters/Second')
 
-        plt.text(12, (data_set[-1])/5 + (data_set[-2] * 4)/5 + max(max(data_sets))/50 + max(data_set)/15, f'{speed_models[i]} Meters/Second', color=line.get_color(), fontweight='bold')
+        plt.text(12, (data_set[-1])/5 + (data_set[-2] * 4)/5 + max(max(data_sets))/50 + max(data_set)/35, f'{speed_models[i]} Meters/Second', color=line.get_color(), fontweight='bold')
 
     # Configure the chart
     plt.xlabel('Group Size (G)', loc='right', fontsize='large')

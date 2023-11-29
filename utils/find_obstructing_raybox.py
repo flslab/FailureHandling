@@ -408,7 +408,7 @@ def calculate_obstructing(group_file, meta_direc, ratio, k, shape):
 
     for i in range(len(views)):
 
-        if i != 3:
+        if i != 4:
             continue
 
         print(f"START: {shape}, K: {k}, Ratio: {ratio} ,{views[i]}")
@@ -473,7 +473,7 @@ if __name__ == "__main__":
     # meta_dir = "/users/Shuqin"
 
     p_list = []
-    for illum_to_disp_ratio in [10]:
+    for illum_to_disp_ratio in [11]:
 
         for k in [3]:
             for shape in ["skateboard", "dragon", "hat"]:

@@ -26,7 +26,7 @@ def rotate_vector(vector, angle_degrees):
 
     return rotated_vector
 
-def check_obstructing(user_eye, points, ratio):
+def check_obstructing(user_eye, points, ratio, standbys):
     potential_blocking_index = []
 
     num_of_standby = 0
@@ -46,6 +46,7 @@ def check_obstructing(user_eye, points, ratio):
 
     obstructing_coord = []
     blocked_coord = []
+    blocking_index = []
 
     for index_dist in tqdm(range(len(sorted_indices))):
         p_index = sorted_indices[index_dist]
@@ -112,8 +113,10 @@ def check_obstructing(user_eye, points, ratio):
 
                         if any(is_visible):
                             is_obstruct = True
+                            blocking_index.append(p_index)
                         break
         obstructing_list[p_index - num_of_illum] = is_obstruct
+        # print(f"Ori:{standbys[p_index - num_of_illum]}, GT:{points[p_index][0:3]}")
 
     return obstructing_list, obstructing_coord, blocked_coord
 
@@ -142,7 +145,7 @@ def calculate_obstructing_omnidegree(ptcld_folder, meta_direc, ratio, k, shape, 
 
         print(f"START: {shape}, K: {k}, Ratio: {ratio}, Angle:{angle}")
 
-        obstructing_list, obstructing_coord, blocked_coord = check_obstructing(user_pos, points, ratio)
+        obstructing_list, obstructing_coord, blocked_coord = check_obstructing(user_pos, points, ratio, standbys)
 
         np.savetxt(f'{output_path}/points/{shape}_{granularity}_{i}.txt', obstructing_list, fmt='%d',
                    delimiter=' ')
@@ -168,17 +171,17 @@ if __name__ == "__main__":
     meta_dir = "../assets"
 
 
-    granularity = 10
+    granularity = 0.2
 
     p_list = []
-    for illum_to_disp_ratio in [1, 3, 5, 10]:
+    for illum_to_disp_ratio in [10]:
 
-        # for k in [3, 20]:
-        #     for shape in ["skateboard"]:
-        #         calculate_obstructing_omnidegree(ptcld_folder, meta_dir, illum_to_disp_ratio, k, shape, granularity)
-        p_list.append(mp.Process(target=run_with_multiProcess,
-                                 args=(ptcld_folder, meta_dir, illum_to_disp_ratio, granularity)))
-
-    for p in p_list:
-        print(p)
-        p.start()
+        for k in [3]:
+            for shape in ["skateboard"]:
+                calculate_obstructing_omnidegree(ptcld_folder, meta_dir, illum_to_disp_ratio, k, shape, granularity)
+    #     p_list.append(mp.Process(target=run_with_multiProcess,
+    #                              args=(ptcld_folder, meta_dir, illum_to_disp_ratio, granularity)))
+    #
+    # for p in p_list:
+    #     print(p)
+    #     p.start()

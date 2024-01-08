@@ -29,7 +29,7 @@ plt.text(7, 0.6, 'G=20', color=dispatcher_line.get_color(), fontweight='bold', z
 # Add legend
 # ax.legend()
 # plt.show(dpi=500)
-plt.savefig(f"/Users/shuqinzhu/Desktop/figure/obstruct_percentage_changed.png", dpi=500)
+plt.savefig(f"../assets/figures/obstruct_percentage_changed.png", dpi=500)
 plt.close()
 
 
@@ -60,7 +60,7 @@ plt.text(7, 0.04, 'G=20', color=dispatcher_line.get_color(), fontweight='bold', 
 # Add legend
 # ax.legend()
 # plt.show(dpi=500)
-plt.savefig(f"/Users/shuqinzhu/Desktop/figure/illum_move_percentage_changed.png", dpi=500)
+plt.savefig(f"../assets/figures/illum_move_percentage_changed.png", dpi=500)
 plt.close()
 
 
@@ -99,7 +99,7 @@ plt.text(7, 0.5, 'G=20', color=dispatcher_line.get_color(), fontweight='bold', z
 # Add legend
 # ax.legend()
 # plt.show(dpi=500)
-plt.savefig(f"/Users/shuqinzhu/Desktop/figure/standby_move_percentage_changed.png", dpi=500)
+plt.savefig(f"../assets/figures/standby_move_percentage_changed.png", dpi=500)
 plt.close()
 
 
@@ -138,7 +138,7 @@ plt.text(7, 0.5, 'G=20', color=dispatcher_line.get_color(), fontweight='bold', z
 # Add legend
 # ax.legend()
 # plt.show(dpi=500)
-plt.savefig(f"/Users/shuqinzhu/Desktop/figure/dragon_standby_move_percentage_changed.png", dpi=500)
+plt.savefig(f"../assets/figures/dragon_standby_move_percentage_changed.png", dpi=500)
 plt.close()
 
 
@@ -177,5 +177,5 @@ plt.text(7, 0.2, 'k-means', color=dispatcher_line.get_color(), fontweight='bold'
 # Add legend
 # ax.legend()
 # plt.show(dpi=500)
-plt.savefig(f"/Users/shuqinzhu/Desktop/figure/skateboard_CANF_kmeans_MTID.png", dpi=500)
+plt.savefig(f"../assets/figures/skateboard_CANF_kmeans_MTID.png", dpi=500)
 plt.close()

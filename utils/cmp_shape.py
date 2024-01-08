@@ -1,4 +1,5 @@
 import os
+import statistics
 
 import pandas as pd
 from itertools import combinations
@@ -238,7 +239,7 @@ def draw_histogram(group_sizes, save_path):
         ax.get_xaxis().set_major_locator(plt.MaxNLocator(integer=True))
         ax.get_yaxis().set_major_locator(plt.MaxNLocator(integer=True))
 
-        plt.savefig(f'/Users/shuqinzhu/Desktop/figures/{save_path}')
+        plt.savefig(f'../assets/figures/{save_path}')
         # plt.show()
         plt.close()
         print(f"Histogram saved successfully to {save_path}")
@@ -304,7 +305,7 @@ def mttr_groupsize_plot(mttrs, group_sizes, name):
     plt.title('Box Plot of MTTR by Group Size')
 
     # Display the plot
-    plt.savefig(f"/Users/shuqinzhu/Desktop/figures/MTTR/{name}")
+    plt.savefig(f"../assets/figures/{name}")
     plt.close()
 
 
@@ -324,7 +325,7 @@ def mtdi_groupsize_plot(mtdis, group_sizes, name):
     plt.title('Box Plot of MTDI by Group Size')
 
     # Display the plot
-    plt.savefig(f"/Users/shuqinzhu/Desktop/figures/MTDI/{name}")
+    plt.savefig(f"../assets/figures/{name}")
     plt.close()
 
 
@@ -341,7 +342,7 @@ def dispatcher_to_centroid_box_plot(data, group_sizes, name):
     plt.ylabel('Distance from Dispatcher to Group Centroids')
 
     # Display the plot
-    plt.savefig(f"/Users/shuqinzhu/Desktop/figures/dispatcher_to_centroid/{name}")
+    plt.savefig(f"../assets/figures/{name}")
     plt.close()
 
 
@@ -367,7 +368,7 @@ def distance_centroid_to_point_plot(data_sets, group_sizes, name):
     # plt.ylim(bottom=min(min(data_sets)) - 1, top=max(max(data_sets)) + 1)
     # Display the plot
     # plt.tight_layout()
-    plt.savefig(f"/Users/shuqinzhu/Desktop/figures/centroid_to_point/{name}", dpi=500)
+    plt.savefig(f"../assets/figures/{name}", dpi=500)
     plt.close()
 
 
@@ -398,7 +399,7 @@ def time_centroid_to_point_plot(data_sets, group_sizes, speed_models, name):
     # plt.ylim(0, 5)
 
     # Display the plot
-    plt.savefig(f"/Users/shuqinzhu/Desktop/figures/time_centroid_to_point/{name}", dpi=500)
+    plt.savefig(f"../assets/figures/{name}", dpi=500)
     plt.close()
 
 
@@ -416,7 +417,36 @@ def dispatcher_to_centroid_plot(data, group_sizes, name):
     plt.xticks(group_sizes)
 
     # Display the plot
-    plt.savefig(f"/Users/shuqinzhu/Desktop/figures/dispatcher_to_centroid/{name}")
+    plt.savefig(f"../assets/figures/{name}")
+    plt.close()
+
+def compare_dist_to_centroid_plot(datasets, group_sizes, name):
+    fig = plt.figure(figsize=(5, 3), layout='constrained')
+    ax = fig.add_subplot()
+
+    group_formation_name = ["CANF", "K-Means"]
+    markers = ['o', "x"]
+    for i, data in enumerate(datasets):
+        line, = plt.plot(group_sizes, data, marker=markers[i], label=f'{group_formation_name[i]}')
+
+        plt.text(6, data[2] + 0.5, f'{group_formation_name[i]}', color=line.get_color(), fontweight='bold')
+
+
+    # print(f"Group centroid to points:{data_sets}")
+    # Set the x-axis label
+    plt.xlabel('Group Size (G)', loc='right', fontsize='large')
+
+    plt.xticks([3, 5, 10, 20])
+
+    # Set the title
+    # plt.title('Distance from Group Centroid To Points in Group by Group Size')
+
+    ax.spines['right'].set_visible(False)
+    ax.spines['top'].set_visible(False)
+    ax.set_title('Distance (Display Cells)', loc='left')
+
+    # Display the plot
+    plt.savefig(f"../assets/figures/{name}", dpi=500)
     plt.close()
 
 
@@ -436,11 +466,14 @@ def compare_dispatcher_to_centroid_plot(datasets, group_sizes, name):
     plt.xticks(group_sizes)
 
     # Display the plot
-    plt.savefig(f"/Users/shuqinzhu/Desktop/figures/dispatcher_to_centroid/{name}")
+    plt.savefig(f"../assets/figures/{name}")
     plt.close()
 
 
 if __name__ == '__main__':
+
+    if not os.path.exists("../assets/figures"):
+        os.makedirs("../assets/figures", exist_ok=True)
 
     mpl.rcParams['font.family'] = 'Times New Roman'
     max_speed = max_acceleration = max_deceleration = 6.11
@@ -459,10 +492,11 @@ if __name__ == '__main__':
                 "Max Dist To Centroid"]]
 
     dispatcher_to_center_compare = []
+    avg_dist_to_centroid = []
 
     for shape in shapes:
 
-        file_path = '/Users/shuqinzhu/Desktop/skateboard_files/pointcloud/' + shape + '.txt'
+        file_path = '../assets/skateboard_files/pointcloud/' + shape + '.txt'
         unique_coordinates = read_coordinates(file_path)
 
         F = len(unique_coordinates)
@@ -486,7 +520,7 @@ if __name__ == '__main__':
                 file_path = shape + "_" + group_type + str(K) + ".xlsx"
                 print(file_path)
 
-                file_path = "/Users/shuqinzhu/Desktop/skateboard_files/" + file_path
+                file_path = "../assets/skateboard_files/" + file_path
                 add_distance_to_center_column(file_path)
 
                 dispatcher_to_center = get_dispatcher_to_centroid(file_path)
@@ -577,7 +611,7 @@ if __name__ == '__main__':
             mttr_groupsize_plot(mttr_list, [3, 5, 10, 20], f"{shape}_{group_name}_MTTR.png")
             mtdi_groupsize_plot(mtdi_list, [3, 5, 10, 20], f"{shape}_{group_name}_MTDI.png")
             distance_centroid_to_point_plot(centroid_dist_list, [3, 5, 10, 20],
-                                            f"{shape}_{group_name}_dist_to_centroid.png")
+                                            f"{shape}_{group_name}_cent_to_member.png")
             dispatcher_to_centroid_plot(avg_dispatcher_to_center_list, [3, 5, 10, 20],
                                         f"{shape}_{group_name}_dist_to_centroid.png")
 
@@ -586,10 +620,14 @@ if __name__ == '__main__':
 
             dispatcher_to_center_compare.append(avg_dispatcher_to_center_list)
 
+            avg_dist_to_centroid.append([statistics.mean(list) for list in centroid_dist_list])
+
             time_centroid_to_point_plot(time_to_travel_center_list, [3, 5, 10, 20], [3, 6.11, 30, 66.67],
                                         f"{shape}_{group_name}_time_to_travel.png")
 
         compare_dispatcher_to_centroid_plot(dispatcher_to_center_compare, [3, 5, 10, 20],
                                             f"{shape}_compare_dist_to_centroid.png")
+        compare_dist_to_centroid_plot(avg_dist_to_centroid, [3, 5, 10, 20],
+                                            f"{shape}_compare_member_to_centroid.png")
 
     write_list_to_csv(report_file_path, reports)

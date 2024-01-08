@@ -4,7 +4,7 @@ from matplotlib.ticker import PercentFormatter
 import matplotlib as mpl
 import pandas as pd
 
-meta_dir = "/Users/shuqinzhu/Desktop"
+meta_dir = "../assets"
 
 mpl.rcParams['font.family'] = 'Times New Roman'
 

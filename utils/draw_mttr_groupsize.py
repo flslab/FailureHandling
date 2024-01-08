@@ -7,7 +7,10 @@ QoI_list = [[],[]]
 for i, filename in enumerate(["True", "False"]):
 
     for folder in ["K0", "K3", "K5", "K10", "K15", "K20"]:
-        input_path = f"/Users/shuqinzhu/Desktop/dragon/{folder}/dragon_D1_R10_T60_S6_P{filename}/dragon_D1_R10_T60_S6_P{filename}_final_report.xlsx"
+
+        folder_path = "/proj/nova-PG0/shuqin/results/" # replace with the result folder of the final result
+
+        input_path = f"{folder_path}/dragon/{folder}/dragon_D1_R10_T60_S6_P{filename}/dragon_D1_R10_T60_S6_P{filename}_final_report.xlsx"
 
         metrics_df = pd.read_excel(input_path, sheet_name='Metrics')
 

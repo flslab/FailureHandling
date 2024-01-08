@@ -206,7 +206,7 @@ def prevent_obstructions(ptcld_folder, meta_direc, ratio, k, shape, granularity,
     obs_idx = np.nonzero(combined_obstruction_map)
     obs_stb_coords = standbys[obs_idx]
 
-    if ratio >= 2:
+    if ratio >= 3:
         closest_ill_coords = closest_points(standbys, points[:, :3])
         new_obs_stb_coords = closest_ill_coords + np.array([0, 0, -1])
         # print(new_obs_stb_coords)
@@ -216,7 +216,7 @@ def prevent_obstructions(ptcld_folder, meta_direc, ratio, k, shape, granularity,
         standbys = new_obs_stb_coords
         # print(standbys)
 
-        move_back_path = f"{meta_dir}/obstructing_iteration/obstructing/R{ratio}/K{k}"
+        move_back_path = f"{meta_dir}/obstructing/R{ratio}/K{k}"
         os.makedirs(move_back_path+"/points", exist_ok=True)
         np.savetxt(f'{move_back_path}/points/{shape}_back_standby.txt', standbys, fmt='%d', delimiter=' ')
 

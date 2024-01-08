@@ -1,3 +1,5 @@
+import os
+
 import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib as mpl
@@ -16,7 +18,7 @@ for shape in shapes:
     for data_name in data_names:
 
         excel_files = [f'{shape}_G0_R3000_T900_S{speed}', f'{shape}_G3_R3000_T900_S{speed}', f'{shape}_G20_R3000_T900_S{speed}']
-        path = "/Users/shuqinzhu/Desktop/mtif_by_time/"
+        path = "../assets/mtif_by_time/"
         labels = ["No Standby", "G=3", "G=20"]
 
         fig = plt.figure(figsize=(5, 3), layout='constrained')
@@ -54,5 +56,9 @@ for shape in shapes:
 
         # Show the plot
         # plt.show(dpi=500)
-        plt.savefig(f"{path}figure/{shape}_{data_name[0:2]}_S{speed}", dpi=500)
+
+        if not os.path.exists(f"{path}figures/"):
+            os.makedirs(f"{path}figures/", exist_ok=True)
+
+        plt.savefig(f"{path}figures/{shape}_{data_name[0:2]}_S{speed}", dpi=500)
         plt.close()

@@ -123,12 +123,12 @@ def generate_video(fig, ax, user, fov, fps, boundary, granularity, duration):
 
     writer = FFMpegWriter(fps=fps)
     # ani.save(f"{exp_dir}/{exp_name}.mp4", writer=writer)
-    ani.save(f"/Users/shuqinzhu/Desktop/try.mp4", writer=writer)
+    ani.save(f"../assets/obstructing_video.mp4", writer=writer)
 
 
 if __name__ == "__main__":
-    ptcld_folder = "/Users/shuqinzhu/Desktop/pointcloud"
-    meta_dir = "/Users/shuqinzhu/Desktop"
+    ptcld_folder = "../assets/pointcloud"
+    meta_dir = "../assets"
 
     for ratio in [5]:
         for k in [3]:

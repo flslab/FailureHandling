@@ -17,10 +17,10 @@ point_nums = {
 for shape in shapes:
     for G in group_size:
         config = f"{shape}_G{G}_R3000_T900_S{speed}"
-        with open(f'/Users/shuqinzhu/Desktop/video/timelines/{config}.json', 'r') as file:
+        with open(f'..assets/timelines/{config}.json', 'r') as file:
             events = json.load(file)
 
-        file_name = f"/Users/shuqinzhu/Desktop/mtif_by_time/{config}"
+        file_name = f"..assets//mtif_by_time/{config}"
         # Dictionary to store the state of each point
         points = {}
 

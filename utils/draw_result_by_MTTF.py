@@ -88,7 +88,7 @@ plt.text(55, 13, 'BetaTTL', color=exp_line.get_color(), fontweight='bold', zorde
 # Add legend
 # plt.tight_layout()
 # plt.show(dpi=500)
-plt.savefig(f"../skateboard_G0_MTIF_by_MTTF.png", dpi=500)
+plt.savefig(f"..assets/figures/skateboard_G0_MTIF_by_MTTF.png", dpi=500)
 plt.close()
 
 

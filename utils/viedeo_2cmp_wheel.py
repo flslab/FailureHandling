@@ -353,17 +353,17 @@ if __name__ == '__main__':
     video_name_list = ["skateboard_G{0,3}_R80_T300_S0"]
 
     for i, file_names in enumerate(file_name_list):
-        txt_file_path = f"/Users/shuqinzhu/Desktop/video/pointclouds/{shape}.txt"
+        txt_file_path = f"../assets/pointclouds/{shape}.txt"
         gtl = read_coordinates(txt_file_path)
         gtl = np.array(gtl)
         print(f"Number of Points: {len(gtl)}")
 
         total_points = len(gtl)
 
-        input_path_K0 = f"/Users/shuqinzhu/Desktop/video/timelines/{file_names[0]}.json"
+        input_path_K0 = f"../assets/timelines/{file_names[0]}.json"
         filtered_events_K0, length, width, height = read_point_cloud(input_path_K0)
 
-        input_path_K3 = f"/Users/shuqinzhu/Desktop/video/timelines/{file_names[1]}.json"
+        input_path_K3 = f"../assets/timelines/{file_names[1]}.json"
         filtered_events_K3, length, width, height = read_point_cloud(input_path_K3)
         fig, ax, ax2, ax3, ax4, tx_K0, tx_K3, tx_left, tx_right, tx_title = draw_figure()
         points_K0 = dict()
@@ -376,4 +376,4 @@ if __name__ == '__main__':
         # plt.show()
         writer = FFMpegWriter(fps=fps)
         # ani.save(f"{exp_dir}/{exp_name}.mp4", writer=writer)
-        ani.save(f"/Users/shuqinzhu/Desktop/video/videos/{video_name_list[i]}_wheel_R3.mp4", writer=writer)
+        ani.save(f"../assets/{video_name_list[i]}_wheel_R3.mp4", writer=writer)

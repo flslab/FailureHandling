@@ -76,13 +76,12 @@ def read_group_formation(file_path):
 
 if __name__ == "__main__":
     # k = 253
-    # file_path = f"/Users/shuqinzhu/Desktop/pointcloud/dragon_G3.xlsx"
 
     group_info = [["skateboard_G3", 576], ["skateboard_G20", 86], ["dragon_G3", 253], ["dragon_G20", 38], ["hat_G3", 521], ["hat_G20", 78]]
 
     for info in group_info:
         k = info[1]
-        file_path = f"/Users/shuqinzhu/Desktop/pointcloud/{info[0]}.xlsx"
+        file_path = f"../assets/pointcloud/{info[0]}.xlsx"
         points, _ = read_group_formation(file_path)
         _, iterations = kmeans(points, k)
 

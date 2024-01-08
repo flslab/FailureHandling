@@ -464,13 +464,8 @@ def calculate_obstructing(group_file, meta_direc, ratio, k, shape):
 
 if __name__ == "__main__":
 
-    # file_folder = "C:/Users/zhusq/Desktop"
-    # meta_dir = "C:/Users/zhusq/Desktop"
-    file_folder = "/Users/shuqinzhu/Desktop/pointcloud"
-    meta_dir = "/Users/shuqinzhu/Desktop"
-
-    # file_folder = "/users/Shuqin/pointcloud"
-    # meta_dir = "/users/Shuqin"
+    file_folder = "../assets/pointcloud"
+    meta_dir = "../assets"
 
     p_list = []
     for illum_to_disp_ratio in [11]:

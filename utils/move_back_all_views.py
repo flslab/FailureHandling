@@ -106,11 +106,8 @@ def solve_all_views(group_file, meta_direc, ratio, k, shape):
 
 if __name__ == "__main__":
 
-    file_folder = "/Users/shuqinzhu/Desktop/pointcloud"
-    meta_dir = "/Users/shuqinzhu/Desktop/obstructing_iteration"
-
-    # file_folder = "/users/Shuqin/pointcloud"
-    # meta_dir = "/users/Shuqin"
+    file_folder = "../assets/pointcloud"
+    meta_dir = "../assets/obstructing"
 
     p_list = []
     for illum_to_disp_ratio in [1, 3, 5, 10]:
